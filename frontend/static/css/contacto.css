@@ -1,0 +1,233 @@
+/* Importar Material Symbols desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/*
+ * Estilos personalizados para la página "Contacto"
+ * Basados en el HTML proporcionado y el orden de colores de "Sobre Nosotros".
+ */
+
+:root {
+    --color-primary: #aa8744;
+    --color-background-light: #fdfbf3;
+    --color-background-dark: #363636;
+    --color-surface-light: #ffffff;
+    --color-surface-dark: #4a4a4a;
+    --color-foreground-light: #363636;
+    --color-foreground-dark: #fdfbf3;
+    --color-subtle-light: #d1bc97;
+    --color-subtle-dark: #9c642d;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--color-background-light);
+    color: var(--color-foreground-light);
+}
+
+body.dark {
+    color: var(--color-foreground-dark);
+}
+
+/* --- Contenedor Principal --- */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    width: 6rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-right-width: 1px;
+    border-color: rgb(209 213 219);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.sidebar-top, .sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-top {
+    gap: 2.5rem;
+}
+
+.sidebar-bottom {
+    gap: 1.5rem;
+}
+
+.logo-img {
+    height: 3rem;
+    width: 3rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* --- Iconos de Navegación --- */
+.nav-icon {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    color: var(--color-foreground-light);
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-icon:hover {
+    background-color: var(--color-background-light);
+}
+
+.nav-icon-active {
+    background-color: var(--color-surface-light);
+    color: var(--color-background-dark);
+}
+
+.nav-icon-active:hover {
+    background-color: var(--color-background-light);
+}
+
+/* --- Iconos Inferiores --- */
+.cart-icon, .user-profile-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.cart-icon:hover, .user-profile-link:hover {
+    background-color: var(--color-background-light);
+}
+
+.user-avatar {
+    background-position: center;
+    background-repeat: no-repeat;
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+    border-radius: 9999px;
+    height: 2.5rem;
+    width: 2.5rem;
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g');
+}
+
+/* --- Contenido Principal --- */
+.main-content {
+    flex: 1 1 0%;
+    padding: 5rem 0 0 30rem;
+    overflow-y: auto;
+}
+
+.content-wrapper {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-foreground-light);
+    margin-bottom: 3rem;
+}
+
+/* --- Secciones --- */
+.sections-container > :not(:first-child) {
+    margin-top: 3rem;
+}
+
+.section-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+/* --- Información de Contacto --- */
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.contact-icon {
+    color: var(--color-primary);
+    margin-top: 0.25rem;
+}
+
+.contact-label {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--color-foreground-light);
+}
+
+.contact-value {
+    margin: 0;
+    color: var(--color-subtle-light);
+}
+
+/* --- Redes Sociales --- */
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-subtle-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.social-link:hover {
+    color: var(--color-primary);
+}
+
+.social-icon-wrapper {
+    border-radius: 9999px;
+    background-color: var(--color-surface-light);
+    padding: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.social-link:hover .social-icon-wrapper {
+    background-color: rgba(170, 135, 68, 0.1); /* var(--color-primary) con 10% opacidad */
+}
+
+.social-icon-svg {
+    height: 2rem;
+    width: 2rem;
+}
+
+.social-label {
+    font-weight: 500;
+}
+
+/* --- Material Symbols Outlined --- */
+.material-symbols-outlined {
+    vertical-align: middle;
+}

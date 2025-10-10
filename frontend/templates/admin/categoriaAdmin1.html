@@ -1,0 +1,121 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+  <link as="style"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Work+Sans%3Awght%40400%3B500%3B700%3B900"
+    onload="this.rel='stylesheet'" rel="stylesheet" />
+  <title>Stitch Design</title>
+  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <style type="text/tailwindcss">
+    :root {
+        --c-gold: #aa8744;
+        --c-dark-gray: #363636;
+        --c-off-white: #fdfbf3;
+        --c-light-tan: #d1bc97;
+        --c-brown: #9c642d;
+      }
+    </style>
+</head>
+
+<body class="bg-[var(--c-off-white)]">
+  <div class="flex min-h-screen" style='font-family: "Work Sans", "Noto Sans", sans-serif;'>
+    <aside class="flex w-64 flex-col bg-[var(--c-dark-gray)] text-[var(--c-off-white)]">
+      <div class="flex h-full flex-col justify-between p-4">
+        <div class="flex flex-col gap-6">
+          <h1 class="text-[var(--c-off-white)] text-2xl font-bold p-2">Meraki</h1>
+          <nav class="flex flex-col gap-2">
+            <a class="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[var(--c-gold)] hover:text-[var(--c-dark-gray)] transition-colors"
+              href="#">
+              <span class="material-symbols-outlined">home</span>
+              <span class="text-sm font-medium">Inicio</span>
+            </a>
+            <a class="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[var(--c-gold)] hover:text-[var(--c-dark-gray)] transition-colors"
+              href="#">
+              <span class="material-symbols-outlined">shopping_bag</span>
+              <span class="text-sm font-medium">Pedidos</span>
+            </a>
+            <a class="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[var(--c-gold)] hover:text-[var(--c-dark-gray)] transition-colors"
+              href="#">
+              <span class="material-symbols-outlined">inventory_2</span>
+              <span class="text-sm font-medium">Productos</span>
+            </a>
+            <a class="flex items-center gap-3 rounded-md px-3 py-2 bg-[var(--c-gold)] text-[var(--c-dark-gray)]"
+              href="#">
+              <span class="material-symbols-outlined">category</span>
+              <span class="text-sm font-medium">Categorías</span>
+            </a>
+            <a class="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[var(--c-gold)] hover:text-[var(--c-dark-gray)] transition-colors"
+              href="#">
+              <span class="material-symbols-outlined">group</span>
+              <span class="text-sm font-medium">Clientes</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </aside>
+    <main class="flex-1 p-8">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-4xl font-bold text-[var(--c-dark-gray)]">Categorías</h2>
+        <button
+          class="flex items-center gap-2 rounded-lg bg-[var(--c-gold)] px-4 py-2 text-sm font-bold text-[var(--c-dark-gray)] shadow-sm hover:bg-[var(--c-brown)] hover:text-white transition-colors">
+          <span class="material-symbols-outlined">add</span>
+          <span>Añadir nueva categoría</span>
+        </button>
+      </div>
+      <div class="overflow-x-auto rounded-lg border border-[var(--c-light-tan)] bg-white">
+        <table class="w-full text-left text-sm text-[var(--c-dark-gray)]">
+          <thead class="bg-[var(--c-light-tan)]/30 text-xs uppercase text-[var(--c-brown)]">
+            <tr>
+              <th class="px-6 py-3" scope="col">Nombre</th>
+              <th class="px-6 py-3 text-right" scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--c-light-tan)]">
+              <th class="whitespace-nowrap px-6 py-4 font-medium text-[var(--c-dark-gray)]" scope="row">Collares</th>
+              <td class="px-6 py-4 text-right">
+                <a class="font-medium text-[var(--c-gold)] hover:underline" href="#">Editar</a>
+                <a class="ml-4 font-medium text-red-600 hover:underline" href="#">Eliminar</a>
+              </td>
+            </tr>
+            <tr class="border-b border-[var(--c-light-tan)]">
+              <th class="whitespace-nowrap px-6 py-4 font-medium text-[var(--c-dark-gray)]" scope="row">Pulseras</th>
+              <td class="px-6 py-4 text-right">
+                <a class="font-medium text-[var(--c-gold)] hover:underline" href="#">Editar</a>
+                <a class="ml-4 font-medium text-red-600 hover:underline" href="#">Eliminar</a>
+              </td>
+            </tr>
+            <tr class="border-b border-[var(--c-light-tan)]">
+              <th class="whitespace-nowrap px-6 py-4 font-medium text-[var(--c-dark-gray)]" scope="row">Anillos</th>
+              <td class="px-6 py-4 text-right">
+                <a class="font-medium text-[var(--c-gold)] hover:underline" href="#">Editar</a>
+                <a class="ml-4 font-medium text-red-600 hover:underline" href="#">Eliminar</a>
+              </td>
+            </tr>
+            <tr class="border-b border-[var(--c-light-tan)]">
+              <th class="whitespace-nowrap px-6 py-4 font-medium text-[var(--c-dark-gray)]" scope="row">Pendientes</th>
+              <td class="px-6 py-4 text-right">
+                <a class="font-medium text-[var(--c-gold)] hover:underline" href="#">Editar</a>
+                <a class="ml-4 font-medium text-red-600 hover:underline" href="#">Eliminar</a>
+              </td>
+            </tr>
+            <tr>
+              <th class="whitespace-nowrap px-6 py-4 font-medium text-[var(--c-dark-gray)]" scope="row">Accesorios</th>
+              <td class="px-6 py-4 text-right">
+                <a class="font-medium text-[var(--c-gold)] hover:underline" href="#">Editar</a>
+                <a class="ml-4 font-medium text-red-600 hover:underline" href="#">Eliminar</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+</body>
+
+</html>

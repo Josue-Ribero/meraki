@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Confirmación de Pedido - Meraki</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style type="text/tailwindcss">
+        :root {
+            --c1: #aa8744;
+            --c2: #363636;
+            --c3: #fdfbf3;
+            --c4: #d1bc97;
+            --c5: #9c642d;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[var(--c3)] text-[var(--c2)]">
+    <div class="flex min-h-screen">
+        <aside class="w-24 bg-[var(--c3)] border-r border-[var(--c4)] flex flex-col items-center py-8">
+            <a class="mb-12" href="#">
+                <img alt="Meraki logo" class="h-8 w-auto"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFQzUBiW5g9UMlE6VcrzYNKrYn5k5n_Y4fmB4GyiiNnMQX5zM8qduNZVs8orz-7195aqsU0GUxvq1udPUvXVUrgMgWAckDwfuuAUbvHzmXGoG6JfoAdHs6Rhb6BCm0F_EPUEGo8J5X0WUSeEfLA63yRHTdG_NGzeGBhnu0Z6Y06kNnqDYeOAWuhlGQMuCFCnCLTr9iZk3RnuioeGgZKAAx4BNxlqjhHamMpvNuCnGCqLWwsgCldd97LQOl8QvKLdrXNoTj3RLcbGtU" />
+            </a>
+            <nav class="flex flex-col items-center space-y-6">
+                <a class="p-3 rounded-lg text-[var(--c2)] hover:bg-[var(--c4)] transition-colors" href="#">
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </a>
+                <a class="p-3 rounded-lg text-[var(--c2)] hover:bg-[var(--c4)] transition-colors" href="#">
+                    <span class="material-symbols-outlined">
+                        storefront
+                    </span>
+                </a>
+                <a class="p-3 rounded-lg text-white bg-[var(--c1)]" href="#">
+                    <span class="material-symbols-outlined">
+                        receipt_long
+                    </span>
+                </a>
+                <a class="p-3 rounded-lg text-[var(--c2)] hover:bg-[var(--c4)] transition-colors" href="#">
+                    <span class="material-symbols-outlined">
+                        person
+                    </span>
+                </a>
+            </nav>
+        </aside>
+        <main class="flex-1 p-8 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="material-symbols-outlined text-7xl text-[var(--c1)]">
+                        check_circle
+                    </span>
+                    <h1 class="text-4xl md:text-5xl font-bold text-[var(--c5)] mt-4">¡Tu pedido ha sido realizado con
+                        éxito!</h1>
+                    <p class="mt-4 text-lg max-w-3xl mx-auto">
+                        Gracias por tu compra. Hemos recibido tu pedido y lo estamos procesando. Recibirás una
+                        confirmación por correo electrónico en breve.
+                    </p>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6 md:p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-[var(--c5)] border-b border-[var(--c4)] pb-3 mb-4">
+                                Resumen del Pedido</h2>
+                            <div class="space-y-3 text-lg">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Número de Pedido:</span>
+                                    <span class="font-semibold text-[var(--c5)]">#MK20240728</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Fecha:</span>
+                                    <span>28 de Julio, 2024</span>
+                                </div>
+                                <div
+                                    class="flex justify-between font-bold text-xl pt-3 border-t border-[var(--c4)] mt-3">
+                                    <span>Total Pagado:</span>
+                                    <span class="text-[var(--c1)]">$185.00</span>
+                                </div>
+                            </div>
+                            <h2
+                                class="text-2xl font-semibold text-[var(--c5)] border-b border-[var(--c4)] pb-3 mb-4 mt-8">
+                                Envío Estimado</h2>
+                            <div class="flex items-start gap-4">
+                                <span class="material-symbols-outlined text-3xl text-[var(--c1)] mt-1">
+                                    local_shipping
+                                </span>
+                                <div>
+                                    <p class="font-semibold text-lg">Dirección de Envío:</p>
+                                    <p class="text-gray-600">
+                                        Calle Falsa 123, Apto 4B<br />
+                                        Ciudad Ejemplo, País Ejemplo, 12345
+                                    </p>
+                                    <p class="mt-2 text-sm text-[var(--c5)]">Entrega estimada: 3-5 días hábiles</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold text-[var(--c5)] border-b border-[var(--c4)] pb-3 mb-4">
+                                Productos Comprados</h2>
+                            <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                <div class="flex items-center gap-4">
+                                    <img alt="Pendientes Meraki" class="w-20 h-20 object-cover rounded-lg"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdpzgqAY7CA_DeCQpdbcZH0rZGXuv-jGevO4uX4C9kUM7Ywhxm9jTdjdNK1zrbWCJ00Lk7MMM_EbGATH33X5s1RVFSTzMiIX69n0wAQ7OfweKM_SNxUvjJksQv42XFz38LpaKIlrPn76aoKeXGX9rH90997kIEE6VvIWOUT3kjKT5O2t6kP6np2C6toIf8bBbOLt-7tEm5GUqY7Sm0RmmK3DocceAYkiLdkcqYDdVi5mH5ldHekl2DlZFhGxCaVFadkzXq-qnjhc7m" />
+                                    <div class="flex-grow">
+                                        <p class="font-semibold text-lg">Pendientes de Aro "Amanecer"</p>
+                                        <p class="text-sm text-gray-500">Cantidad: 1</p>
+                                    </div>
+                                    <p class="font-semibold text-[var(--c1)] text-lg">$65.00</p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <img alt="Collar Meraki" class="w-20 h-20 object-cover rounded-lg"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjnZIcNAoye433KbHKraaK3BmF9qwwDrxHl4S0mwUU9e4f9zOdvygEnqJy8kMFc47oFGceM-PL4jLzBn065-3rMb87q9F_trQJebxsEn1FNgcYA7hKXU5utKUdDpFzkHssXEbiiVByBMf9vEy_YrMwqHWnUGxfTRNBPJ0UJ4NnObDHdj_ZJokq8HFtYb88bW9TGpVjGnVaO31Ym_QP75E23sNFiVNYwi-UeZf1uT0WbgkxPKLfAS7zvKbe_WX813jf7cZL2TXMJFEy" />
+                                    <div class="flex-grow">
+                                        <p class="font-semibold text-lg">Collar "Solsticio"</p>
+                                        <p class="text-sm text-gray-500">Cantidad: 1</p>
+                                    </div>
+                                    <p class="font-semibold text-[var(--c1)] text-lg">$120.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <button
+                        class="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-[var(--c1)] text-white font-bold rounded-lg hover:bg-[var(--c5)] transition-colors text-lg">
+                        <span class="material-symbols-outlined mr-2">history</span>
+                        Ver Historial de Pedidos
+                    </button>
+                    <button
+                        class="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-[var(--c4)] text-[var(--c2)] font-bold rounded-lg hover:bg-[var(--c4)]/80 transition-colors text-lg">
+                        <span class="material-symbols-outlined mr-2">storefront</span>
+                        Seguir Comprando
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>
