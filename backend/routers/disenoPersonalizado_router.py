@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from ..auth.auth import clienteActual
 from sqlmodel import select
 from ..models.disenoPersonalizado import DisenoPersonalizado, DisenoPersonalizadoCreate, DisenoPersonalizadoUpdate
 from ..db.db import SessionDep
@@ -7,18 +8,22 @@ router = APIRouter(prefix="/disenos", tags=["DiseñosPersonalizados"])
 
 # CREATE - Crear nuevo diseno personalizado
 @router.post("/crear", response_model=DisenoPersonalizado, status_code=201)
-def crearDiseno(disenoNuevo: DisenoPersonalizadoCreate, session: SessionDep):
-    diseno = DisenoPersonalizado.model_validate(disenoNuevo)
+def crearDiseno(disenoNuevo: DisenoPersonalizadoCreate, session: SessionDep, cliente = Depends(clienteActual)):
+    # Asignar diseno al cliente
+    diseno = DisenoPersonalizado(clienteID=cliente.id)
+    # diseno = DisenoPersonalizado.model_validate(disenoNuevo)
     session.add(diseno)
     session.commit()
     session.refresh(diseno)
     return diseno
 
-# READ - Obtener lista de disenos por cliente
-@router.get("/cliente/{clienteID}", response_model=list[DisenoPersonalizado])
-def listaDisenosPorCliente(clienteID: int, session: SessionDep):
-    disenos = session.exec(select(DisenoPersonalizado).where(DisenoPersonalizado.clienteID == clienteID)).all()
-    return disenos
+# READ - Obtener los disenos del cliente
+@router.get("/mis-disenos", response_model=list[DisenoPersonalizado])
+def misDisenos(session: SessionDep, cliente = Depends(clienteActual)):
+    disenosDB = session.exec(select(DisenoPersonalizado).where(DisenoPersonalizado.clienteID == cliente.id)).all()
+    if not disenosDB:
+        raise HTTPException(404, "No tienes disenos personalizados")
+    return disenosDB
 
 # UPDATE - Cambiar estado o precio
 @router.patch("/{disenoID}", response_model=DisenoPersonalizado)

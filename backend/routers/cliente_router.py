@@ -1,15 +1,43 @@
-from fastapi import APIRouter, HTTPException, status, Form
+from fastapi import APIRouter, HTTPException, Form, Request
 from sqlmodel import select
 from ..models.cliente import Cliente, ClienteCreate, ClienteUpdate
 from ..db.db import SessionDep, contrasenaContext
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-from datetime import datetime as dt
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 # CREATE - Registro del cliente
-@router.post("/registrar", response_model=Cliente, status_code=201)
-def crearCliente(nuevoCliente: ClienteCreate, session: SessionDep):
+@router.post("/registrar")
+def registrarClienteForm(
+    request: Request,
+    nombre: str = Form(...),
+    email: str = Form(...),
+    contrasena: str = Form(...),
+    session: SessionDep = None
+):
+    # Verificar si ya existe el email
+    clienteDB = session.exec(select(Cliente).where(Cliente.email == email)).first()
+    if clienteDB:
+        return RedirectResponse(url="/registrar?error=email_existente", status_code=303)
+
+    # Encriptar la contraseña
+    contrasenaEncriptada = contrasenaContext.hash(contrasena)
+
+    # Crear el nuevo cliente
+    nuevoCliente = Cliente(nombre=nombre, email=email, contrasenaHash=contrasenaEncriptada)
+    session.add(nuevoCliente)
+    session.commit()
+    session.refresh(nuevoCliente)
+
+    # Guardar sesión activa
+    request.session["clienteID"] = nuevoCliente.id
+
+    # Redirigir a la página principal o perfil del cliente
+    return RedirectResponse(url="/personal", status_code=303)
+
+"""@router.post("/registrar", response_model=Cliente, status_code=201)
+def registrarCliente(nuevoCliente: ClienteCreate, session: SessionDep):
     # Verificar si ya existe el email
     clienteDB = session.exec(select(Cliente).where(Cliente.email == nuevoCliente.email)).first()
     if clienteDB:
@@ -24,21 +52,16 @@ def crearCliente(nuevoCliente: ClienteCreate, session: SessionDep):
     session.add(cliente)
     session.commit()
     session.refresh(cliente)
-    return cliente
+    return RedirectResponse(url="/", status_code=303)"""
 
-# CREATE - Ingreso del cliente
-@router.post("/ingresar", response_model=Cliente, status_code=200)
-def ingresarCliente(email: str = Form(...), contrasena: str = Form(...), session: SessionDep =None):
-    # Verificar si ya existe el email
-    clienteDB = session.exec(select(Cliente).where(Cliente.email == email)).first()
-    if not clienteDB:
-        raise HTTPException(401, "Email no registrado")
-    
-    # verificar contrasena
-    if not contrasenaContext.verify(contrasena, clienteDB.contrasenaHash):
-        raise HTTPException(401, "Contrasena incorrecta")
-    
-    return clienteDB
+
+# CREATE - Cerrar sesion
+@router.post("/cerrar-sesion")
+def cerrarSesion(request: Request):
+    request.session.pop("clienteID", None)
+    return RedirectResponse(url="/ingresar", status_code=303)
+
+
 
 # READ - Obtener lista de clientes y por ID
 @router.get("/", response_model=list[Cliente])
@@ -46,12 +69,17 @@ def listaClientes(session: SessionDep):
     clientes = session.exec(select(Cliente)).all()
     return clientes
 
+
+
+# READ - Obtener un cliente (solo administrador)
 @router.get("/{clienteID}", response_model=Cliente)
 def clientePorID(clienteID: int, session: SessionDep):
     clienteDB = session.get(Cliente, clienteID)
     if not clienteDB:
         raise HTTPException(404, "Cliente no encontrado")
     return clienteDB
+
+
 
 # UPDATE - Actualizar datos personales del cliente
 @router.patch("/{clienteID}", response_model=Cliente)
@@ -63,26 +91,28 @@ def actualizarCliente(clienteID: int, datosCliente: ClienteUpdate, session: Sess
     
     # Desempaquetar el objeto en un diccionario
     datosUpdate = datosCliente.model_dump(exclude_none=True)
-
-    #Valores que tiene FastAPI por defecto
-    valoresPorDefecto = {"string", "", 0}
+    valoresPorDefecto = {"string", "", 0} #Valores que tiene FastAPI por defecto
 
     # Revisar que la clave no sea None ni por defecto
     nuevaContrasenaSinEncriptar = datosUpdate.pop('contrasenaHash', None)
-    if nuevaContrasenaSinEncriptar is not None and nuevaContrasenaSinEncriptar not in valoresPorDefecto:
-        contrasenaEncriptada = contrasenaContext.hash(nuevaContrasenaSinEncriptar)
-        clienteDB.contrasenaHash = contrasenaEncriptada
+    if nuevaContrasenaSinEncriptar and nuevaContrasenaSinEncriptar not in valoresPorDefecto:
+        # Encriptar la contrasena
+        clienteDB.contrasenaHash = contrasenaContext.hash(nuevaContrasenaSinEncriptar)
     
-    for valor in datosUpdate.items():
-        if valor in valoresPorDefecto:
-            valor = None
+    # Quitar campos con los valores por defecto
+    datosFiltrados = {}
+    for dato, valor in datosUpdate.items():
+        if valor not in valoresPorDefecto:
+            datosFiltrados[dato] = valor
 
     # Actualizar los datos y cargarlos a la DB
-    clienteDB.sqlmodel_update(datosUpdate)
+    clienteDB.sqlmodel_update(datosFiltrados)
     session.add(clienteDB)
     session.commit()
     session.refresh(clienteDB)
     return clienteDB
+
+
 
 # DELETE - Eliminar cliente
 @router.delete("/{clienteID}", status_code=204)

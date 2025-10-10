@@ -1,4 +1,5 @@
 from ..utils.enums import *
+from .administrador import Administrador, AdministradorCreate, AdministradorUpdate, AdministradorDelete
 from .cliente import Cliente, ClienteCreate, ClienteUpdate, ClienteDelete
 from .direccionEnvio import DireccionEnvio, DireccionEnvioCreate, DireccionEnvioUpdate, DireccionEnvioDelete
 from .producto import Producto, ProductoCreate, ProductoUpdate, ProductoDelete

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from ..auth.auth import clienteActual
 from sqlmodel import select
 from ..models.direccionEnvio import DireccionEnvio, DireccionEnvioCreate, DireccionEnvioUpdate
 from ..db.db import SessionDep
@@ -7,18 +8,22 @@ router = APIRouter(prefix="/direcciones", tags=["Direcciones"])
 
 # CREATE - Crear una nueva direccion
 @router.post("/crear", response_model=DireccionEnvio, status_code=201)
-def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep):
-    direccion = DireccionEnvio.model_validate(direccionNueva)
+def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cliente = Depends(clienteActual)):
+    # Asignar direccion al cliente
+    direccion = DireccionEnvio(clienteID=cliente.id)
+    #direccion = DireccionEnvio.model_validate(direccionNueva)
     session.add(direccion)
     session.commit()
     session.refresh(direccion)
     return direccion
 
-# READ - Obtener lista de direcciones por ID de cliente
-@router.get("/cliente/{clienteID}", response_model=list[DireccionEnvio])
-def listaDireccionesPorCliente(clienteID: int, session: SessionDep):
-    direcciones = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == clienteID)).all()
-    return direcciones
+# READ - Obtener las direcciones del cliente
+@router.get("/mis-direcciones", response_model=list[DireccionEnvio])
+def misDirecciones(session: SessionDep, cliente = Depends(clienteActual)):
+    direccioesDB = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).all()
+    if not direccioesDB:
+        raise HTTPException(404, "No tienes direcciones registradas")
+    return direccioesDB
 
 # UPDATE - Actualizar direccion para un usuario por ID
 @router.patch("/{direccionID}", response_model=DireccionEnvio)

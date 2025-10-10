@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Depends
+from ..auth.auth import adminActual
 from sqlmodel import select
 from ..models.producto import Producto, ProductoCreate, ProductoUpdate
 from ..db.db import SessionDep
@@ -7,7 +8,7 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 
 # CREATE - Crear producto
 @router.post("/crear", response_model=Producto, status_code=201)
-def crearProducto(nuevoProducto: ProductoCreate, session: SessionDep):
+def crearProducto(nuevoProducto: ProductoCreate, session: SessionDep, admin = Depends(adminActual)):
     producto = Producto.model_validate(nuevoProducto)
     session.add(producto)
     session.commit()
@@ -29,7 +30,7 @@ def productoPorID(productoID: int, session: SessionDep):
 
 # UPDATE - Actualizar producto
 @router.patch("/{productoID}", response_model=Producto)
-def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: SessionDep):
+def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: SessionDep, admin = Depends(adminActual)):
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
@@ -41,7 +42,7 @@ def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: S
 
 # DELETE - Eliminar producto por ID
 @router.delete("/{productoID}", status_code=204)
-def eliminarProducto(productoID: int, session: SessionDep):
+def eliminarProducto(productoID: int, session: SessionDep, admin = Depends(adminActual)):
     producto = session.get(Producto, productoID)
     if not producto:
         raise HTTPException(404, "Producto no encontrado")

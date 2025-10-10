@@ -28,8 +28,17 @@ class Producto(ProductoBase, table=True):
     detallesPedido: list["DetallePedido"] = Relationship(back_populates="producto")
     wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
 
-class ProductoCreate(ProductoBase):
-    pass
+class ProductoCreate(SQLModel):
+    nombre: str
+    descripcion: str
+    precio: int
+    stock: int
+    imagenURL: str
+    esPersonalizado: bool
+    opcionesColor: str | None = None
+    opcionesTamano: str | None = None
+    activo: bool = True
+    categoriaID: int
 
 class ProductoUpdate(ProductoBase):
     pass
