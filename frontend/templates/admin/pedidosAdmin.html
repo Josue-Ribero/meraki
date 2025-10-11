@@ -1,86 +1,64 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="utf-8" />
-  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
-  <link as="style"
-    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
-    onload="this.rel='stylesheet'" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <meta charset="utf-8" />
   <title>Meraki Admin - Pedidos</title>
-  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+  
+  <!-- Fuentes y Material Icons -->
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link as="style"
+        href="https://fonts.googleapis.com/css2?display=swap&family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900"
+        rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <style type="text/tailwindcss">
-    :root {
-        --c-aa8744: #aa8744;
-        --c-363636: #363636;
-        --c-fdfbf3: #fdfbf3;
-        --c-d1bc97: #d1bc97;
-        --c-9c642d: #9c642d;
-      }
-    </style>
+
+  <!-- CSS Propio -->
+  <link rel="stylesheet" href="../../static/css/admin/pedidosAdmin.css">
 </head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../../static/js/admin/dashboardAdmin.js"></script>
 
 <body class="bg-[var(--c-fdfbf3)]" style='font-family: Manrope, "Noto Sans", sans-serif;'>
   <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
     <div class="flex flex-1">
+
+      <!-- Sidebar -->
       <aside class="flex flex-col w-64 bg-[var(--c-363636)] text-white p-6 shrink-0">
         <div class="flex items-center gap-3 mb-10">
-          <div
-            class="w-10 h-10 rounded-full bg-[var(--c-aa8744)] flex items-center justify-center text-white font-bold text-xl">
-            M</div>
+          <div class="w-10 h-10 rounded-full bg-[var(--c-aa8744)] flex items-center justify-center text-white font-bold text-xl">M</div>
           <h1 class="text-white text-2xl font-bold">Meraki</h1>
         </div>
+
         <nav class="flex flex-col gap-2">
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-[var(--c-9c642d)] hover:text-white transition-colors"
-            href="#">
-            <span class="material-symbols-outlined">dashboard</span>
-            <span class="text-sm font-medium">Dashboard</span>
-          </a>
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--c-aa8744)] text-white" href="#">
-            <span class="material-symbols-outlined">receipt_long</span>
-            <span class="text-sm font-medium">Pedidos</span>
-          </a>
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-[var(--c-9c642d)] hover:text-white transition-colors"
-            href="#">
-            <span class="material-symbols-outlined">inventory_2</span>
-            <span class="text-sm font-medium">Productos</span>
-          </a>
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-[var(--c-9c642d)] hover:text-white transition-colors"
-            href="#">
-            <span class="material-symbols-outlined">group</span>
-            <span class="text-sm font-medium">Clientes</span>
-          </a>
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-[var(--c-9c642d)] hover:text-white transition-colors"
-            href="#">
-            <span class="material-symbols-outlined">analytics</span>
-            <span class="text-sm font-medium">Analíticas</span>
-          </a>
-          <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-[var(--c-9c642d)] hover:text-white transition-colors mt-auto"
-            href="#">
-            <span class="material-symbols-outlined">logout</span>
-            <span class="text-sm font-medium">Cerrar Sesión</span>
-          </a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">dashboard</span> <span>Dashboard</span></a>
+          <a href="#" class="nav-item active"><span class="material-symbols-outlined">receipt_long</span> <span>Pedidos</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">inventory_2</span> <span>Productos</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">group</span> <span>Clientes</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">analytics</span> <span>Analíticas</span></a>
+          <a href="#" class="nav-item mt-auto"><span class="material-symbols-outlined">logout</span> <span>Cerrar Sesión</span></a>
         </nav>
       </aside>
+
+      <!-- Contenido principal -->
       <main class="flex-1 p-8 bg-white">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-[var(--c-363636)] text-3xl font-bold">Gestión de Pedidos</h2>
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-500">Hola, Admin</span>
-            <div
-              class="w-10 h-10 rounded-full bg-[var(--c-d1bc97)] flex items-center justify-center text-white font-bold">
-              A</div>
+            <div class="w-10 h-10 rounded-full bg-[var(--c-d1bc97)] flex items-center justify-center text-white font-bold">A</div>
           </div>
         </div>
+
+        <!-- Filtros -->
         <div class="mb-6 bg-[var(--c-fdfbf3)] p-4 rounded-xl shadow-sm">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
-              <label class="block text-sm font-medium text-[var(--c-9c642d)] mb-1" for="status-filter">Estado</label>
-              <select
-                class="w-full rounded-lg border border-[var(--c-d1bc97)] bg-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)]"
-                id="status-filter">
+              <label for="status-filter" class="label">Estado</label>
+              <select id="status-filter" class="input">
                 <option>Todos</option>
                 <option>Pendiente</option>
                 <option>En Proceso</option>
@@ -89,182 +67,66 @@
                 <option>Cancelado</option>
               </select>
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-[var(--c-9c642d)] mb-1" for="date-filter">Fecha</label>
-              <input
-                class="w-full rounded-lg border border-[var(--c-d1bc97)] bg-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)]"
-                id="date-filter" type="date" />
+              <label for="date-filter" class="label">Fecha</label>
+              <input id="date-filter" type="date" class="input" />
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-[var(--c-9c642d)] mb-1" for="client-filter">Cliente</label>
-              <input
-                class="w-full rounded-lg border border-[var(--c-d1bc97)] bg-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)]"
-                id="client-filter" placeholder="Nombre del cliente" type="text" />
+              <label for="client-filter" class="label">Cliente</label>
+              <input id="client-filter" type="text" placeholder="Nombre del cliente" class="input" />
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-[var(--c-9c642d)] mb-1" for="product-filter">Producto</label>
-              <input
-                class="w-full rounded-lg border border-[var(--c-d1bc97)] bg-white py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)]"
-                id="product-filter" placeholder="Nombre del producto" type="text" />
+              <label for="product-filter" class="label">Producto</label>
+              <input id="product-filter" type="text" placeholder="Nombre del producto" class="input" />
             </div>
+
             <div class="self-end">
-              <button
-                class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--c-aa8744)] text-white hover:bg-[var(--c-9c642d)] transition-colors">
-                <span class="material-symbols-outlined">filter_list</span>
-                <span>Filtrar</span>
+              <button id="filter-button" class="btn-primary">
+                <span class="material-symbols-outlined">filter_list</span> <span>Filtrar</span>
               </button>
             </div>
           </div>
         </div>
+
+        <!-- Tabla -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
           <div class="overflow-x-auto">
-            <table class="w-full">
+            <table id="tabla-pedidos" class="w-full">
               <thead class="bg-[var(--c-fdfbf3)]">
                 <tr>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Pedido</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Fecha</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Cliente</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Total</th>
-                  <th class="px-6 py-4 text-center text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Estado</th>
-                  <th class="px-6 py-4 text-center text-xs font-bold text-[var(--c-9c642d)] uppercase tracking-wider">
-                    Acciones</th>
+                  <th>Pedido</th>
+                  <th>Fecha</th>
+                  <th>Cliente</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--c-363636)]">#1011</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">16 de mayo de 2024</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">Valentina Mora</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">$95.50</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pendiente</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">visibility</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">local_shipping</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">edit</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">print</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">mail</span></button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--c-363636)]">#1010</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">15 de mayo de 2024</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">Mateo Rojas</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">$210.00</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-cyan-100 text-cyan-800">En
-                      Proceso</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">visibility</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">local_shipping</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">edit</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">print</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">mail</span></button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--c-363636)]">#1009</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">14 de mayo de 2024</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">Luciana Gil</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">$45.00</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Enviado</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">visibility</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">local_shipping</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">edit</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">print</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">mail</span></button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--c-363636)]">#1008</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">13 de mayo de 2024</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">Emilio Cruz</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">$300.00</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Entregado</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">visibility</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">local_shipping</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">edit</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">print</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">mail</span></button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--c-363636)]">#1007</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">12 de mayo de 2024</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">Isabella Soto</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--c-363636)]">$75.00</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Cancelado</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">visibility</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">local_shipping</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">edit</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">print</span></button>
-                    <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1"><span
-                        class="material-symbols-outlined text-base">mail</span></button>
-                  </td>
-                </tr>
+              <tbody id="tabla-body">
+                <!-- Se rellena dinámicamente con JS -->
               </tbody>
             </table>
           </div>
         </div>
+
+        <!-- Paginación -->
         <div class="flex justify-between items-center mt-6">
           <span class="text-sm text-gray-500">Mostrando 5 de 50 pedidos</span>
           <div class="flex items-center gap-2">
-            <button class="px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-100">Anterior</button>
-            <button class="px-3 py-1 rounded-md text-sm font-medium bg-[var(--c-aa8744)] text-white">1</button>
-            <button class="px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-100">2</button>
-            <button class="px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-100">3</button>
-            <button class="px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-100">Siguiente</button>
+            <button class="page-btn">Anterior</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">Siguiente</button>
           </div>
         </div>
       </main>
     </div>
   </div>
 
+  <script src="../../static/js/admin/pedidosAdmin.js"></script>
 </body>
-
 </html>

@@ -1,0 +1,49 @@
+:root {
+  --c-aa8744: #aa8744;
+  --c-363636: #363636;
+  --c-fdfbf3: #fdfbf3;
+  --c-d1bc97: #d1bc97;
+  --c-9c642d: #9c642d;
+}
+
+.key-btn {
+  display: flex;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background-color: var(--c-d1bc97);
+  color: var(--c-363636);
+  font-size: 2rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.key-btn:hover {
+  background-color: var(--c-aa8744);
+  color: var(--c-fdfbf3);
+}
+
+.key-btn:active {
+  transform: scale(0.95);
+}
+
+#backspace, #submit-token {
+  display: flex;
+  height: 5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+#submit-token {
+  background-color: var(--c-aa8744);
+  color: var(--c-fdfbf3);
+}
+
+#submit-token:hover {
+  background-color: var(--c-9c642d);
+}

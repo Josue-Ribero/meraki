@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meraki – Proceso de Pago</title>
+
+  <!-- Tailwind + Alpine -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="../../static/css/pedidos/procesoPago.css">
+</head>
+
+<body class="bg-[var(--c-off-white)] text-[var(--c-dark-gray)]">
+  <div class="flex min-h-screen" x-data="checkoutApp()">
+
+    <!-- Sidebar -->
+    <aside class="w-20 bg-white border-r border-[#E5E7EB] flex flex-col items-center py-6 space-y-8">
+      <a href="#" class="block text-[var(--c-gold)]">
+        <svg fill="none" viewBox="0 0 48 48" class="w-8 h-8">
+          <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"/>
+        </svg>
+      </a>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="flex-1 px-8 md:px-16 lg:px-24 py-12 max-w-6xl mx-auto">
+
+      <!-- Tabs -->
+      <div class="border-b border-gray-200 mb-8">
+        <nav class="-mb-px flex space-x-8">
+          <button :class="{ 'border-b-2 border-[var(--c-gold)]': step === 'shipping' }" @click="step='shipping'" class="pb-2 font-semibold">Dirección</button>
+          <button :class="{ 'border-b-2 border-[var(--c-gold)]': step === 'payment' }" @click="step='payment'" class="pb-2 font-semibold">Pago</button>
+          <button :class="{ 'border-b-2 border-[var(--c-gold)]': step === 'details' }" @click="step='details'" class="pb-2 font-semibold">Detalles</button>
+          <button class="pb-2 font-semibold cursor-not-allowed text-gray-400">Confirmación</button>
+        </nav>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+        <!-- Pasos -->
+        <div class="space-y-8">
+
+          <!-- Direcciones -->
+          <div x-show="step==='shipping'">
+            <h2 class="section-title">Direcciones de envío</h2>
+            <template x-for="(dir,index) in addresses" :key="index">
+              <div class="border p-4 rounded-lg flex justify-between items-center mb-2">
+                <div>
+                  <p class="font-semibold" x-text="dir.name"></p>
+                  <p x-text="dir.street + ', ' + dir.city + ' - ' + dir.postal"></p>
+                  <small x-text="dir.default ? 'Predeterminada' : ''"></small>
+                </div>
+                <div class="space-x-2">
+                  <button class="text-blue-600 font-semibold" @click="editAddress(index)">Editar</button>
+                  <button class="text-red-600 font-semibold" @click="deleteAddress(index)">Eliminar</button>
+                </div>
+              </div>
+            </template>
+
+            <!-- Form -->
+            <div class="bg-white p-6 rounded-lg border border-[var(--c-light-tan)] mt-4">
+              <h3 class="font-semibold mb-2" x-text="editIndex===null ? 'Agregar nueva dirección' : 'Editar dirección'"></h3>
+              <div class="space-y-3">
+                <input type="text" placeholder="Nombre completo" class="input" x-model="form.name">
+                <input type="text" placeholder="Calle y número" class="input" x-model="form.street">
+                <input type="text" placeholder="Ciudad" class="input" x-model="form.city">
+                <input type="text" placeholder="Código Postal" class="input" x-model="form.postal">
+                <div class="flex items-center justify-between">
+                  <span>Predeterminada</span>
+                  <label class="switch">
+                    <input type="checkbox" x-model="form.default">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="flex justify-end space-x-2 mt-4">
+                  <button class="px-4 py-2 border border-gray-300 rounded" type="button" @click="resetForm()">Cancelar</button>
+                  <button class="px-4 py-2 bg-[var(--c-gold)] text-white rounded" type="button" @click="saveAddress()" x-text="editIndex===null?'Guardar Dirección':'Guardar Cambios'"></button>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary mt-6" @click="step='payment'" :disabled="addresses.length===0">Continuar a Pago</button>
+          </div>
+
+          <!-- Pago -->
+          <div x-show="step==='payment'">
+            <h2 class="section-title">Método de pago</h2>
+            <div class="space-y-4">
+              <template x-for="method in methods" :key="method">
+                <label class="option" :class="{'active': paymentMethod===method}" @click="paymentMethod=method">
+                  <input type="radio" name="payment_method" class="hidden" :value="method" x-model="paymentMethod" />
+                  <span x-text="method"></span>
+                </label>
+              </template>
+            </div>
+            <button class="btn-primary mt-8" @click="step='details'" :disabled="!paymentMethod">Continuar</button>
+          </div>
+
+          <!-- Detalles -->
+          <div x-show="step==='details'">
+            <h2 class="section-title">Detalles del pago</h2>
+
+            <template x-if="paymentMethod==='Transferencia'">
+              <div class="info-box">
+                <p>Realiza la transferencia a la cuenta:</p>
+                <p class="font-bold">Banco: Bancolombia</p>
+                <p class="font-bold">Número: 1234567890</p>
+                <p>A nombre de: Meraki Accesorios</p>
+              </div>
+            </template>
+            <template x-if="paymentMethod==='Nequi'">
+              <div class="info-box">
+                <p>Transfiere al número:</p>
+                <p class="font-bold text-[var(--c-gold)]">+57 300 123 4567</p>
+              </div>
+            </template>
+            <template x-if="paymentMethod==='Daviplata'">
+              <div class="info-box">
+                <p>Transfiere al número:</p>
+                <p class="font-bold text-[var(--c-gold)]">+57 320 987 6543</p>
+              </div>
+            </template>
+            <template x-if="paymentMethod==='Efectivo'">
+              <div class="info-box">
+                <p class="font-bold">Deberás pagar en el lugar de entrega.</p>
+              </div>
+            </template>
+            <template x-if="paymentMethod==='Puntos'">
+              <div class="info-box space-y-2">
+                <p class="font-bold">Selecciona puntos a usar:</p>
+                <input type="range" min="0" max="100" step="10" x-model="puntos" class="w-full accent-[var(--c-gold)]">
+                <p><span x-text="puntos"></span> puntos seleccionados.</p>
+              </div>
+            </template>
+
+            <template x-if="addresses.length">
+              <div class="info-box mt-4">
+                <h3 class="font-semibold mb-2">Dirección de envío:</h3>
+                <p x-text="addresses.find(a => a.default)?.name || addresses[0].name"></p>
+                <p x-text="addresses.find(a => a.default)?.street + ', ' + addresses.find(a => a.default)?.city + ' - ' + addresses.find(a => a.default)?.postal || addresses[0].street + ', ' + addresses[0].city + ' - ' + addresses[0].postal"></p>
+              </div>
+            </template>
+
+            <button class="btn-primary mt-8" @click="step='confirmation'" :disabled="!addresses.length">Finalizar pedido</button>
+          </div>
+
+          <!-- Confirmación -->
+          <div x-show="step==='confirmation'" class="text-center">
+            <span class="material-symbols-outlined text-7xl text-[var(--c-gold)]">check_circle</span>
+            <h2 class="text-4xl md:text-5xl font-bold text-[var(--c-brown)] mt-4">¡Tu pedido ha sido realizado con éxito!</h2>
+            <p class="mt-4 text-lg max-w-3xl mx-auto">
+              Gracias por tu compra. Hemos recibido tu pedido y lo estamos procesando. Recibirás una confirmación por correo electrónico en breve.
+            </p>
+
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mt-8 max-w-3xl mx-auto">
+              <div>
+                <h3 class="font-semibold mb-2">Se enviará a:</h3>
+                <p x-text="addresses.find(a => a.default)?.name || addresses[0].name"></p>
+                <p x-text="addresses.find(a => a.default)?.street + ', ' + addresses.find(a => a.default)?.city + ' - ' + addresses.find(a => a.default)?.postal || addresses[0].street + ', ' + addresses[0].city + ' - ' + addresses[0].postal"></p>
+              </div>
+
+              <div class="mt-6 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button class="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-[var(--c-gold)] text-white font-bold rounded-lg hover:bg-[var(--c-brown)] transition-colors text-lg">
+                  <span class="material-symbols-outlined mr-2">history</span>
+                  Ver Historial de Pedidos
+                </button>
+                <button class="w-full sm:w-auto flex items-center justify-center px-8 py-3 bg-[var(--c-light-tan)] text-[var(--c-dark-gray)] font-bold rounded-lg hover:bg-[var(--c-light-tan)]/80 transition-colors text-lg">
+                  <span class="material-symbols-outlined mr-2">storefront</span>
+                  Seguir Comprando
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="summary-box bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 class="section-title mb-6">Resumen del pedido</h2>
+          <template x-for="item in items" :key="item.name">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="bg-center bg-no-repeat bg-cover rounded-md w-16 h-16" :style="'background-image: url(' + item.img + ')'"></div>
+              <div class="flex-1">
+                <p class="font-semibold" x-text="item.name"></p>
+                <p class="text-sm text-gray-500" x-text="'Cantidad: ' + item.qty"></p>
+              </div>
+              <p class="font-semibold" x-text="'$' + item.price + '.00'"></p>
+            </div>
+          </template>
+          <div class="border-t border-gray-200 mt-6 pt-4 flex justify-between font-bold text-lg">
+            <p>Total</p>
+            <p x-text="'$' + items.reduce((acc, i) => acc + i.price, 0) + '.00'"></p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../static/js/pedidos/procesoPago.js"></script>
+</body>
+</html>

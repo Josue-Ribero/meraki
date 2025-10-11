@@ -1,266 +1,135 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Meraki Admin - Gestión de Productos</title>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <style type="text/tailwindcss">
-        :root {
-            --brand-gold: #aa8744;
-            --brand-dark-gray: #363636;
-            --brand-off-white: #fdfbf3;
-            --brand-light-tan: #d1bc97;
-            --brand-brown: #9c642d;
-        }
-        .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Meraki Admin - Gestión de Productos</title>
+
+  <!-- Fuentes / Material Icons / Tailwind (opcional) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- CSS propio -->
+  <link rel="stylesheet" href="../../static/css/admin/productosAdmin.css">
 </head>
-
 <body class="bg-[var(--brand-off-white)] font-sans">
-    <div class="flex min-h-screen">
-        <aside class="w-64 flex-shrink-0 bg-[var(--brand-dark-gray)] text-[var(--brand-off-white)] flex flex-col p-4">
-            <div class="flex items-center gap-2 px-2 py-3 mb-8">
-                <span class="material-symbols-outlined text-[var(--brand-gold)] text-3xl">
-                    diamond
-                </span>
-                <span class="text-2xl font-bold">Meraki</span>
-            </div>
-            <nav class="flex-grow">
-                <ul>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">dashboard</span>Dashboard</a>
-                    </li>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-bold bg-[var(--brand-gold)] text-[var(--brand-dark-gray)]"
-                            href="#"><span class="material-symbols-outlined">inventory_2</span>Productos</a></li>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">shopping_cart</span>Pedidos</a>
-                    </li>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">group</span>Clientes</a>
-                    </li>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">bar_chart</span>Analíticas</a>
-                    </li>
-                </ul>
-            </nav>
-            <div>
-                <ul>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">settings</span>Configuración</a>
-                    </li>
-                    <li><a class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[var(--brand-brown)]"
-                            href="#"><span
-                                class="material-symbols-outlined text-[var(--brand-light-tan)]">logout</span>Cerrar
-                            Sesión</a></li>
-                </ul>
-            </div>
-        </aside>
-        <main class="flex-1 p-8">
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-[var(--brand-dark-gray)]">Gestión de Productos</h1>
-                <button
-                    class="flex items-center gap-2 bg-[var(--brand-gold)] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[var(--brand-brown)] transition-colors">
-                    <span class="material-symbols-outlined">add</span>
-                    Añadir Producto
-                </button>
-            </div>
-            <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
-                <div class="relative flex-grow max-w-lg">
-                    <span
-                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                    <input
-                        class="w-full pl-10 pr-4 py-2 border rounded-lg border-[var(--brand-light-tan)] focus:ring-[var(--brand-gold)] focus:border-[var(--brand-gold)] text-sm"
-                        placeholder="Buscar por nombre, SKU..." type="text" />
-                </div>
-                <div class="flex gap-4">
-                    <div class="relative">
-                        <select
-                            class="appearance-none w-full bg-white border border-[var(--brand-light-tan)] text-[var(--brand-dark-gray)] py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-[var(--brand-gold)] text-sm">
-                            <option>Categoría: Todas</option>
-                            <option>Collares</option>
-                            <option>Aretes</option>
-                            <option>Pulseras</option>
-                            <option>Anillos</option>
-                        </select>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </div>
-                    </div>
-                    <div class="relative">
-                        <select
-                            class="appearance-none w-full bg-white border border-[var(--brand-light-tan)] text-[var(--brand-dark-gray)] py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-[var(--brand-gold)] text-sm">
-                            <option>Ordenar por: Relevancia</option>
-                            <option>Precio: Menor a Mayor</option>
-                            <option>Precio: Mayor a Menor</option>
-                            <option>Stock: Menor a Mayor</option>
-                            <option>Stock: Mayor a Menor</option>
-                        </select>
-                        <div
-                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-[var(--brand-light-tan)]">
-                    <thead class="bg-gray-50">
-                        <tr class="text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                            <th class="py-3 px-6">Producto</th>
-                            <th class="py-3 px-6">SKU</th>
-                            <th class="py-3 px-6">Categoría</th>
-                            <th class="py-3 px-6 text-center">Stock</th>
-                            <th class="py-3 px-6 text-right">Precio</th>
-                            <th class="py-3 px-6 text-center">Visibilidad</th>
-                            <th class="py-3 px-6 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 text-sm text-[var(--brand-dark-gray)]">
-                        <tr>
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <div class="flex items-center gap-4">
-                                    <img alt="Collar de Perlas" class="w-12 h-12 rounded-md object-cover"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJxzS1PUIrsSDWpBwn7kT1lJ3nbgOSN71xvUyyltOs1t6fKluZlZXQo0GiV6Mcr6ZQ5yTXqtQBvXn_FDgS-DI29KQxisqf0Cfp7dteiLG-NFNWBZtq6-m-D3ohtZrzS4KiGcpErSujPCsEJ789QH5zn8sTAa2IGJ_q2m9DDWUyrA2AWp5vr5bJrVeSbkK2y4E9vEkD2FrAoLwFjpmaDis_yQzNbIdWUpAFSbSUurloSsiHkWkGvIURg9fWTBI2MucWJZLBHuX2MIIK" />
-                                    <span>Collar de Perlas Finas</span>
-                                </div>
-                            </td>
-                            <td class="py-4 px-6">MK-C001</td>
-                            <td class="py-4 px-6">Collares</td>
-                            <td class="py-4 px-6 text-center">15</td>
-                            <td class="py-4 px-6 text-right">$125.00</td>
-                            <td class="py-4 px-6 text-center">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                                    <span class="w-2 h-2 mr-2 bg-green-500 rounded-full"></span>
-                                    Visible
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                <button class="text-[var(--brand-gold)] hover:text-[var(--brand-brown)]"><span
-                                        class="material-symbols-outlined">edit</span></button>
-                                <button class="text-red-500 hover:text-red-700 ml-2"><span
-                                        class="material-symbols-outlined">delete</span></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <div class="flex items-center gap-4">
-                                    <img alt="Aretes de Oro" class="w-12 h-12 rounded-md object-cover"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAKpHLB-_T-FU6vBlmJorHhqJX4OeePLkJVPEK_rWxfqKplMCGvLd4trXi1iKXQuyRBN0j6eywhexk9Jw7hpC1x86TVEADOYv8oTQWHlQTfn6i_cRHzOdBxRugxb63kS4uAMK0ci4ILAzEB_CYVl7Q1Xqwh-tP2Hs9j_UGHQcuPptira7mwnd3KjlXxe0ODOcaVcSkxUE2jR9A4_UCXPfqfZX2lGGlaGBgPSanU9HVLJCk7ivsRAnqjiF0SOSexcLGEYKIH7kyiBPJ" />
-                                    <span>Aretes de Oro 18k</span>
-                                </div>
-                            </td>
-                            <td class="py-4 px-6">MK-A002</td>
-                            <td class="py-4 px-6">Aretes</td>
-                            <td class="py-4 px-6 text-center">32</td>
-                            <td class="py-4 px-6 text-right">$250.00</td>
-                            <td class="py-4 px-6 text-center">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                                    <span class="w-2 h-2 mr-2 bg-green-500 rounded-full"></span>
-                                    Visible
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                <button class="text-[var(--brand-gold)] hover:text-[var(--brand-brown)]"><span
-                                        class="material-symbols-outlined">edit</span></button>
-                                <button class="text-red-500 hover:text-red-700 ml-2"><span
-                                        class="material-symbols-outlined">delete</span></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <div class="flex items-center gap-4">
-                                    <img alt="Pulsera de Plata" class="w-12 h-12 rounded-md object-cover"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx5Ap5bYkkTykGvsEC54KBRIHajn_iYIT1Dj_MJdz7LGCwz8e92fQaNuQBiBBMWU_zS9ILRrbdbTcogbvOOvMX1f3QglP5r3aUcQaOMrv7WclUDQgAnWch8Ek0sZT22mZu9dDpcOLg9FiI4cTSbJhoUo0JPH_akxVMwGLxOygn2IFXzJAQkAh9tc2l6acWLGnM0y5kLZsW0zwNs1SiAe4A5ItTfIiEmfY5ZwGNoxLyIt7J6_A4pwYSf2RXqWZXDpOOu-HkY9J8ZVIA" />
-                                    <span>Pulsera de Plata 950</span>
-                                </div>
-                            </td>
-                            <td class="py-4 px-6">MK-P003</td>
-                            <td class="py-4 px-6">Pulseras</td>
-                            <td class="py-4 px-6 text-center text-red-600 font-semibold">0</td>
-                            <td class="py-4 px-6 text-right">$95.00</td>
-                            <td class="py-4 px-6 text-center">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800">
-                                    <span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>
-                                    Agotado
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                <button class="text-[var(--brand-gold)] hover:text-[var(--brand-brown)]"><span
-                                        class="material-symbols-outlined">edit</span></button>
-                                <button class="text-red-500 hover:text-red-700 ml-2"><span
-                                        class="material-symbols-outlined">delete</span></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-6 whitespace-nowrap">
-                                <div class="flex items-center gap-4">
-                                    <img alt="Anillo Solitario" class="w-12 h-12 rounded-md object-cover"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWjE7NQK56YHHCnYrDTzhfwemhErmcatR49VrLXrtrjT32ljc6LWkBL2D74liLnSRhZ_-lXK8M-dVXY01Wybkcm9eB-EL5mn4UaZfFPKC4-vBiPuvfQ61riXiE_Cr6us9ivj0LGjrStTK07KALa4_q0kHJo4LLk07zzd20qmE6nM8hmo4O3lgtMkAJajlqtWk8Us9PlrSW9hsw_OLzfmBEnExVHknB27hcmZNUJLsblE7A4_VoC9z49m1o2FTciaAij3onBZTivXpf" />
-                                    <span>Anillo Solitario Diamante</span>
-                                </div>
-                            </td>
-                            <td class="py-4 px-6">MK-N004</td>
-                            <td class="py-4 px-6">Anillos</td>
-                            <td class="py-4 px-6 text-center">5</td>
-                            <td class="py-4 px-6 text-right">$1,200.00</td>
-                            <td class="py-4 px-6 text-center">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-xs font-medium text-gray-800">
-                                    <span class="w-2 h-2 mr-2 bg-gray-500 rounded-full"></span>
-                                    Oculto
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                <button class="text-[var(--brand-gold)] hover:text-[var(--brand-brown)]"><span
-                                        class="material-symbols-outlined">edit</span></button>
-                                <button class="text-red-500 hover:text-red-700 ml-2"><span
-                                        class="material-symbols-outlined">delete</span></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="px-6 py-4 flex justify-between items-center border-t border-[var(--brand-light-tan)]">
-                    <p class="text-sm text-gray-700">
-                        Mostrando <span class="font-semibold">1</span> a <span class="font-semibold">4</span> de <span
-                            class="font-semibold">25</span> resultados
-                    </p>
-                    <div class="flex items-center gap-2">
-                        <button class="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50" disabled="">
-                            <span class="material-symbols-outlined text-sm">chevron_left</span>
-                        </button>
-                        <button class="px-4 py-2 text-sm rounded-md bg-[var(--brand-gold)] text-white">1</button>
-                        <button class="px-4 py-2 text-sm rounded-md hover:bg-gray-100">2</button>
-                        <button class="px-4 py-2 text-sm rounded-md hover:bg-gray-100">3</button>
-                        <button class="p-2 rounded-md hover:bg-gray-100">
-                            <span class="material-symbols-outlined text-sm">chevron_right</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
+
+  <div class="flex min-h-screen">
+    <!-- SIDEBAR -->
+    <aside class="w-64 flex-shrink-0 bg-[var(--brand-dark-gray)] text-[var(--brand-off-white)] flex flex-col p-4">
+      <div class="flex items-center gap-2 px-2 py-3 mb-8">
+        <span class="material-symbols-outlined text-[var(--brand-gold)] text-3xl">diamond</span>
+        <span class="text-2xl font-bold">Meraki</span>
+      </div>
+      <nav class="flex-grow">
+        <ul>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">dashboard</span>Dashboard</a></li>
+          <li><a class="menu-item active" href="#"><span class="material-symbols-outlined">inventory_2</span>Productos</a></li>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">shopping_cart</span>Pedidos</a></li>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">group</span>Clientes</a></li>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">bar_chart</span>Analíticas</a></li>
+        </ul>
+      </nav>
+      <div>
+        <ul>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">settings</span>Configuración</a></li>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">logout</span>Cerrar Sesión</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-[var(--brand-dark-gray)]">Gestión de Productos</h1>
+        <button id="btnAdd" class="btn-add">
+          <span class="material-symbols-outlined">add</span>
+          Añadir Producto
+        </button>
+      </div>
+
+      <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
+        <div class="relative flex-grow max-w-lg">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input id="searchInput" class="input-search" placeholder="Buscar por nombre, SKU o categoría..." type="text" />
+        </div>
+      </div>
+
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-[var(--brand-light-tan)]" id="productTable">
+          <thead class="bg-gray-50">
+            <tr class="text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
+              <th class="py-3 px-6">Producto</th>
+              <th class="py-3 px-6">SKU</th>
+              <th class="py-3 px-6">Categoría</th>
+              <th class="py-3 px-6 text-center">Stock</th>
+              <th class="py-3 px-6 text-right">Precio</th>
+              <th class="py-3 px-6 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="productBody" class="divide-y divide-gray-200 text-sm text-[var(--brand-dark-gray)]">
+            <!-- Rellenado por JS -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para añadir/editar producto -->
+  <div id="productModal" class="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h3 id="modal-title" class="text-xl font-bold mb-2">Producto</h3>
+
+      <form id="productForm" class="grid gap-3">
+        <input type="hidden" id="product-id" />
+
+        <label class="text-sm">
+          Nombre
+          <input id="product-name" class="input" required />
+        </label>
+
+        <label class="text-sm">
+          SKU
+          <input id="product-sku" class="input" required />
+        </label>
+
+        <label class="text-sm">
+          Categoría
+          <input id="product-category" class="input" />
+        </label>
+
+        <label class="text-sm">
+          Stock
+          <input id="product-stock" type="number" min="0" class="input" />
+        </label>
+
+        <label class="text-sm">
+          Precio (USD)
+          <input id="product-price" type="number" step="0.01" min="0" class="input" />
+        </label>
+
+        <label class="text-sm">
+          URL imagen
+          <input id="product-image" class="input" />
+        </label>
+
+        <label class="inline-flex items-center gap-2">
+          <input id="product-visible" type="checkbox" />
+          <span>Visible</span>
+        </label>
+
+        <div class="flex justify-end gap-2 mt-2">
+          <button type="button" id="modal-delete" class="btn-delete">Eliminar</button>
+          <button type="button" id="modal-cancel" class="btn">Cancelar</button>
+          <button type="submit" id="modal-save" class="btn-primary">Guardar</button>
+        </div>
+      </form>
     </div>
+  </div>
 
+  <!-- JS propio -->
+  <script src="../../static/js/admin/productosAdmin.js"></script>
 </body>
-
 </html>

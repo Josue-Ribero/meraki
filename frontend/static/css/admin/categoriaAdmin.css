@@ -1,0 +1,278 @@
+:root {
+  --c-gold: #aa8744;
+  --c-dark-gray: #363636;
+  --c-off-white: #fdfbf3;
+  --c-light-tan: #d1bc97;
+  --c-brown: #9c642d;
+}
+
+body {
+  font-family: "Work Sans", sans-serif;
+  background-color: var(--c-off-white);
+  margin: 0;
+}
+
+/* ---- ESTRUCTURA ---- */
+.contenedor {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 16rem;
+  background-color: var(--c-dark-gray);
+  color: var(--c-off-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(209, 188, 151, 0.2);
+  text-align: center;
+}
+
+.logo h1 {
+  color: var(--c-gold);
+  font-size: 1.8rem;
+}
+
+.menu {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--c-off-white);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.menu a:hover {
+  background-color: var(--c-gold);
+  color: var(--c-dark-gray);
+}
+
+.menu a.activo {
+  background-color: var(--c-gold);
+  color: var(--c-dark-gray);
+}
+
+.logout {
+  padding: 1rem;
+  border-top: 1px solid rgba(209, 188, 151, 0.2);
+}
+
+.logout a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--c-off-white);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s;
+}
+
+.logout a:hover {
+  background-color: var(--c-gold);
+  color: var(--c-dark-gray);
+}
+
+/* ---- CONTENIDO ---- */
+.contenido {
+  flex: 1;
+  padding: 2rem;
+}
+
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.encabezado h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--c-dark-gray);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.buscador {
+  position: relative;
+}
+
+.buscador input {
+  padding: 0.5rem 0.75rem 0.5rem 2rem;
+  border: 1px solid var(--c-light-tan);
+  border-radius: 0.5rem;
+}
+
+.icono {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--c-brown);
+}
+
+button#abrir-modal {
+  background-color: var(--c-gold);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+button#abrir-modal:hover {
+  background-color: var(--c-brown);
+}
+
+/* ---- TABLA ---- */
+.tabla-contenedor {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla thead {
+  background-color: rgba(209, 188, 151, 0.3);
+  color: var(--c-brown);
+  text-transform: uppercase;
+}
+
+.tabla th, .tabla td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(209, 188, 151, 0.5);
+}
+
+.tabla tbody tr:hover {
+  background-color: var(--c-off-white);
+}
+
+.tabla .centro {
+  text-align: center;
+}
+
+.tabla .derecha {
+  text-align: right;
+}
+
+.editar {
+  color: var(--c-gold);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.editar:hover {
+  color: var(--c-brown);
+}
+
+.eliminar {
+  color: red;
+  background: none;
+  border: none;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.eliminar:hover {
+  color: darkred;
+}
+
+/* ---- MODAL ---- */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-contenido {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-contenido h3 {
+  color: var(--c-dark-gray);
+  margin-bottom: 1rem;
+}
+
+.modal-contenido label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  color: var(--c-brown);
+}
+
+.modal-contenido input,
+.modal-contenido textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--c-light-tan);
+  border-radius: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-botones button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.modal-botones #cancelar {
+  background-color: white;
+  border: 1px solid var(--c-light-tan);
+  color: var(--c-dark-gray);
+}
+
+.modal-botones .guardar {
+  background-color: var(--c-gold);
+  color: white;
+}
+
+.modal-botones .guardar:hover {
+  background-color: var(--c-brown);
+}
+
+.modal.activo {
+  display: flex;
+}

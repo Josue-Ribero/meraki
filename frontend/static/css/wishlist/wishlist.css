@@ -1,0 +1,197 @@
+:root {
+  --c-brand: #aa8744;
+  --c-dark: #363636;
+  --c-light: #fdfbf3;
+  --c-accent: #d1bc97;
+  --c-secondary: #9c642d;
+}
+
+body {
+  font-family: 'Manrope', 'Noto Sans', sans-serif;
+  background-color: var(--c-light);
+  color: var(--c-dark);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor-principal {
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.fila-flex {
+  display: flex;
+  flex: 1;
+}
+
+.barra-lateral {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  background-color: var(--c-light);
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+  width: 6rem;
+}
+
+.logo img {
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
+.nav-lateral {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.enlace-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--c-dark);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.enlace-nav:hover {
+  color: var(--c-brand);
+}
+
+.enlace-nav.activo .icono-activo {
+  background-color: var(--c-accent);
+  border-radius: 9999px;
+  padding: 0.75rem;
+  color: white;
+}
+
+.icono {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.texto-nav {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.contenido {
+  flex: 1;
+  padding: 2rem;
+}
+
+.encabezado {
+  margin-bottom: 2rem;
+}
+
+.titulo {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--c-dark);
+  margin: 0;
+}
+
+.subtitulo {
+  font-size: 1rem;
+  color: var(--c-secondary);
+  margin-top: 0.25rem;
+}
+
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.imagen {
+  width: 100%;
+  height: 16rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.info {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.nombre {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--c-dark);
+  margin: 0;
+}
+
+.precio {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--c-brand);
+  margin-top: 0.25rem;
+}
+
+.acciones {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-primario {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--c-brand);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primario:hover {
+  background-color: var(--c-secondary);
+}
+
+.btn-eliminar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background-color: #e5e7eb;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-eliminar:hover {
+  background-color: #d1d5db;
+}

@@ -1,190 +1,144 @@
 <!DOCTYPE html>
-<html><head>
-<meta charset="utf-8"/>
-<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<title>Meraki - Mis Pedidos y Puntos</title>
-<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<style type="text/tailwindcss">
-        :root {
-            --primary-color: #aa8744;
-            --secondary-color: #fdfbf3;
-            --accent-color: #9c642d;
-            --text-primary: #363636;
-            --text-secondary: #6c757d;
-            --border-color: #d1bc97;
-        }
-        .status-enviado {
-            background-color: #FFF8E1;
-            color: #FFA000;
-        }
-        .status-entregado {
-            background-color: #E8F5E9;
-            color: #388E3C;
-        }
-        .status-cancelado {
-            background-color: #FCE4EC;
-            color: #D32F2F;
-        }
-        .status-canje {
-            background-color: #FCE4EC;
-            color: #D32F2F;
-        }
-        .status-acumulacion {
-            background-color: #E8F5E9;
-            color: #388E3C;
-        }
-    </style>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link
+    as="style"
+    href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+    onload="this.rel='stylesheet'"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <title>Meraki - Mis Pedidos y Puntos</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+  <link rel="stylesheet" href="../../static/css/client/panelCliente.css" />
 </head>
-<body class="bg-[var(--secondary-color)]" style='font-family: Inter, "Noto Sans", sans-serif;'>
-<div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden">
-<div class="flex flex-col md:flex-row min-h-screen">
-<aside class="w-full md:w-64 bg-white border-r border-[var(--border-color)] p-4 shadow-lg">
-<div class="flex flex-col gap-8 py-4">
-<div class="text-center">
-<h1 class="text-3xl font-bold text-[var(--primary-color)] tracking-wider">Meraki</h1>
-</div>
-<nav class="flex flex-col gap-2 mt-8">
-<a class="flex items-center gap-3 px-3 py-2 text-[var(--text-primary)] hover:bg-stone-100 hover:text-[var(--primary-color)] rounded-md transition-colors duration-200" href="#">
-<span class="material-symbols-outlined">home</span>
-<p class="text-sm font-medium">Inicio</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-[var(--text-primary)] hover:bg-stone-100 hover:text-[var(--primary-color)] rounded-md transition-colors duration-200" href="#">
-<span class="material-symbols-outlined">storefront</span>
-<p class="text-sm font-medium">Tienda</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-[var(--text-primary)] hover:bg-stone-100 hover:text-[var(--primary-color)] rounded-md transition-colors duration-200" href="#">
-<span class="material-symbols-outlined">favorite</span>
-<p class="text-sm font-medium">Favoritos</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 text-[var(--text-primary)] hover:bg-stone-100 hover:text-[var(--primary-color)] rounded-md transition-colors duration-200" href="#">
-<span class="material-symbols-outlined">shopping_bag</span>
-<p class="text-sm font-medium">Carrito</p>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 bg-[var(--border-color)] text-[var(--text-primary)] rounded-md font-bold" href="#">
-<span class="material-symbols-outlined">receipt_long</span>
-<p class="text-sm font-medium">Mis Pedidos</p>
-</a>
-</nav>
-<div class="mt-auto">
-<a class="flex items-center gap-3 px-3 py-2 text-[var(--text-primary)] hover:bg-stone-100 hover:text-[var(--primary-color)] rounded-md transition-colors duration-200" href="#">
-<span class="material-symbols-outlined">logout</span>
-<p class="text-sm font-medium">Cerrar Sesión</p>
-</a>
-</div>
-</div>
-</aside>
-<main class="flex-1 bg-[var(--secondary-color)] p-6 md:p-8">
-<div class="max-w-5xl mx-auto">
-<header class="mb-8">
-<h1 class="text-4xl font-bold text-[var(--text-primary)] tracking-tight">Mis Pedidos y Puntos</h1>
-<p class="text-lg text-[var(--text-secondary)] mt-2">Revisa tus compras y gestiona tus recompensas.</p>
-</header>
-<div class="mb-8">
-<div class="flex border-b border-[var(--border-color)]">
-<button class="px-4 py-3 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)]">Pedidos</button>
-<button class="px-4 py-3 text-sm font-semibold text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]">Mis Puntos</button>
-</div>
-</div>
-<section id="puntos-fidelidad">
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<div class="lg:col-span-2">
-<div class="space-y-8">
-<div>
-<h2 class="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-6">Recompensas Disponibles</h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] p-6 flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">local_offer</span>
-<p class="text-lg font-bold text-[var(--text-primary)] mt-3">S/ 10 de Descuento</p>
-<p class="text-[var(--text-secondary)] text-sm mb-4">100 Puntos</p>
-<button class="w-full h-10 px-4 bg-[var(--primary-color)] text-white text-sm font-bold rounded-full hover:bg-[var(--accent-color)] transition-colors">Canjear</button>
-</div>
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] p-6 flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">local_shipping</span>
-<p class="text-lg font-bold text-[var(--text-primary)] mt-3">Envío Gratis</p>
-<p class="text-[var(--text-secondary)] text-sm mb-4">150 Puntos</p>
-<button class="w-full h-10 px-4 bg-[var(--primary-color)] text-white text-sm font-bold rounded-full hover:bg-[var(--accent-color)] transition-colors">Canjear</button>
-</div>
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] p-6 flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">card_giftcard</span>
-<p class="text-lg font-bold text-[var(--text-primary)] mt-3">Aretes de Regalo</p>
-<p class="text-[var(--text-secondary)] text-sm mb-4">200 Puntos</p>
-<button class="w-full h-10 px-4 bg-[var(--primary-color)] text-white text-sm font-bold rounded-full hover:bg-[var(--accent-color)] transition-colors">Canjear</button>
-</div>
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] p-6 flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-5xl text-[var(--primary-color)]">percent</span>
-<p class="text-lg font-bold text-[var(--text-primary)] mt-3">15% Descuento</p>
-<p class="text-[var(--text-secondary)] text-sm mb-4">250 Puntos</p>
-<button class="w-full h-10 px-4 bg-gray-300 text-gray-500 text-sm font-bold rounded-full cursor-not-allowed" disabled="">Insuficientes</button>
-</div>
-</div>
-</div>
-<div>
-<h2 class="text-2xl font-bold text-[var(--text-primary)] tracking-tight mb-6">Historial de Puntos</h2>
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden">
-<div class="overflow-x-auto">
-<table class="w-full text-sm">
-<thead class="bg-stone-50">
-<tr>
-<th class="px-6 py-4 text-left font-semibold text-[var(--text-primary)] uppercase tracking-wider">Fecha</th>
-<th class="px-6 py-4 text-left font-semibold text-[var(--text-primary)] uppercase tracking-wider">Descripción</th>
-<th class="px-6 py-4 text-right font-semibold text-[var(--text-primary)] uppercase tracking-wider">Puntos</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-[var(--border-color)]">
-<tr>
-<td class="px-6 py-4 whitespace-nowrap text-[var(--text-secondary)]">25 de julio de 2024</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium text-[var(--text-primary)]">Acumulación por compra #MK123456</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-green-600 font-bold">+125</td>
-</tr>
-<tr>
-<td class="px-6 py-4 whitespace-nowrap text-[var(--text-secondary)]">20 de julio de 2024</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium text-[var(--text-primary)]">Canje: S/ 10 de Descuento</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-red-600 font-bold">-100</td>
-</tr>
-<tr>
-<td class="px-6 py-4 whitespace-nowrap text-[var(--text-secondary)]">15 de julio de 2024</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium text-[var(--text-primary)]">Acumulación por compra #MK654321</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-green-600 font-bold">+85</td>
-</tr>
-<tr>
-<td class="px-6 py-4 whitespace-nowrap text-[var(--text-secondary)]">5 de julio de 2024</td>
-<td class="px-6 py-4 whitespace-nowrap font-medium text-[var(--text-primary)]">Acumulación por compra #MK987654</td>
-<td class="px-6 py-4 whitespace-nowrap text-right text-green-600 font-bold">+210</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="space-y-8">
-<div class="bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] rounded-xl shadow-lg p-8 text-white text-center">
-<span class="material-symbols-outlined text-6xl text-white">workspace_premium</span>
-<p class="text-lg font-light mt-4">Balance Actual</p>
-<p class="text-6xl font-bold">220</p>
-<p class="text-sm opacity-80 mt-2">Puntos Meraki</p>
-</div>
-<div class="bg-white rounded-xl shadow-md border border-[var(--border-color)] p-6">
-<h3 class="text-lg font-bold text-[var(--text-primary)] mb-4">Aplicar Puntos en tu Próxima Compra</h3>
-<p class="text-sm text-[var(--text-secondary)] mb-4">Usa tus puntos para obtener un descuento. Cada 10 puntos equivalen a S/ 1.00.</p>
-<div class="flex items-center space-x-2 mb-2">
-<input class="w-full h-2 bg-[var(--border-color)] rounded-lg appearance-none cursor-pointer accent-[var(--primary-color)]" max="220" min="0" type="range" value="100"/>
-</div>
-<div class="text-center font-medium text-lg text-[var(--primary-color)]">
-<span class="font-bold">100</span> Puntos = <span class="font-bold">S/ 10.00</span> de Descuento
-                                    </div>
-<button class="mt-4 w-full h-11 px-5 bg-[var(--accent-color)] text-white text-sm font-bold rounded-full shadow-md hover:bg-[var(--primary-color)] transition-transform transform hover:scale-105">Aplicar Descuento</button>
-</div>
-</div>
-</div>
-</section>
-</div>
-</main>
-</div>
-</div>
 
-</body></html>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <div class="logo">
+          <h1>Meraki</h1>
+        </div>
+        <nav class="nav-menu">
+          <a href="#"><span class="material-symbols-outlined">home</span><p>Inicio</p></a>
+          <a href="#"><span class="material-symbols-outlined">storefront</span><p>Tienda</p></a>
+          <a href="#"><span class="material-symbols-outlined">favorite</span><p>Favoritos</p></a>
+          <a href="#"><span class="material-symbols-outlined">shopping_bag</span><p>Carrito</p></a>
+          <a href="#" class="active"><span class="material-symbols-outlined">receipt_long</span><p>Mis Pedidos</p></a>
+        </nav>
+        <div class="logout">
+          <a href="#"><span class="material-symbols-outlined">logout</span><p>Cerrar Sesión</p></a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="container">
+        <header class="page-header">
+          <h1>Mis Pedidos y Puntos</h1>
+          <p>Revisa tus compras y gestiona tus recompensas.</p>
+        </header>
+
+        <div class="tabs">
+          <button>Pedidos</button>
+          <button class="active-tab">Mis Puntos</button>
+        </div>
+
+        <section id="puntos-fidelidad">
+          <div class="grid">
+            <div class="recompensas">
+              <h2>Recompensas Disponibles</h2>
+              <div class="recompensas-grid">
+                <div class="recompensa">
+                  <span class="material-symbols-outlined">local_offer</span>
+                  <p class="titulo">S/ 10 de Descuento</p>
+                  <p class="puntos">100 Puntos</p>
+                  <button>Canjear</button>
+                </div>
+                <div class="recompensa">
+                  <span class="material-symbols-outlined">local_shipping</span>
+                  <p class="titulo">Envío Gratis</p>
+                  <p class="puntos">150 Puntos</p>
+                  <button>Canjear</button>
+                </div>
+                <div class="recompensa">
+                  <span class="material-symbols-outlined">card_giftcard</span>
+                  <p class="titulo">Aretes de Regalo</p>
+                  <p class="puntos">200 Puntos</p>
+                  <button>Canjear</button>
+                </div>
+                <div class="recompensa disabled">
+                  <span class="material-symbols-outlined">percent</span>
+                  <p class="titulo">15% Descuento</p>
+                  <p class="puntos">250 Puntos</p>
+                  <button disabled>Insuficientes</button>
+                </div>
+              </div>
+
+              <h2>Historial de Puntos</h2>
+              <div class="tabla-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Descripción</th>
+                      <th>Puntos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>25 de julio de 2024</td>
+                      <td>Acumulación por compra #MK123456</td>
+                      <td class="positivo">+125</td>
+                    </tr>
+                    <tr>
+                      <td>20 de julio de 2024</td>
+                      <td>Canje: S/ 10 de Descuento</td>
+                      <td class="negativo">-100</td>
+                    </tr>
+                    <tr>
+                      <td>15 de julio de 2024</td>
+                      <td>Acumulación por compra #MK654321</td>
+                      <td class="positivo">+85</td>
+                    </tr>
+                    <tr>
+                      <td>5 de julio de 2024</td>
+                      <td>Acumulación por compra #MK987654</td>
+                      <td class="positivo">+210</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="sidebar-right">
+              <div class="balance">
+                <span class="material-symbols-outlined">workspace_premium</span>
+                <p>Balance Actual</p>
+                <h3>220</h3>
+                <p class="sub">Puntos Meraki</p>
+              </div>
+
+              <div class="aplicar-puntos">
+                <h3>Aplicar Puntos en tu Próxima Compra</h3>
+                <p>Usa tus puntos para obtener un descuento. Cada 10 puntos equivalen a S/ 1.00.</p>
+                <input type="range" min="0" max="220" value="100" id="sliderPuntos" />
+                <div class="resultado">
+                  <span id="valorPuntos">100</span> Puntos = 
+                  <span id="valorDescuento">S/ 10.00</span> de Descuento
+                </div>
+                <button id="btnAplicar">Aplicar Descuento</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../static/js/client/panelCliente.js"></script>
+</body>
+</html>

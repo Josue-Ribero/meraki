@@ -1,104 +1,90 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Restablecer Contraseña - Meraki</title>
-<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans:wght@400;500;700;900&amp;family=Work+Sans:wght@400;500;700;900" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<style type="text/tailwindcss">
-      :root {
-        --c-aa8744: #aa8744;
-        --c-363636: #363636;
-        --c-fdfbf3: #fdfbf3;
-        --c-d1bc97: #d1bc97;
-        --c-9c642d: #9c642d;
-      }
-    </style>
-</head>
-<body class="bg-[var(--c-fdfbf3)]" style='font-family: "Work Sans", "Noto Sans", sans-serif;'>
-<div class="relative flex min-h-screen">
-<aside class="flex w-20 flex-col items-center border-r border-[var(--c-d1bc97)] bg-[var(--c-fdfbf3)] py-8">
-<div class="mb-8">
-<a class="text-2xl font-bold text-[var(--c-aa8744)]" href="#">M</a>
-</div>
-<nav class="flex flex-1 flex-col items-center gap-6">
-<a class="text-[var(--c-363636)]" href="#">
-<span class="material-symbols-outlined text-2xl"> home </span>
-</a>
-<a class="text-[var(--c-363636)]" href="#">
-<span class="material-symbols-outlined text-2xl"> person </span>
-</a>
-<a class="text-[var(--c-363636)]" href="#">
-<span class="material-symbols-outlined text-2xl"> shopping_cart </span>
-</a>
-<a class="rounded-lg bg-[var(--c-aa8744)] p-2 text-[var(--c-fdfbf3)]" href="#">
-<span class="material-symbols-outlined text-2xl"> lock_reset </span>
-</a>
-</nav>
-<div class="flex flex-col items-center gap-6">
-<a class="text-[var(--c-363636)]" href="#">
-<span class="material-symbols-outlined text-2xl"> settings </span>
-</a>
-<a class="text-[var(--c-363636)]" href="#">
-<span class="material-symbols-outlined text-2xl"> logout </span>
-</a>
-</div>
-</aside>
-<main class="flex flex-1 items-center justify-center">
-<div class="w-full max-w-md px-8" id="reset-form-container">
-<div class="text-center">
-<h1 class="text-4xl font-bold tracking-tight text-[var(--c-363636)]">Restablecer Contraseña</h1>
-<p class="mt-4 text-[var(--c-9c642d)]">
-                        Ingresa el correo electrónico asociado a tu cuenta para enviarte un enlace de recuperación.
-                    </p>
-</div>
-<form class="mt-8 space-y-6" onsubmit="showConfirmation(event)">
-<div>
-<label class="block text-sm font-medium text-[var(--c-363636)]" for="email">Correo electrónico</label>
-<div class="mt-1">
-<input autocomplete="email" class="block w-full appearance-none rounded-lg border border-[var(--c-d1bc97)] bg-white px-4 py-3 text-[var(--c-363636)] placeholder-[var(--c-d1bc97)] shadow-sm focus:border-[var(--c-aa8744)] focus:outline-none focus:ring-[var(--c-aa8744)] sm:text-sm" id="email" name="email" placeholder="tu@email.com" required="" type="email"/>
-</div>
-</div>
-<div>
-<button class="flex w-full justify-center rounded-lg border border-transparent bg-[var(--c-aa8744)] px-4 py-3 text-base font-semibold text-[var(--c-fdfbf3)] shadow-sm hover:bg-[var(--c-9c642d)] focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)] focus:ring-offset-2" type="submit">
-                            Enviar enlace de recuperación
-                        </button>
-</div>
-</form>
-<p class="mt-6 text-center text-sm text-[var(--c-9c642d)]">
-                    ¿Ya tienes una cuenta?
-                    <a class="font-medium text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)]" href="#"> Iniciar sesión </a>
-</p>
-</div>
-<div class="hidden w-full max-w-md px-8 text-center" id="confirmation-message">
-<div class="flex justify-center">
-<span class="material-symbols-outlined text-6xl text-[var(--c-aa8744)]"> mark_email_read </span>
-</div>
-<h1 class="mt-4 text-4xl font-bold tracking-tight text-[var(--c-363636)]">Correo enviado</h1>
-<p class="mt-4 text-[var(--c-9c642d)]">
-                    Hemos enviado un enlace para restablecer tu contraseña a tu correo electrónico. Por favor, revisa tu bandeja de entrada.
-                </p>
-<div class="mt-8">
-<a class="flex w-full justify-center rounded-lg border border-transparent bg-[var(--c-aa8744)] px-4 py-3 text-base font-semibold text-[var(--c-fdfbf3)] shadow-sm hover:bg-[var(--c-9c642d)] focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)] focus:ring-offset-2" href="#">
-                        Volver a inicio de sesión
-                    </a>
-</div>
-</div>
-</main>
-</div>
-<script>
-        function showConfirmation(event) {
-            event.preventDefault();
-            const emailInput = document.getElementById('email');
-            if (emailInput.checkValidity()) {
-                 document.getElementById('reset-form-container').classList.add('hidden');
-                 document.getElementById('confirmation-message').classList.remove('hidden');
-            } else {
-                emailInput.reportValidity();
-            }
-        }
-    </script>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restablecer Contraseña - Meraki</title>
 
-</body></html>
+  <!-- Fuentes y css -->
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Work+Sans:wght@400;500;700;900" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="stylesheet" href="../../static/css/contrasena/recuperacion.css">
+</head>
+<body class="bg-[var(--c-fdfbf3)]">
+
+<div class="relative flex min-h-screen">
+
+  <!-- Barra lateral -->
+  <aside class="flex w-20 flex-col items-center border-r border-[var(--c-d1bc97)] bg-[var(--c-fdfbf3)] py-8">
+    <div class="mb-8">
+      <a class="text-2xl font-bold text-[var(--c-aa8744)]" href="#">M</a>
+    </div>
+    <nav class="flex flex-1 flex-col items-center gap-6">
+      <a class="text-[var(--c-363636)]" href="#"><span class="material-symbols-outlined text-2xl"> home </span></a>
+      <a class="text-[var(--c-363636)]" href="#"><span class="material-symbols-outlined text-2xl"> person </span></a>
+      <a class="text-[var(--c-363636)]" href="#"><span class="material-symbols-outlined text-2xl"> shopping_cart </span></a>
+      <a class="rounded-lg bg-[var(--c-aa8744)] p-2 text-[var(--c-fdfbf3)]" href="#"><span class="material-symbols-outlined text-2xl"> lock_reset </span></a>
+    </nav>
+    <div class="flex flex-col items-center gap-6">
+      <a class="text-[var(--c-363636)]" href="#"><span class="material-symbols-outlined text-2xl"> settings </span></a>
+      <a class="text-[var(--c-363636)]" href="#"><span class="material-symbols-outlined text-2xl"> logout </span></a>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="flex flex-1 flex-col items-center justify-center p-8">
+
+    <!-- Sección 1: Correo -->
+    <div class="w-full max-w-sm px-8 text-center" id="email-section">
+      <h1 class="text-4xl font-bold tracking-tight text-[var(--c-363636)]">Restablecer Contraseña</h1>
+      <p class="mt-2 text-[var(--c-9c642d)]">Ingresa el correo electrónico asociado a tu cuenta para enviarte un token de recuperación.</p>
+      <form id="email-form" class="mt-6 space-y-4">
+        <input type="email" id="email" placeholder="tu@email.com" required
+               class="w-full rounded-lg border border-[var(--c-d1bc97)] px-4 py-3 text-[var(--c-363636)] placeholder-[var(--c-d1bc97)] focus:border-[var(--c-aa8744)] focus:outline-none"/>
+        <button type="submit" class="w-full rounded-lg bg-[var(--c-aa8744)] px-4 py-3 text-white hover:bg-[var(--c-9c642d)]">Enviar token</button>
+      </form>
+    </div>
+
+    <!-- Sección 2: Token -->
+    <div class="hidden w-full max-w-sm px-8 text-center" id="token-section">
+      <div class="mb-8 flex flex-col items-center">
+        <h2 class="text-6xl font-extrabold tracking-tight text-[var(--c-363636)]" id="timer-display">05:00</h2>
+        <p class="mt-2 text-lg text-[var(--c-9c642d)]">Ingresa el token de 6 dígitos</p>
+      </div>
+
+      <div class="relative mb-6">
+        <input id="token-input" type="text" pattern="[0-9]{6}" inputmode="numeric" maxlength="6"
+               class="absolute inset-0 z-0 h-full w-full appearance-none rounded-lg border-2 border-[var(--c-d1bc97)] bg-white py-3 text-center text-4xl font-bold tracking-widest text-[var(--c-363636)] opacity-0 focus:border-[var(--c-aa8744)] focus:outline-none focus:ring-0"/>
+        <div class="relative z-10 flex justify-center space-x-3" id="token-display">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <button class="key-btn" data-value="1" type="button">1</button>
+        <button class="key-btn" data-value="2" type="button">2</button>
+        <button class="key-btn" data-value="3" type="button">3</button>
+        <button class="key-btn" data-value="4" type="button">4</button>
+        <button class="key-btn" data-value="5" type="button">5</button>
+        <button class="key-btn" data-value="6" type="button">6</button>
+        <button class="key-btn" data-value="7" type="button">7</button>
+        <button class="key-btn" data-value="8" type="button">8</button>
+        <button class="key-btn" data-value="9" type="button">9</button>
+        <button id="backspace" type="button"><span class="material-symbols-outlined"> arrow_back </span></button>
+        <button class="key-btn" data-value="0" type="button">0</button>
+        <button id="submit-token" type="button"><span class="material-symbols-outlined"> check </span></button>
+      </div>
+
+      <button id="resend-token-button" class="mt-8 hidden w-full justify-center rounded-lg border border-transparent bg-[var(--c-aa8744)] px-4 py-3 text-base font-semibold text-[var(--c-fdfbf3)] shadow-sm hover:bg-[var(--c-9c642d)] focus:outline-none focus:ring-2 focus:ring-[var(--c-aa8744)] focus:ring-offset-2" type="button">
+        Reenviar Token
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../static/js/contrasena/recuperacion.js"></script>
+</body>
+</html>
