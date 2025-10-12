@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Meraki Admin - Gestión de Productos</title>
 
-  <!-- Fuentes / Material Icons / Tailwind (opcional) -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <!-- CSS propio -->
   <link rel="stylesheet" href="../../static/css/admin/productosAdmin.css">
 </head>
-<body class="bg-[var(--brand-off-white)] font-sans">
 
+<body class="bg-[var(--brand-off-white)] font-sans">
   <div class="flex min-h-screen">
-    <!-- SIDEBAR -->
     <aside class="w-64 flex-shrink-0 bg-[var(--brand-dark-gray)] text-[var(--brand-off-white)] flex flex-col p-4">
       <div class="flex items-center gap-2 px-2 py-3 mb-8">
         <span class="material-symbols-outlined text-[var(--brand-gold)] text-3xl">diamond</span>
@@ -26,7 +24,8 @@
       <nav class="flex-grow">
         <ul>
           <li><a class="menu-item" href="#"><span class="material-symbols-outlined">dashboard</span>Dashboard</a></li>
-          <li><a class="menu-item active" href="#"><span class="material-symbols-outlined">inventory_2</span>Productos</a></li>
+          <li><a class="menu-item active" href="#"><span
+                class="material-symbols-outlined">inventory_2</span>Productos</a></li>
           <li><a class="menu-item" href="#"><span class="material-symbols-outlined">shopping_cart</span>Pedidos</a></li>
           <li><a class="menu-item" href="#"><span class="material-symbols-outlined">group</span>Clientes</a></li>
           <li><a class="menu-item" href="#"><span class="material-symbols-outlined">bar_chart</span>Analíticas</a></li>
@@ -34,13 +33,13 @@
       </nav>
       <div>
         <ul>
-          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">settings</span>Configuración</a></li>
+          <li><a class="menu-item" href="#"><span class="material-symbols-outlined">settings</span>Configuración</a>
+          </li>
           <li><a class="menu-item" href="#"><span class="material-symbols-outlined">logout</span>Cerrar Sesión</a></li>
         </ul>
       </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="flex-1 p-8">
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-[var(--brand-dark-gray)]">Gestión de Productos</h1>
@@ -53,7 +52,8 @@
       <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
         <div class="relative flex-grow max-w-lg">
           <span class="material-symbols-outlined search-icon">search</span>
-          <input id="searchInput" class="input-search" placeholder="Buscar por nombre, SKU o categoría..." type="text" />
+          <input id="searchInput" class="input-search" placeholder="Buscar por nombre, SKU o categoría..."
+            type="text" />
         </div>
       </div>
 
@@ -70,14 +70,12 @@
             </tr>
           </thead>
           <tbody id="productBody" class="divide-y divide-gray-200 text-sm text-[var(--brand-dark-gray)]">
-            <!-- Rellenado por JS -->
           </tbody>
         </table>
       </div>
     </main>
   </div>
 
-  <!-- Modal para añadir/editar producto -->
   <div id="productModal" class="modal" aria-hidden="true">
     <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <h3 id="modal-title" class="text-xl font-bold mb-2">Producto</h3>
@@ -129,7 +127,7 @@
     </div>
   </div>
 
-  <!-- JS propio -->
   <script src="../../static/js/admin/productosAdmin.js"></script>
 </body>
+
 </html>

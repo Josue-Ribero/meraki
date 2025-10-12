@@ -1,46 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Mi Wishlist</title>
-  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../static/css/wishlist/wishlist.css"/>
+  <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../static/css/wishlist/wishlist.css" />
 </head>
+
 <body>
   <div class="contenedor-principal">
     <div class="fila-flex">
-      <!-- Barra lateral -->
       <aside class="barra-lateral">
         <a class="logo" href="#">
-          <img alt="Logo de Meraki" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEMJTL4Hmd48dFjgHpdBGtEJJdIhOB7DUHYi8PVS98ZprLNpex4sCTkz_9fO01n3ynXmiCuwdGw2G3o-BZk9OAD30VR3p6gZ7qgwyya2CnSzy4xiLS3YiLGfX4Stdifvm3qMHpBYxXJsUyJm31yuxJdOVJUhlxtBO9uRj2ArAULic1GIan5x3KDSQOaOJnaVJdMdqJatZk7Ts_9XtcpS8rCbOfmoxF7wMLSiJbFP6imb0HtoyY9IfmcLdbqtquUxY2eQPQM1MQrQ7Y"/>
+          <img alt="Logo de Meraki"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEMJTL4Hmd48dFjgHpdBGtEJJdIhOB7DUHYi8PVS98ZprLNpex4sCTkz_9fO01n3ynXmiCuwdGw2G3o-BZk9OAD30VR3p6gZ7qgwyya2CnSzy4xiLS3YiLGfX4Stdifvm3qMHpBYxXJsUyJm31yuxJdOVJUhlxtBO9uRj2ArAULic1GIan5x3KDSQOaOJnaVJdMdqJatZk7Ts_9XtcpS8rCbOfmoxF7wMLSiJbFP6imb0HtoyY9IfmcLdbqtquUxY2eQPQM1MQrQ7Y " />
         </a>
         <nav class="nav-lateral">
           <a class="enlace-nav" href="#">
-            <svg class="icono" fill="currentColor" viewBox="0 0 256 256"><path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path></svg>
+            <svg class="icono" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z">
+              </path>
+            </svg>
             <span class="texto-nav">Inicio</span>
           </a>
           <a class="enlace-nav" href="#">
-            <svg class="icono" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+            <svg class="icono" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+              </path>
+            </svg>
             <span class="texto-nav">Buscar</span>
           </a>
           <a class="enlace-nav activo" href="#">
             <div class="icono-activo">
-              <svg class="icono" fill="currentColor" viewBox="0 0 256 256"><path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z" fill="currentColor"></path></svg>
+              <svg class="icono" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
+                  fill="currentColor"></path>
+              </svg>
             </div>
             <span class="texto-nav">Wishlist</span>
           </a>
           <a class="enlace-nav" href="#">
-            <svg class="icono" fill="currentColor" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path></svg>
+            <svg class="icono" fill="currentColor" viewBox="0 0 256 256">
+              <path
+                d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z">
+              </path>
+            </svg>
             <span class="texto-nav">Carrito</span>
           </a>
         </nav>
       </aside>
 
-      <!-- Contenido principal -->
       <main class="contenido">
         <header class="encabezado">
           <h1 class="titulo">Mi Wishlist</h1>
@@ -48,9 +67,10 @@
         </header>
 
         <div class="galeria" id="galeria">
-          <!-- Producto 1 -->
           <div class="tarjeta">
-            <div class="imagen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBND6Jd9a7bb_iwQxtFnO95ptDBpEZnjJamR-_sWkaAeUz96URO5Cyd8WYr1Blf6Cg3fmDNpk7TSLbLKLcnx8JVs8tg4cM6rpoqvVWC6lOJ_C0CLTduapX_j93ijWZdBUBuMTDmmsAZH3QlA4pMJlPNV86D2sByxk7F0fD4unZTLDHzfaEWv89x8VKtdXhOAl72SRXFLeeKMOy1k6k8FaWrAkDyXBEMlu24xR8ZHrfQhq5gibFjcbAmUZGXnHIcKIRlEVyuciEwMSBi ");'></div>
+            <div class="imagen"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBND6Jd9a7bb_iwQxtFnO95ptDBpEZnjJamR-_sWkaAeUz96URO5Cyd8WYr1Blf6Cg3fmDNpk7TSLbLKLcnx8JVs8tg4cM6rpoqvVWC6lOJ_C0CLTduapX_j93ijWZdBUBuMTDmmsAZH3QlA4pMJlPNV86D2sByxk7F0fD4unZTLDHzfaEWv89x8VKtdXhOAl72SRXFLeeKMOy1k6k8FaWrAkDyXBEMlu24xR8ZHrfQhq5gibFjcbAmUZGXnHIcKIRlEVyuciEwMSBi  ");'>
+            </div>
             <div class="info">
               <h3 class="nombre">Collar Elegante Chapado en Oro</h3>
               <p class="precio">$45</p>
@@ -61,9 +81,10 @@
             </div>
           </div>
 
-          <!-- Producto 2 -->
           <div class="tarjeta">
-            <div class="imagen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAn2JahpzwR68BE2VlBe7N_8sQjXA2v83S2IwsOOrKqRUiLaBi3KhkBpczNkeprhPgLv6f6_3m4mJX0erG77xrPPkiWZJyAvbiiERotdsMhGXVlvPP0n244cAGcr05bTV5HkFiVDDcQ0ipUW5JTKFeMGobiXKnqti0hmlmMqWNX7fo36zTnn1kpfW88SGaFuI__lTcQlYmcPoMJMMbIvhMU4tvQkfpN79v0kwiPRZYl1LQO7brWGz52dbnRUAAc6x5Dg1hMnc-Ur8We ");'></div>
+            <div class="imagen"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAn2JahpzwR68BE2VlBe7N_8sQjXA2v83S2IwsOOrKqRUiLaBi3KhkBpczNkeprhPgLv6f6_3m4mJX0erG77xrPPkiWZJyAvbiiERotdsMhGXVlvPP0n244cAGcr05bTV5HkFiVDDcQ0ipUW5JTKFeMGobiXKnqti0hmlmMqWNX7fo36zTnn1kpfW88SGaFuI__lTcQlYmcPoMJMMbIvhMU4tvQkfpN79v0kwiPRZYl1LQO7brWGz52dbnRUAAc6x5Dg1hMnc-Ur8We  ");'>
+            </div>
             <div class="info">
               <h3 class="nombre">Pulsera de Plata Artesanal</h3>
               <p class="precio">$35</p>
@@ -74,9 +95,10 @@
             </div>
           </div>
 
-          <!-- Producto 3 -->
           <div class="tarjeta">
-            <div class="imagen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCA95YVF-BbA33rSdjuAnF0kiqyboK_ns4jSD1benjl-c7BB70Eb00NV-NWO89EuoaNMfftiEeuNhTomr0vPxAqV_n8RMTUVs2_cfcW76qwhR6UVtDoxmCEUNeo7zF1Yn3mpluNAmAIzzfJffwHETnzWG0JsT8pcc09Sx-LLqSet82kCOq8AU0tRUG_h8jjZ6o7ZIOqN7cxGoGGc_Cfo9a-Gi0gb_5Q15OdmNvt-rcmVve6aKVw5zwwZ-MGXKm5Wl4HTN6m5XZM6zsW ");'></div>
+            <div class="imagen"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCA95YVF-BbA33rSdjuAnF0kiqyboK_ns4jSD1benjl-c7BB70Eb00NV-NWO89EuoaNMfftiEeuNhTomr0vPxAqV_n8RMTUVs2_cfcW76qwhR6UVtDoxmCEUNeo7zF1Yn3mpluNAmAIzzfJffwHETnzWG0JsT8pcc09Sx-LLqSet82kCOq8AU0tRUG_h8jjZ6o7ZIOqN7cxGoGGc_Cfo9a-Gi0gb_5Q15OdmNvt-rcmVve6aKVw5zwwZ-MGXKm5Wl4HTN6m5XZM6zsW  ");'>
+            </div>
             <div class="info">
               <h3 class="nombre">Pendientes Estilo Bohemio</h3>
               <p class="precio">$25</p>
@@ -87,9 +109,10 @@
             </div>
           </div>
 
-          <!-- Producto 4 -->
           <div class="tarjeta">
-            <div class="imagen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1FL9MeyrrG3xXi7Bfos1yN9I8kSTiL5EVWcs0QvMHYFGp-D-z6d-p4wtGwbyfwLQoSw-zr9r61ECiccKjmzKtHA9zTKReUvTUX4wUpB3x1j_J0QtEEh02mblgKrj8MJ41RKwVsav9_hWoP0sCOVbXSsECZPHCjcWoDaK588c-IPlMQXEUIUUYqpmxZ5XaY3RXO53huzaWf5-u1p5rP1b_CzVlFK1CI9mDrU2WCY9JS9UpmnHn7fi4neHn9TEdpI7kW9RzLP-qMyGG ");'></div>
+            <div class="imagen"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1FL9MeyrrG3xXi7Bfos1yN9I8kSTiL5EVWcs0QvMHYFGp-D-z6d-p4wtGwbyfwLQoSw-zr9r61ECiccKjmzKtHA9zTKReUvTUX4wUpB3x1j_J0QtEEh02mblgKrj8MJ41RKwVsav9_hWoP0sCOVbXSsECZPHCjcWoDaK588c-IPlMQXEUIUUYqpmxZ5XaY3RXO53huzaWf5-u1p5rP1b_CzVlFK1CI9mDrU2WCY9JS9UpmnHn7fi4neHn9TEdpI7kW9RzLP-qMyGG  ");'>
+            </div>
             <div class="info">
               <h3 class="nombre">Broche de Estilo Vintage</h3>
               <p class="precio">$30</p>
@@ -106,4 +129,5 @@
 
   <script src="../../static/js/wishlist/wishlist.js"></script>
 </body>
+
 </html>

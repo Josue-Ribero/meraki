@@ -1,4 +1,3 @@
-// Controla el slider de puntos y actualiza el texto dinámicamente
 const slider = document.getElementById("sliderPuntos");
 const puntos = document.getElementById("valorPuntos");
 const descuento = document.getElementById("valorDescuento");

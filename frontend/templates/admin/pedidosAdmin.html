@@ -1,59 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <title>Meraki Admin - Pedidos</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-  
-  <!-- Fuentes y Material Icons -->
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link as="style"
-        href="https://fonts.googleapis.com/css2?display=swap&family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900"
-        rel="stylesheet" />
+    href="https://fonts.googleapis.com/css2?display=swap&family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900"
+    rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <!-- CSS Propio -->
   <link rel="stylesheet" href="../../static/css/admin/pedidosAdmin.css">
 </head>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../../static/js/admin/dashboardAdmin.js"></script>
 
 <body class="bg-[var(--c-fdfbf3)]" style='font-family: Manrope, "Noto Sans", sans-serif;'>
   <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
     <div class="flex flex-1">
 
-      <!-- Sidebar -->
       <aside class="flex flex-col w-64 bg-[var(--c-363636)] text-white p-6 shrink-0">
         <div class="flex items-center gap-3 mb-10">
-          <div class="w-10 h-10 rounded-full bg-[var(--c-aa8744)] flex items-center justify-center text-white font-bold text-xl">M</div>
+          <div
+            class="w-10 h-10 rounded-full bg-[var(--c-aa8744)] flex items-center justify-center text-white font-bold text-xl">
+            M</div>
           <h1 class="text-white text-2xl font-bold">Meraki</h1>
         </div>
 
         <nav class="flex flex-col gap-2">
-          <a href="#" class="nav-item"><span class="material-symbols-outlined">dashboard</span> <span>Dashboard</span></a>
-          <a href="#" class="nav-item active"><span class="material-symbols-outlined">receipt_long</span> <span>Pedidos</span></a>
-          <a href="#" class="nav-item"><span class="material-symbols-outlined">inventory_2</span> <span>Productos</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">dashboard</span>
+            <span>Dashboard</span></a>
+          <a href="#" class="nav-item active"><span class="material-symbols-outlined">receipt_long</span>
+            <span>Pedidos</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">inventory_2</span>
+            <span>Productos</span></a>
           <a href="#" class="nav-item"><span class="material-symbols-outlined">group</span> <span>Clientes</span></a>
-          <a href="#" class="nav-item"><span class="material-symbols-outlined">analytics</span> <span>Analíticas</span></a>
-          <a href="#" class="nav-item mt-auto"><span class="material-symbols-outlined">logout</span> <span>Cerrar Sesión</span></a>
+          <a href="#" class="nav-item"><span class="material-symbols-outlined">analytics</span>
+            <span>Analíticas</span></a>
+          <a href="#" class="nav-item mt-auto"><span class="material-symbols-outlined">logout</span> <span>Cerrar
+              Sesión</span></a>
         </nav>
       </aside>
 
-      <!-- Contenido principal -->
       <main class="flex-1 p-8 bg-white">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-[var(--c-363636)] text-3xl font-bold">Gestión de Pedidos</h2>
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-500">Hola, Admin</span>
-            <div class="w-10 h-10 rounded-full bg-[var(--c-d1bc97)] flex items-center justify-center text-white font-bold">A</div>
+            <div
+              class="w-10 h-10 rounded-full bg-[var(--c-d1bc97)] flex items-center justify-center text-white font-bold">
+              A</div>
           </div>
         </div>
 
-        <!-- Filtros -->
         <div class="mb-6 bg-[var(--c-fdfbf3)] p-4 rounded-xl shadow-sm">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
@@ -91,7 +92,6 @@
           </div>
         </div>
 
-        <!-- Tabla -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
           <div class="overflow-x-auto">
             <table id="tabla-pedidos" class="w-full">
@@ -106,22 +106,14 @@
                 </tr>
               </thead>
               <tbody id="tabla-body">
-                <!-- Se rellena dinámicamente con JS -->
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Paginación -->
         <div class="flex justify-between items-center mt-6">
-          <span class="text-sm text-gray-500">Mostrando 5 de 50 pedidos</span>
-          <div class="flex items-center gap-2">
-            <button class="page-btn">Anterior</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">Siguiente</button>
-          </div>
+          <span class="results-info text-sm text-gray-500">Mostrando 0 de 0 pedidos</span>
+          <div class="flex items-center gap-2 pagination"></div>
         </div>
       </main>
     </div>
@@ -129,4 +121,5 @@
 
   <script src="../../static/js/admin/pedidosAdmin.js"></script>
 </body>
+
 </html>

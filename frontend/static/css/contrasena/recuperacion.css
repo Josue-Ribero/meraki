@@ -28,7 +28,8 @@
   transform: scale(0.95);
 }
 
-#backspace, #submit-token {
+#backspace,
+#submit-token {
   display: flex;
   height: 5rem;
   align-items: center;

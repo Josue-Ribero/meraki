@@ -1,32 +1,43 @@
-// categorias.js
+// categoriaAdmin.js
 document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("modal");               // overlay del modal
-  const openBtn = document.getElementById("abrir-modal");      // botón "Añadir Categoría"
-  const cancelBtn = document.getElementById("cancelar");       // botón "Cancelar" dentro del modal
-  const modalTitle = document.getElementById("modal-title");   // título del modal
-  const form = modal ? modal.querySelector("form") : null;     // el formulario dentro del modal
-  const tbody = document.querySelector("table tbody");         // tbody de la tabla (delegación)
-  let editingRow = null; // fila que estamos editando (null si estamos creando)
+  const modal = document.getElementById("modal");
+  const openBtn = document.getElementById("abrir-modal");
+  const cancelBtn = document.getElementById("cancelar");
+  const modalTitle = document.getElementById("modal-title");
+  const form = modal?.querySelector("form");
+  const tbody = document.getElementById("categoriaBody");
+  const inputBuscar = document.getElementById("buscarCategoria");
 
-  // seguridad: si faltan elementos clave, reportar y salir
-  if (!modal || !form || !tbody) {
-    console.error("categorias.js: faltan elementos esperados en el DOM (modal, form o tbody). Revisa los IDs y estructura HTML.");
+  let editingRow = null;
+
+  if (!modal || !form || !tbody || !inputBuscar) {
+    console.error("Faltan elementos críticos en el DOM.");
     return;
   }
 
+  /* ---------- Buscador en tiempo real ---------- */
+  inputBuscar.addEventListener("input", () => {
+    const texto = inputBuscar.value.trim().toLowerCase();
+    [...tbody.querySelectorAll("tr")].forEach(row => {
+      const nombre = row.cells[0].textContent.toLowerCase();
+      row.style.display = nombre.includes(texto) ? "" : "none";
+    });
+  });
+
+  /* ---------- Modal lógica (crear/editar) ---------- */
   function openModalForAdd() {
     editingRow = null;
     modalTitle.textContent = "Añadir Nueva Categoría";
     form.reset();
-    modal.classList.add("activo");   // en tu CSS .modal.activo => display:flex
+    modal.classList.add("activo");
     form.querySelector("#nombre").focus();
   }
 
   function openModalForEdit(row) {
     editingRow = row;
     modalTitle.textContent = "Editar Categoría";
-    const nombre = row.querySelector("td:nth-child(1)").textContent.trim();
-    const descripcion = row.querySelector("td:nth-child(2)").textContent.trim();
+    const nombre = row.cells[0].textContent.trim();
+    const descripcion = row.cells[1].textContent.trim();
     form.querySelector("#nombre").value = nombre;
     form.querySelector("#descripcion").value = descripcion;
     modal.classList.add("activo");
@@ -38,77 +49,52 @@ document.addEventListener("DOMContentLoaded", () => {
     editingRow = null;
   }
 
-  // abrir modal para crear
-  if (openBtn) openBtn.addEventListener("click", openModalForAdd);
+  openBtn?.addEventListener("click", openModalForAdd);
+  cancelBtn?.addEventListener("click", closeModal);
+  modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
-  // cerrar modal (botón cancelar)
-  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
-
-  // cerrar modal clicando fuera (overlay)
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  // submit del formulario (crear o editar)
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", e => {
     e.preventDefault();
     const nombreEl = form.querySelector("#nombre");
     const descEl = form.querySelector("#descripcion");
     const nombre = nombreEl.value.trim();
-    const descripcion = descEl.value.trim();
+    const descr = descEl.value.trim();
 
-    if (!nombre) {
-      alert("El nombre de la categoría es obligatorio.");
-      nombreEl.focus();
-      return;
-    }
+    if (!nombre) { alert("El nombre es obligatorio."); nombreEl.focus(); return; }
 
     if (editingRow) {
-      // editar fila existente
-      editingRow.querySelector("td:nth-child(1)").textContent = nombre;
-      editingRow.querySelector("td:nth-child(2)").textContent = descripcion;
+      editingRow.cells[0].textContent = nombre;
+      editingRow.cells[1].textContent = descr;
     } else {
-      // crear nueva fila
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="px-6 py-4 font-medium">${escapeHtml(nombre)}</td>
-        <td class="px-6 py-4 text-gray-500 max-w-xs truncate">${escapeHtml(descripcion)}</td>
-        <td class="px-6 py-4 text-center">0</td>
-        <td class="px-6 py-4 text-right">
-          <button class="editar p-1" title="Editar"><span class="material-symbols-outlined">edit</span></button>
-          <button class="eliminar p-1 ml-2" title="Eliminar"><span class="material-symbols-outlined">delete</span></button>
-        </td>
-      `;
+        <td>${escapeHtml(nombre)}</td>
+        <td>${escapeHtml(descr)}</td>
+        <td class="centro">0</td>
+        <td class="derecha">
+          <button class="editar"><span class="material-symbols-outlined">edit</span></button>
+          <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
+        </td>`;
       tbody.appendChild(tr);
     }
-
     closeModal();
     form.reset();
   });
 
-  // delegación para editar/eliminar filas existentes (incluye las nuevas dinámicas)
-  tbody.addEventListener("click", (e) => {
+  /* ---------- Delegación editar/eliminar ---------- */
+  tbody.addEventListener("click", e => {
     const editBtn = e.target.closest("button.editar");
-    const deleteBtn = e.target.closest("button.eliminar");
-
-    if (editBtn) {
-      const row = editBtn.closest("tr");
-      if (row) openModalForEdit(row);
-      return;
-    }
-
-    if (deleteBtn) {
-      const row = deleteBtn.closest("tr");
-      if (!row) return;
-      const nombre = row.querySelector("td:nth-child(1)")?.textContent?.trim() || "esta categoría";
-      if (confirm(`¿Seguro que deseas eliminar "${nombre}"?`)) {
-        row.remove();
-      }
+    const delBtn = e.target.closest("button.eliminar");
+    if (editBtn) { openModalForEdit(editBtn.closest("tr")); return; }
+    if (delBtn) {
+      const row = delBtn.closest("tr");
+      const nom = row.cells[0].textContent.trim();
+      if (confirm(`¿Seguro que deseas eliminar "${nom}"?`)) row.remove();
     }
   });
 
-  // función simple para escapar texto antes de inyectarlo en HTML (previene XSS básico)
+  /* ---------- Escapar HTML ---------- */
   function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    return text.replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
   }
 });

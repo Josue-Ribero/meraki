@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-  <link
-    as="style"
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link as="style"
     href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
-    onload="this.rel='stylesheet'"
-    rel="stylesheet"
-  />
+    onload="this.rel='stylesheet'" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>Meraki - Mis Pedidos y Puntos</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
@@ -23,14 +21,26 @@
           <h1>Meraki</h1>
         </div>
         <nav class="nav-menu">
-          <a href="#"><span class="material-symbols-outlined">home</span><p>Inicio</p></a>
-          <a href="#"><span class="material-symbols-outlined">storefront</span><p>Tienda</p></a>
-          <a href="#"><span class="material-symbols-outlined">favorite</span><p>Favoritos</p></a>
-          <a href="#"><span class="material-symbols-outlined">shopping_bag</span><p>Carrito</p></a>
-          <a href="#" class="active"><span class="material-symbols-outlined">receipt_long</span><p>Mis Pedidos</p></a>
+          <a href="#"><span class="material-symbols-outlined">home</span>
+            <p>Inicio</p>
+          </a>
+          <a href="#"><span class="material-symbols-outlined">storefront</span>
+            <p>Tienda</p>
+          </a>
+          <a href="#"><span class="material-symbols-outlined">favorite</span>
+            <p>Favoritos</p>
+          </a>
+          <a href="#"><span class="material-symbols-outlined">shopping_bag</span>
+            <p>Carrito</p>
+          </a>
+          <a href="#" class="active"><span class="material-symbols-outlined">receipt_long</span>
+            <p>Mis Pedidos</p>
+          </a>
         </nav>
         <div class="logout">
-          <a href="#"><span class="material-symbols-outlined">logout</span><p>Cerrar Sesión</p></a>
+          <a href="#"><span class="material-symbols-outlined">logout</span>
+            <p>Cerrar Sesión</p>
+          </a>
         </div>
       </div>
     </aside>
@@ -127,7 +137,7 @@
                 <p>Usa tus puntos para obtener un descuento. Cada 10 puntos equivalen a S/ 1.00.</p>
                 <input type="range" min="0" max="220" value="100" id="sliderPuntos" />
                 <div class="resultado">
-                  <span id="valorPuntos">100</span> Puntos = 
+                  <span id="valorPuntos">100</span> Puntos =
                   <span id="valorDescuento">S/ 10.00</span> de Descuento
                 </div>
                 <button id="btnAplicar">Aplicar Descuento</button>
@@ -141,4 +151,5 @@
 
   <script src="../../static/js/client/panelCliente.js"></script>
 </body>
+
 </html>

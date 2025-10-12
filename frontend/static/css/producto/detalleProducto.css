@@ -31,7 +31,7 @@ body {
   justify-content: flex-start;
   background-color: var(--color-surface);
   padding: 2rem 1.5rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 6rem;
   height: 100vh;
 }
@@ -82,7 +82,7 @@ body {
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .main-img img {
@@ -233,7 +233,7 @@ body {
 
 .btn-menos,
 .btn-mas {
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   color: var(--color-text-light);
   background: none;
   border: none;

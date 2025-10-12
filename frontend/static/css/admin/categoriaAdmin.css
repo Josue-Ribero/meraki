@@ -1,3 +1,4 @@
+/* categoriaAdmin.css */
 :root {
   --c-gold: #aa8744;
   --c-dark-gray: #363636;
@@ -12,7 +13,6 @@ body {
   margin: 0;
 }
 
-/* ---- ESTRUCTURA ---- */
 .contenedor {
   display: flex;
   min-height: 100vh;
@@ -85,7 +85,6 @@ body {
   color: var(--c-dark-gray);
 }
 
-/* ---- CONTENIDO ---- */
 .contenido {
   flex: 1;
   padding: 2rem;
@@ -146,7 +145,6 @@ button#abrir-modal:hover {
   background-color: var(--c-brown);
 }
 
-/* ---- TABLA ---- */
 .tabla-contenedor {
   background-color: white;
   border-radius: 0.5rem;
@@ -165,7 +163,8 @@ button#abrir-modal:hover {
   text-transform: uppercase;
 }
 
-.tabla th, .tabla td {
+.tabla th,
+.tabla td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(209, 188, 151, 0.5);
 }
@@ -205,12 +204,11 @@ button#abrir-modal:hover {
   color: darkred;
 }
 
-/* ---- MODAL ---- */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
 }

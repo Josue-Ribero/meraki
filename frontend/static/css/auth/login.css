@@ -6,7 +6,6 @@
   --c5: #9c642d;
 }
 
-/* === Base === */
 body {
   font-family: "Work Sans", "Noto Sans", sans-serif;
   background-color: var(--c3);
@@ -16,7 +15,6 @@ body {
   flex-direction: column;
 }
 
-/* === Layout === */
 .root-container {
   display: flex;
   flex: 1;
@@ -63,7 +61,6 @@ body {
   padding: 2rem;
 }
 
-/* === Card === */
 .form-card {
   width: 100%;
   max-width: 28rem;
@@ -87,7 +84,6 @@ body {
   margin-bottom: 2rem;
 }
 
-/* === Tabs === */
 .tab-container {
   display: flex;
   margin-bottom: 1.5rem;
@@ -124,7 +120,6 @@ body {
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-/* === Formularios === */
 .form-label {
   display: block;
   font-size: 0.875rem;
@@ -154,7 +149,6 @@ body {
   box-shadow: 0 0 0 3px rgba(170, 135, 68, 0.3);
 }
 
-/* === Botones === */
 .btn-primary {
   display: flex;
   justify-content: center;
@@ -174,7 +168,6 @@ body {
   background-color: var(--c5);
 }
 
-/* === Links === */
 .link {
   color: var(--c1);
   font-weight: 500;
@@ -186,7 +179,6 @@ body {
   color: var(--c5);
 }
 
-/* === Checkbox === */
 .checkbox {
   height: 1rem;
   width: 1rem;
@@ -201,7 +193,6 @@ body {
   color: rgba(54, 54, 54, 0.8);
 }
 
-/* === Utilidades === */
 .hidden {
   display: none !important;
 }

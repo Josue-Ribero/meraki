@@ -1,4 +1,3 @@
-// Eliminar productos de la wishlist
 document.querySelectorAll('.btn-eliminar').forEach(boton => {
   boton.addEventListener('click', () => {
     const tarjeta = boton.closest('.tarjeta');

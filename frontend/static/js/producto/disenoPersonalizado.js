@@ -1,4 +1,3 @@
-// Canvas setup
 const canvas = document.getElementById('designCanvas');
 const ctx = canvas.getContext('2d');
 const pixelSize = 16;
@@ -11,14 +10,12 @@ let selectedShape = 'circle';
 let currentMaterial = 'metal';
 let useShape = false;
 
-// Paletas de colores por material
 const palettes = {
   metal: ['#aa8744', '#363636', '#fdfbf3', '#d1bc97', '#9c642d'],
   pearls: ['#f8f8f8', '#e2e2e2', '#ffffff', '#dcdcdc', '#b0b0b0'],
   gems: ['#ff4d4d', '#4dff4d', '#4d4dff', '#ffff4d', '#ff4dff']
 };
 
-// Dibujar grid vacío
 function drawGrid() {
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -36,7 +33,6 @@ function drawGrid() {
 }
 drawGrid();
 
-// Pintar pixel
 function drawPixel(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
@@ -46,11 +42,10 @@ function drawPixel(x, y) {
   }
 }
 
-// Dibujar forma
 function drawShape(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
-  const radius = 3; // Tamaño de la forma
+  const radius = 3;
   ctx.fillStyle = selectedColor;
 
   for (let dx = -radius; dx <= radius; dx++) {
@@ -84,7 +79,6 @@ function drawShape(x, y) {
   }
 }
 
-// Eventos de ratón
 canvas.addEventListener('mousedown', (e) => {
   isDrawing = true;
   const rect = canvas.getBoundingClientRect();
@@ -104,7 +98,6 @@ canvas.addEventListener('mousemove', (e) => {
 canvas.addEventListener('mouseup', () => isDrawing = false);
 canvas.addEventListener('mouseleave', () => isDrawing = false);
 
-// Selección de forma
 document.querySelectorAll('.shape-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     selectedShape = btn.dataset.shape;
@@ -113,12 +106,10 @@ document.querySelectorAll('.shape-btn').forEach(btn => {
   });
 });
 
-// Activar/desactivar formas
 document.getElementById('shapeToggle').addEventListener('change', (e) => {
   useShape = e.target.checked;
 });
 
-// Selección de material
 function updatePalette() {
   currentMaterial = document.querySelector('.material-radio:checked').value;
   const palette = palettes[currentMaterial];
@@ -146,10 +137,8 @@ document.querySelectorAll('.material-radio').forEach(radio => {
   radio.addEventListener('change', updatePalette);
 });
 
-// Limpiar
 document.getElementById('clearBtn').addEventListener('click', drawGrid);
 
-// Guardar diseño y actualizar vista previa
 document.getElementById('saveBtn').addEventListener('click', () => {
   const dataURL = canvas.toDataURL();
   document.getElementById('previewImg').style.backgroundImage = `url(${dataURL})`;

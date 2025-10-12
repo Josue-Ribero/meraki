@@ -1,41 +1,29 @@
-// pedidosAdmin.js
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Datos iniciales (usa fechas ISO para poder filtrar con input[type=date]) ---
-  let orders = [
+  const orders = [
     { id: "#1011", date: "2024-05-16", client: "Valentina Mora", product: "Aretes X", total: "$95.50", status: "Pendiente" },
     { id: "#1010", date: "2024-05-15", client: "Mateo Rojas", product: "Collar de perlas", total: "$210.00", status: "En Proceso" },
     { id: "#1009", date: "2024-05-14", client: "Luciana Gil", product: "Pulsera", total: "$45.00", status: "Enviado" },
     { id: "#1008", date: "2024-05-13", client: "Emilio Cruz", product: "Set Regalo", total: "$300.00", status: "Entregado" },
     { id: "#1007", date: "2024-05-12", client: "Isabella Soto", product: "Pendientes", total: "$75.00", status: "Cancelado" }
-    // añade más objetos si quieres probar paginación
   ];
 
-  // --- Config UI / estado ---
   const perPage = 5;
   let currentPage = 1;
 
-  // --- Referencias DOM ---
   const tbody = document.getElementById("tabla-body");
   const statusFilter = document.getElementById("status-filter");
   const dateFilter = document.getElementById("date-filter");
   const clientFilter = document.getElementById("client-filter");
   const productFilter = document.getElementById("product-filter");
   const filterBtn = document.getElementById("filter-button");
+  const resultsInfo = document.querySelector(".results-info");
+  const paginationEl = document.querySelector(".pagination");
 
-  // span de resultados y contenedor de paginación (buscamos los elementos en tu layout)
-  const resultsInfo = document.querySelector("main .flex.justify-between.items-center span.text-sm")
-                    || document.querySelector(".results-info");
-  const paginationEl = document.querySelector("main .flex.justify-between.items-center div") || null;
+  if (!tbody) return;
 
-  if (!tbody) {
-    console.error("pedidosAdmin.js: no se encontró #tabla-body en el DOM. Revisa tu HTML.");
-    return;
-  }
-
-  // --- Utilidades ---
   function formatDateLong(iso) {
     if (!iso) return "";
-    const d = new Date(iso + "T00:00:00"); // asegura zona
+    const d = new Date(iso + "T00:00:00");
     return d.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
   }
 
@@ -50,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Filtrado ---
   function applyFilters() {
     const status = statusFilter.value || "Todos";
     const date = dateFilter.value || "";
@@ -66,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Render tabla y paginación ---
   function renderTable() {
     const filtered = applyFilters();
     const total = filtered.length;
@@ -87,8 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="px-6 py-4 text-sm">${escapeHtml(o.total)}</td>
         <td class="px-6 py-4 text-center"><span class="${badgeClassesFor(o.status)}">${o.status}</span></td>
         <td class="px-6 py-4 text-center">
-          <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 view-btn" data-id="${o.id}" title="Ver"><span class="material-symbols-outlined text-base">visibility</span></button>
-          <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 ship-btn" data-id="${o.id}" title="Marcar Enviado"><span class="material-symbols-outlined text-base">local_shipping</span></button>
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 edit-btn" data-id="${o.id}" title="Editar"><span class="material-symbols-outlined text-base">edit</span></button>
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 print-btn" data-id="${o.id}" title="Imprimir"><span class="material-symbols-outlined text-base">print</span></button>
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 mail-btn" data-id="${o.id}" title="Mail"><span class="material-symbols-outlined text-base">mail</span></button>
@@ -97,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.appendChild(tr);
     }
 
-    // actualizar info visible (si existe el span)
     if (resultsInfo) resultsInfo.textContent = `Mostrando ${pageItems.length} de ${filtered.length} pedidos`;
     renderPagination(totalPages);
   }
@@ -128,22 +111,16 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationEl.appendChild(next);
   }
 
-  // --- delegación de acciones en la tabla ---
   tbody.addEventListener("click", (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
     const id = btn.dataset.id;
     if (!id) return;
     const order = orders.find(o => o.id === id);
-    if (!order) { console.warn("Pedido no encontrado", id); return; }
+    if (!order) return;
 
-    if (btn.classList.contains("view-btn") || btn.classList.contains("edit-btn")) {
+    if (btn.classList.contains("edit-btn")) {
       openModal(order);
-    } else if (btn.classList.contains("ship-btn")) {
-      if (confirm(`Marcar pedido ${id} como ENVIADO?`)) {
-        order.status = "Enviado";
-        renderTable();
-      }
     } else if (btn.classList.contains("print-btn")) {
       printOrder(order);
     } else if (btn.classList.contains("mail-btn")) {
@@ -151,15 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- filtros (botón y inputs en tiempo real) ---
   filterBtn.addEventListener("click", () => { currentPage = 1; renderTable(); });
   [statusFilter, dateFilter, clientFilter, productFilter].forEach(el => {
     el.addEventListener("input", () => { currentPage = 1; renderTable(); });
   });
 
-  // --- Modal dinámico (crea y gestiona) ---
   function openModal(order) {
-    // eliminar modal previo
     const existing = document.getElementById("order-modal");
     if (existing) existing.remove();
 
@@ -176,18 +150,14 @@ document.addEventListener("DOMContentLoaded", () => {
           <label>Total <input id="m-total" type="text" value="${escapeHtml(order.total)}" class="input"></label>
           <label>Estado 
             <select id="m-status" class="input">
-              <option${order.status==="Pendiente"?' selected':''}>Pendiente</option>
-              <option${order.status==="En Proceso"?' selected':''}>En Proceso</option>
-              <option${order.status==="Enviado"?' selected':''}>Enviado</option>
-              <option${order.status==="Entregado"?' selected':''}>Entregado</option>
-              <option${order.status==="Cancelado"?' selected':''}>Cancelado</option>
+              <option${order.status === "Pendiente" ? ' selected' : ''}>Pendiente</option>
+              <option${order.status === "En Proceso" ? ' selected' : ''}>En Proceso</option>
+              <option${order.status === "Enviado" ? ' selected' : ''}>Enviado</option>
+              <option${order.status === "Entregado" ? ' selected' : ''}>Entregado</option>
+              <option${order.status === "Cancelado" ? ' selected' : ''}>Cancelado</option>
             </select>
           </label>
-
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px;">
-            <button type="button" id="m-ship" class="btn">Marcar Enviado</button>
-            <button type="button" id="m-print" class="btn">Imprimir</button>
-            <button type="button" id="m-mail" class="btn">Mail</button>
             <button type="button" id="m-close" class="btn-secondary">Cerrar</button>
             <button type="submit" id="m-save" class="btn-primary">Guardar</button>
           </div>
@@ -196,19 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     document.body.appendChild(modal);
 
-    // listeners
     modal.querySelector("#m-close").addEventListener("click", () => modal.remove());
     modal.addEventListener("click", (ev) => { if (ev.target === modal) modal.remove(); });
-
-    modal.querySelector("#m-ship").addEventListener("click", () => {
-      order.status = "Enviado";
-      renderTable();
-      // actualizar select en modal
-      modal.querySelector("#m-status").value = "Enviado";
-    });
-
-    modal.querySelector("#m-print").addEventListener("click", () => printOrder(order));
-    modal.querySelector("#m-mail").addEventListener("click", () => mailOrder(order));
 
     modal.querySelector("#modal-form").addEventListener("submit", (ev) => {
       ev.preventDefault();
@@ -222,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- imprimir y mail ---
   function printOrder(order) {
     const html = `
       <html><head><title>Imprimir ${order.id}</title></head>
@@ -247,12 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = `mailto:?subject=${subj}&body=${body}`;
   }
 
-  // simple escape para evitar inyección cuando inyectamos en innerHTML
   function escapeHtml(str) {
     if (typeof str !== "string") return str;
-    return str.replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+    return str.replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
   }
 
-  // --- inicio ---
   renderTable();
 });

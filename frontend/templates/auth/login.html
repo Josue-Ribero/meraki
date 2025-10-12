@@ -6,34 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meraki - Acceso</title>
 
-  <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?display=swap&family=Work+Sans:wght@400;500;600;700&family=Noto+Sans:wght@400;500;700;900" />
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <!-- Estilos propios -->
-  <link rel="stylesheet" href="../../static/css/auth/login.css"/>
+  <link rel="stylesheet" href="../../static/css/auth/login.css" />
 
-  <!-- Script -->
   <script defer src="../../static/js/auth/loginCliente.js"></script>
 </head>
 
 <body>
   <div class="root-container">
     <div class="flex flex-1">
-      <!-- Barra lateral -->
-      <div class="sidebar">
+      <aside class="sidebar">
         <div class="sidebar-buttons">
           <button class="icon-btn">
             <a href="../principal.html">
               <img class="logo" src="../../static/img/UI/Logo.png" alt="Logo">
             </a>
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-            </svg>
           </button>
           <button class="icon-btn">
             <svg class="lucide lucide-shield" fill="none" height="24" stroke="currentColor" stroke-linecap="round"
@@ -61,9 +53,8 @@
             <line x1="21" x2="9" y1="12" y2="12"></line>
           </svg>
         </button>
-      </div>
+      </aside>
 
-      <!-- Contenido principal -->
       <main class="main-content">
         <div class="form-card">
           <h2 class="title">Bienvenido a Meraki</h2>
@@ -74,7 +65,6 @@
             <button class="tab-button" id="register-tab" onclick="showTab('register-form')">Registrarse</button>
           </div>
 
-          <!-- Formulario de Login -->
           <form class="space-y-6" id="login-form" method="post" action="/auth/login">
             <div>
               <label for="login-email" class="form-label">Email</label>
@@ -91,7 +81,6 @@
             </div>
           </form>
 
-          <!-- Formulario de Registro -->
           <form class="space-y-6 hidden" id="register-form" method="post" action="/clientes/registrar">
             <div>
               <label for="register-name" class="form-label">Nombre</label>

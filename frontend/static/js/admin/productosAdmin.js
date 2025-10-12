@@ -1,8 +1,6 @@
-/* script.js - gestión de productos (Local, sin backend) */
 (() => {
   const STORAGE_KEY = "meraki_products_v1";
 
-  // Productos iniciales (se usan si no hay localStorage)
   const initialProducts = [
     {
       id: "MK-C001",
@@ -36,14 +34,10 @@
     }
   ];
 
-  // estado
   let productos = [];
-
-  // DOM
   const productBody = document.getElementById("productBody");
   const searchInput = document.getElementById("searchInput");
   const btnAdd = document.getElementById("btnAdd");
-
   const modal = document.getElementById("productModal");
   const form = document.getElementById("productForm");
   const inputId = document.getElementById("product-id");
@@ -57,29 +51,27 @@
   const btnCancel = document.getElementById("modal-cancel");
   const btnDelete = document.getElementById("modal-delete");
 
-  // helpers
-  const saveToStorage = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
+  const saveToStorage = () => localStorage.setItem("meraki_products_v1", JSON.stringify(productos));
   const loadFromStorage = () => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem("meraki_products_v1");
       return raw ? JSON.parse(raw) : null;
-    } catch (e) { return null; }
+    } catch {
+      return null;
+    }
   };
 
-  // inicializar
   function init() {
-    const fromStorage = loadFromStorage();
-    productos = fromStorage && Array.isArray(fromStorage) ? fromStorage : initialProducts.slice();
+    const stored = loadFromStorage();
+    productos = stored && Array.isArray(stored) ? stored : initialProducts.slice();
     renderTable();
     attachEvents();
   }
 
-  // render tabla (filtrado simple)
   function renderTable(filter = "") {
     if (!productBody) return;
     productBody.innerHTML = "";
-
-    const q = (filter || "").toLowerCase().trim();
+    const q = filter.toLowerCase().trim();
     const filtered = productos.filter(p =>
       p.nombre.toLowerCase().includes(q) ||
       p.sku.toLowerCase().includes(q) ||
@@ -102,8 +94,7 @@
         <td class="py-4 px-6 text-center ${p.stock === 0 ? 'text-red-600 font-semibold' : ''}">${p.stock}</td>
         <td class="py-4 px-6 text-right">$${Number(p.precio).toFixed(2)}</td>
         <td class="py-4 px-6 text-center">
-          ${p.visible ? '<span class="badge-visible"><span style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block;"></span> Visible</span>'
-                     : '<span class="badge-hidden"><span style="width:8px;height:8px;background:#6b7280;border-radius:50%;display:inline-block;"></span> Oculto</span>'}
+          ${p.visible ? '<span class="badge-visible"><span></span>Visible</span>' : '<span class="badge-hidden"><span></span>Oculto</span>'}
           <div style="margin-top:8px;">
             <button class="action edit-btn" data-id="${p.id}" title="Editar"><span class="material-symbols-outlined">edit</span></button>
             <button class="action delete-btn" data-id="${p.id}" title="Eliminar"><span class="material-symbols-outlined text-red-600">delete</span></button>
@@ -114,22 +105,19 @@
     });
   }
 
-  // escapar HTML básico
-  function escapeHtml(s) { return (s||"").toString().replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+  function escapeHtml(s) {
+    return (s || "").toString().replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+  }
 
-  // eventos (delegación)
   function attachEvents() {
-    // buscar (debounce)
     let t;
     searchInput && searchInput.addEventListener("input", (e) => {
       clearTimeout(t);
       t = setTimeout(() => renderTable(e.target.value), 180);
     });
 
-    // abrir modal para añadir
     btnAdd && btnAdd.addEventListener("click", () => openModal());
 
-    // acciones de tabla (delegación)
     productBody && productBody.addEventListener("click", (ev) => {
       const editBtn = ev.target.closest(".edit-btn");
       const delBtn = ev.target.closest(".delete-btn");
@@ -146,10 +134,7 @@
       }
     });
 
-    // modal: cancelar
     btnCancel && btnCancel.addEventListener("click", closeModal);
-
-    // modal: borrar desde modal
     btnDelete && btnDelete.addEventListener("click", () => {
       const id = inputId.value;
       if (!id) return;
@@ -160,7 +145,6 @@
       renderTable(searchInput ? searchInput.value : "");
     });
 
-    // submit modal (guardar)
     form && form.addEventListener("submit", (ev) => {
       ev.preventDefault();
       const id = inputId.value || generateId();
@@ -174,27 +158,22 @@
         imagen: inputImage.value.trim() || '',
         visible: !!inputVisible.checked
       };
-
-      const exists = productos.findIndex(p => p.id === id);
-      if (exists >= 0) productos[exists] = item;
-      else productos.unshift(item); // agregar arriba
-
+      const idx = productos.findIndex(p => p.id === id);
+      if (idx >= 0) productos[idx] = item;
+      else productos.unshift(item);
       saveToStorage();
       closeModal();
       renderTable(searchInput ? searchInput.value : "");
     });
 
-    // cerrar modal con Esc
     window.addEventListener("keydown", (ev) => {
-      if (ev.key === "Escape" && modal && modal.getAttribute("aria-hidden")==="false") closeModal();
+      if (ev.key === "Escape" && modal && modal.getAttribute("aria-hidden") === "false") closeModal();
     });
   }
 
-  // abrir modal: si product dado -> edición, si no -> creación
   function openModal(product) {
     if (!modal) return;
     modal.setAttribute("aria-hidden", "false");
-
     if (!product) {
       inputId.value = "";
       inputName.value = "";
@@ -226,9 +205,8 @@
   }
 
   function generateId() {
-    return "P" + Date.now().toString(36) + Math.floor(Math.random()*1000).toString(36);
+    return "P" + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);
   }
 
-  // inicialización
   init();
 })();

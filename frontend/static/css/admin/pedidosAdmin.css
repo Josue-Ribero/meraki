@@ -6,7 +6,6 @@
   --c-9c642d: #9c642d;
 }
 
-/* Sidebar */
 .nav-item {
   display: flex;
   align-items: center;
@@ -29,7 +28,6 @@
   color: white;
 }
 
-/* Filtros */
 .label {
   display: block;
   font-size: 0.875rem;
@@ -53,7 +51,6 @@
   box-shadow: 0 0 0 2px rgba(170, 135, 68, 0.3);
 }
 
-/* Botones */
 .btn-primary {
   width: 100%;
   display: flex;
@@ -71,7 +68,6 @@
   background-color: var(--c-9c642d);
 }
 
-/* Tabla */
 table th {
   padding: 1rem 1.5rem;
   text-align: left;
@@ -91,7 +87,6 @@ tr:hover {
   background-color: #f9f9f9;
 }
 
-/* Paginación */
 .page-btn {
   padding: 0.25rem 0.75rem;
   border-radius: 0.375rem;

@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stitch Design - Dashboard</title>
+  <title>Meraki - Panel de control</title>
 
-  <!-- Tipografía y Tailwind -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Work+Sans:wght@400;500;700;900&display=swap" />
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Work+Sans:wght@400;500;700;900&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <!-- Estilos personalizados -->
   <link rel="stylesheet" href="../../static/css/admin/dashboardAdmin.css">
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
   <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
     <div class="flex h-full w-full flex-1">
-      <!-- Sidebar -->
+      <!-- Barra lateral -->
       <aside class="flex w-64 flex-col bg-[#363636] text-white">
         <div class="flex h-full flex-col justify-between p-4">
           <div class="flex flex-col gap-6">
@@ -32,10 +29,22 @@
                 <span class="material-symbols-outlined">home</span>
                 <p>Inicio</p>
               </a>
-              <a class="nav-item" href="#"><span class="material-symbols-outlined">package_2</span><p>Pedidos</p></a>
-              <a class="nav-item" href="#"><span class="material-symbols-outlined">list_alt</span><p>Productos</p></a>
-              <a class="nav-item" href="#"><span class="material-symbols-outlined">group</span><p>Clientes</p></a>
-              <a class="nav-item" href="#"><span class="material-symbols-outlined">percent</span><p>Promociones</p></a>
+              <a class="nav-item" href="#">
+                <span class="material-symbols-outlined">package_2</span>
+                <p>Pedidos</p>
+              </a>
+              <a class="nav-item" href="#">
+                <span class="material-symbols-outlined">list_alt</span>
+                <p>Productos</p>
+              </a>
+              <a class="nav-item" href="#">
+                <span class="material-symbols-outlined">group</span>
+                <p>Clientes</p>
+              </a>
+              <a class="nav-item" href="#">
+                <span class="material-symbols-outlined">percent</span>
+                <p>Promociones</p>
+              </a>
             </nav>
           </div>
           <div class="nav-item">
@@ -45,7 +54,7 @@
         </div>
       </aside>
 
-      <!-- Main -->
+      <!-- Contenido principal -->
       <main class="flex-1 bg-[#fdfbf3]">
         <div class="p-6 md:p-8">
           <header class="mb-8">
@@ -55,20 +64,28 @@
           <!-- Tarjetas -->
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div class="card">
-              <p>Ventas totales</p><h3>$12,500</h3>
-              <div class="text-green-500 flex items-center"><span class="material-symbols-outlined">arrow_upward</span>10%</div>
+              <p>Ventas totales</p>
+              <h3>$12,500</h3>
+              <div class="text-green-500 flex items-center"><span
+                  class="material-symbols-outlined">arrow_upward</span>10%</div>
             </div>
             <div class="card">
-              <p>Pedidos recientes</p><h3>35</h3>
-              <div class="text-green-500 flex items-center"><span class="material-symbols-outlined">arrow_upward</span>5%</div>
+              <p>Pedidos recientes</p>
+              <h3>35</h3>
+              <div class="text-green-500 flex items-center"><span
+                  class="material-symbols-outlined">arrow_upward</span>5%</div>
             </div>
             <div class="card">
-              <p>Productos más vendidos</p><h3>Collar de perlas</h3>
-              <div class="text-green-500 flex items-center"><span class="material-symbols-outlined">arrow_upward</span>8%</div>
+              <p>Productos más vendidos</p>
+              <h3>Collar de perlas</h3>
+              <div class="text-green-500 flex items-center"><span
+                  class="material-symbols-outlined">arrow_upward</span>8%</div>
             </div>
             <div class="card">
-              <p>Clientes activos</p><h3>120</h3>
-              <div class="text-green-500 flex items-center"><span class="material-symbols-outlined">arrow_upward</span>12%</div>
+              <p>Clientes activos</p>
+              <h3>120</h3>
+              <div class="text-green-500 flex items-center"><span
+                  class="material-symbols-outlined">arrow_upward</span>12%</div>
             </div>
           </div>
 
@@ -87,12 +104,28 @@
               <h2>Productos más vendidos</h2>
               <table class="w-full text-left">
                 <thead class="border-b border-[#d1bc97]">
-                  <tr><th>Producto</th><th>Ventas</th><th>Ingresos</th></tr>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Ventas</th>
+                    <th>Ingresos</th>
+                  </tr>
                 </thead>
                 <tbody class="divide-y divide-[#d1bc97]">
-                  <tr><td>Collar de perlas</td><td>50</td><td>$2,500</td></tr>
-                  <tr><td>Pendientes de aro</td><td>40</td><td>$2,000</td></tr>
-                  <tr><td>Pulsera de cuero</td><td>30</td><td>$1,500</td></tr>
+                  <tr>
+                    <td>Collar de perlas</td>
+                    <td>50</td>
+                    <td>$2,500</td>
+                  </tr>
+                  <tr>
+                    <td>Pendientes de aro</td>
+                    <td>40</td>
+                    <td>$2,000</td>
+                  </tr>
+                  <tr>
+                    <td>Pulsera de cuero</td>
+                    <td>30</td>
+                    <td>$1,500</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -103,13 +136,43 @@
             <h2>Pedidos recientes</h2>
             <table class="w-full text-left">
               <thead class="border-b border-[#d1bc97]">
-                <tr><th>ID</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th class="text-right">Total</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th class="text-right">Total</th>
+                </tr>
               </thead>
               <tbody class="divide-y divide-[#d1bc97]">
-                <tr><td>#12345</td><td>Sofía Rodríguez</td><td>2024-07-26</td><td><span class="estado azul">Enviado</span></td><td class="text-right">$150</td></tr>
-                <tr><td>#12346</td><td>Diego Martínez</td><td>2024-07-25</td><td><span class="estado verde">Entregado</span></td><td class="text-right">$200</td></tr>
-                <tr><td>#12347</td><td>Isabel García</td><td>2024-07-24</td><td><span class="estado amarillo">Procesando</span></td><td class="text-right">$100</td></tr>
-                <tr><td>#12348</td><td>Carlos López</td><td>2024-07-23</td><td><span class="estado rojo">Cancelado</span></td><td class="text-right">$50</td></tr>
+                <tr>
+                  <td>#12345</td>
+                  <td>Sofía Rodríguez</td>
+                  <td>2024-07-26</td>
+                  <td><span class="estado azul">Enviado</span></td>
+                  <td class="text-right">$150</td>
+                </tr>
+                <tr>
+                  <td>#12346</td>
+                  <td>Diego Martínez</td>
+                  <td>2024-07-25</td>
+                  <td><span class="estado verde">Entregado</span></td>
+                  <td class="text-right">$200</td>
+                </tr>
+                <tr>
+                  <td>#12347</td>
+                  <td>Isabel García</td>
+                  <td>2024-07-24</td>
+                  <td><span class="estado amarillo">Procesando</span></td>
+                  <td class="text-right">$100</td>
+                </tr>
+                <tr>
+                  <td>#12348</td>
+                  <td>Carlos López</td>
+                  <td>2024-07-23</td>
+                  <td><span class="estado rojo">Cancelado</span></td>
+                  <td class="text-right">$50</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -120,4 +183,5 @@
 
   <script src="../../static/js/admin/dashboardAdmin.js"></script>
 </body>
+
 </html>

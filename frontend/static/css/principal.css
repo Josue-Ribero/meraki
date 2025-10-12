@@ -1,13 +1,11 @@
-/* Definir variables CSS para los colores */
 :root {
-  --c-aa8744: #aa8744; /* Color principal (dorado) */
-  --c-363636: #363636; /* Color de texto oscuro */
-  --c-fdfbf3: #fdfbf3; /* Color de fondo principal */
-  --c-d1bc97: #d1bc97; /* Color de borde del input */
-  --c-9c642d: #9c642d; /* Color principal oscuro */
+  --c-aa8744: #aa8744;
+  --c-363636: #363636;
+  --c-fdfbf3: #fdfbf3;
+  --c-d1bc97: #d1bc97;
+  --c-9c642d: #9c642d;
 }
 
-/* Clases de Tailwind personalizadas usando las variables CSS */
 .bg-fondo-principal {
   background-color: var(--c-fdfbf3);
 }

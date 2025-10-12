@@ -9,7 +9,8 @@ function checkoutApp() {
       { name: 'Collar "Solsticio"', qty: 1, price: 120, img: 'https://via.placeholder.com/60' }
     ],
     addresses: [],
-    form: { name: '', street: '', city: '', postal: '', default: false },
+    // Ciudad fija
+    form: { name: '', street: '', city: 'Bogotá D.C', postal: '', default: false },
     editIndex: null,
     saveAddress() {
       if (this.editIndex === null) {
@@ -30,7 +31,8 @@ function checkoutApp() {
       if (this.editIndex === index) this.resetForm();
     },
     resetForm() {
-      this.form = { name: '', street: '', city: '', postal: '', default: false };
+      // Ciudad siempre fija
+      this.form = { name: '', street: '', city: 'Bogotá D.C', postal: '', default: false };
       this.editIndex = null;
     }
   };

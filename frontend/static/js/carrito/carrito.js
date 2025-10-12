@@ -1,36 +1,29 @@
-// Datos iniciales simulados del carrito
-// En una aplicación real, esto podría venir de una API o localStorage
 let carrito = [
-    { id: 1, nombre: "Collar de Perlas del Mar", precio: 1250.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuBM20vbb5tsVpr1zeYw1gS5Nb4DGuJnn2fKTVGtqZ9rCUMwkT_j9IKgYhaX-UHLi9u6ALjZVUCA4gNR47cLRei7X_8o0MoQo4K1LUySWnes6_tu4nWGD8I8YbOL4pglcAiozuMgO5SxW7xaDDfGK4R4HeWypvsKI8Y5KjhzGmoTHQIPGc-fVQosYI-YgPhbaENNAKmNy8mlZrtzy8spg1M7RA_k2aCcmGXL84LuF4ggeThAh0u5E14Vkvz3wAjIkKC0_YRVofjHqhnY" },
-    { id: 2, nombre: "Aretes de Filigrana de Plata", precio: 850.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuApFCn0cGnypwWODmsi_4eoTeEAMOPjb8Yz8nyDmKQWdk3Kiq-cPdGy_oBVy2bMMnJzSXhbiQettlRQSgJ7wO-UoDJEPKZqVmVYDvCw44rbsn_9uSvYGEFW2qsRbn4TshX9GNnH0JBDRx1wmRX-uh1tHEArFkq5VaA3zf1qXI61mzFMMEIUHwAH6HRLPBc9YRbM-MU_MyhozaDxGr_oUc99Yhr8jZM4jsp0A7bei1fUammlIfUfHbELJ41KvILR6wnfuLvXETRLs1P1" },
-    { id: 3, nombre: "Pulsera Sol de Oro", precio: 900.00, cantidad: 2, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuAme2eB6cgTCrO3kSH20yYbyfHmZ-WSZZt8KfswOrNwAdU1X-bCVYJa_ArU8iyirqmzsksdarsHBR9AjXYcAWFi64TtKeJ_yxX8RQdR9e9AWSGC0AmYC0q3ZIgOi7oCln_dJnXZ59wNpXO344UcnlYSVyBFyd5lHQ53YhLaw9j7AtZGRoFkXf_PrcnYdiwV_KymZVEfjYyzlzAp-bQUnFyQvi_e5qYcAT8taHZenm3nza0OzegYcOW-o256JAM9ORjNVQD70i4jvrfk" }
+    { id: 1, nombre: "Collar de Perlas del Mar", precio: 1250.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuBM20vbb5tsVpr1zeYw1gS5Nb4DGuJnn2fKTVGtqZ9rCUMwkT_j9IKgYhaX-UHLi9u6ALjZVUCA4gNR47cLRei7X_8o0MoQo4K1LUySWnes6_tu4nWGD8I8YbOL4pglcAiozuMgO5SxW7xaDDfGK4R4HeWypvsKI8Y5KjhzGmoTHQIPGc-fVQosYI-YgPhbaENNAKmNy8mlZrtzy8spg1M7RA_k2aCcmGXL84LuF4ggeThAh0u5E14Vkvz3wAjIkKC0_YRVofjHqhnY " },
+    { id: 2, nombre: "Aretes de Filigrana de Plata", precio: 850.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuApFCn0cGnypwWODmsi_4eoTeEAMOPjb8Yz8nyDmKQWdk3Kiq-cPdGy_oBVy2bMMnJzSXhbiQettlRQSgJ7wO-UoDJEPKZqVmVYDvCw44rbsn_9uSvYGEFW2qsRbn4TshX9GNnH0JBDRx1wmRX-uh1tHEArFkq5VaA3zf1qXI61mzFMMEIUHwAH6HRLPBc9YRbM-MU_MyhozaDxGr_oUc99Yhr8jZM4jsp0A7bei1fUammlIfUfHbELJ41KvILR6wnfuLvXETRLs1P1 " },
+    { id: 3, nombre: "Pulsera Sol de Oro", precio: 900.00, cantidad: 2, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuAme2eB6cgTCrO3kSH20yYbyfHmZ-WSZZt8KfswOrNwAdU1X-bCVYJa_ArU8iyirqmzsksdarsHBR9AjXYcAWFi64TtKeJ_yxX8RQdR9e9AWSGC0AmYC0q3ZIgOi7oCln_dJnXZ59wNpXO344UcnlYSVyBFyd5lHQ53YhLaw9j7AtZGRoFkXf_PrcnYdiwV_KymZVEfjYyzlzAp-bQUnFyQvi_e5qYcAT8taHZenm3nza0OzegYcOW-o256JAM9ORjNVQD70i4jvrfk " }
 ];
 
-// Función para formatear moneda
 function formatearMoneda(valor) {
     return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(valor);
 }
 
-// Función para calcular el total del carrito
 function calcularTotal() {
     let subtotal = 0;
     for (let item of carrito) {
         subtotal += item.precio * item.cantidad;
     }
-    // En este ejemplo, el envío es gratis
     const envio = 0;
     const total = subtotal + envio;
 
-    // Actualizar el DOM
     document.querySelector('.summary-row.total span:last-child').textContent = formatearMoneda(total);
     document.querySelector('.summary-row:first-child span:last-child').textContent = formatearMoneda(subtotal);
     return total;
 }
 
-// Función para renderizar los items del carrito en el DOM
 function renderizarCarrito() {
     const contenedorItems = document.querySelector('.cart-items');
-    contenedorItems.innerHTML = ''; // Limpiar contenido previo
+    contenedorItems.innerHTML = '';
 
     for (let item of carrito) {
         const itemElement = document.createElement('div');
@@ -57,13 +50,10 @@ function renderizarCarrito() {
         contenedorItems.appendChild(itemElement);
     }
 
-    // Volver a asignar los eventos después de renderizar
     asignarEventos();
 }
 
-// Función para asignar los eventos de los botones
 function asignarEventos() {
-    // Eventos para botones de cantidad
     document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(e.target.dataset.id);
@@ -88,7 +78,6 @@ function asignarEventos() {
         });
     });
 
-    // Eventos para botones de eliminar
     document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(e.target.closest('.remove-btn').dataset.id);
@@ -99,7 +88,6 @@ function asignarEventos() {
     });
 }
 
-// Función para actualizar un solo item en el DOM
 function actualizarItemEnDOM(id) {
     const item = carrito.find(i => i.id === id);
     if (item) {
@@ -108,7 +96,6 @@ function actualizarItemEnDOM(id) {
     }
 }
 
-// Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
     renderizarCarrito();
     calcularTotal();
