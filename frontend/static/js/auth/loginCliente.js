@@ -34,24 +34,24 @@ document.getElementById('register-form').addEventListener('submit', async (event
   const formData = new FormData(event.target);
   const nombre = formData.get('nombre');
   const email = formData.get('email');
-  const password = formData.get('password');
+  const contrasena = formData.get('contrasena');
 
   try {
-    const response = await fetch('/usuario/registro', {
+    const response = await fetch('/clientes/registrar', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded', // Opcional, pero bueno especificarlo
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+      body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
     });
 
+
     if (response.ok) {
-      // Si la respuesta es exitosa (status 201), redirige a principal.html
-      window.location.href = '/principal'; // Ajusta la URL si principal.html está en otra ruta
+      // Si la respuesta es exitosa (status 201), redirige a login.html
+      window.location.href = '/ingresar';
     } else {
       // Manejar errores (opcional)
       console.error('Error en el registro:', response.status);
-      // Puedes mostrar un mensaje de error al usuario aquí
     }
   } catch (error) {
     console.error('Error de red:', error);

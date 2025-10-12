@@ -7,7 +7,7 @@ from ..models.cliente import Cliente
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
-templates = Jinja2Templates(directory="frontend/templates/auth")
+templates = Jinja2Templates(directory="frontend/templates")
 
 # Ruta para mostrar si ya hay una sesion activa
 @router.get("/login", response_class=HTMLResponse)
@@ -18,7 +18,7 @@ def mostrarLogin(request: Request):
     if request.session.get("clienteID"):
         return RedirectResponse(url="/", status_code=303)
     
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("auth/login.html", {"request": request})
 
 
 # Ruta del login

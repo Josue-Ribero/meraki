@@ -1,10 +1,10 @@
 from sqlmodel import SQLModel, Field, Relationship
 
 class DireccionEnvioBase(SQLModel):
-    nombre: str = Field(default=None)
-    calle: str = Field(default=None)
-    localidad: str = Field(default=None)
-    codigoPostal: str = Field(default=None)
+    nombre: str = Field()
+    calle: str = Field()
+    localidad: str = Field()
+    codigoPostal: str = Field()
     esPredeterminada: bool = Field(default=False)
 
     # Metodo direccion

@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 
 class CategoriaBase(SQLModel):
-    nombre: str = Field(default=None)
+    nombre: str = Field()
     descripcion: str | None = Field(default=None)
 
     def contarProductos(self) -> int:

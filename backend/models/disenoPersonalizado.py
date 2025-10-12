@@ -5,7 +5,7 @@ from ..utils.enums import EstadoDiseno
 import json
 
 class DisenoPersonalizadoBase(SQLModel):
-    imagenURL: str = Field(default=None)
+    imagenURL: str | None = Field(default=None)
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoDiseno = Field(default=EstadoDiseno.EN_PRODUCCION)
     data: dict | None = Field(default=None, sa_column=Column(JSON))
@@ -13,7 +13,7 @@ class DisenoPersonalizadoBase(SQLModel):
 
     # Métodos
     def obtenerImagen(self) -> str:
-        return self.imagenURL
+        return self.imagenURL or ""
 
     def calcularPrecio(self) -> int:
         return self.precioEstimado
@@ -22,7 +22,7 @@ class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="disenos")
-    clienteID: int | None = Field(foreign_key="cliente.id")
+    clienteID: int = Field(foreign_key="cliente.id")
     cliente: "Cliente" = Relationship(back_populates="disenos")
     detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="disenoPersonalizado")
     detallesPedido: list["DetallePedido"] = Relationship(back_populates="disenoPersonalizado")

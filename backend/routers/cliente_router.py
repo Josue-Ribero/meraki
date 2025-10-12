@@ -21,11 +21,8 @@ def registrarClienteForm(
     if clienteDB:
         return RedirectResponse(url="/registrar?error=email_existente", status_code=303)
 
-    # Encriptar la contraseña
-    contrasenaEncriptada = contrasenaContext.hash(contrasena)
-
-    # Crear el nuevo cliente
-    nuevoCliente = Cliente(nombre=nombre, email=email, contrasenaHash=contrasenaEncriptada)
+    # Crear el nuevo cliente con la contraseña encriptada
+    nuevoCliente = Cliente(nombre=nombre, email=email, contrasenaHash=contrasenaContext.hash(contrasena))
     session.add(nuevoCliente)
     session.commit()
     session.refresh(nuevoCliente)
@@ -35,24 +32,6 @@ def registrarClienteForm(
 
     # Redirigir a la página principal o perfil del cliente
     return RedirectResponse(url="/personal", status_code=303)
-
-"""@router.post("/registrar", response_model=Cliente, status_code=201)
-def registrarCliente(nuevoCliente: ClienteCreate, session: SessionDep):
-    # Verificar si ya existe el email
-    clienteDB = session.exec(select(Cliente).where(Cliente.email == nuevoCliente.email)).first()
-    if clienteDB:
-        raise HTTPException(400, "El email ya está registrado")
-    
-    # Encriptar la contrasena
-    contrasenaEncriptada = contrasenaContext.hash(nuevoCliente.contrasenaHash)
-
-    # Guardar el cliente en la DB
-    cliente = Cliente.model_validate(nuevoCliente)
-    cliente.contrasenaHash = contrasenaEncriptada
-    session.add(cliente)
-    session.commit()
-    session.refresh(cliente)
-    return RedirectResponse(url="/", status_code=303)"""
 
 
 # CREATE - Cerrar sesion

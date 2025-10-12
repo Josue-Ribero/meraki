@@ -2,9 +2,9 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
 
 class AdministradorBase(SQLModel):
-    nombre: str = Field(default=None)
-    email: str = Field(default=None, unique=True)
-    contrasenaHash: str = Field(default=None)
+    nombre: str = Field()
+    email: str = Field(unique=True)
+    contrasenaHash: str = Field()
     fechaCreacion: dt = Field(default_factory=dt.now)
 
     # Metodos administrador

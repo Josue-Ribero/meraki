@@ -1,11 +1,11 @@
 from sqlmodel import SQLModel, Field, Relationship
 
 class ProductoBase(SQLModel):
-    nombre: str = Field(default=None)
+    nombre: str = Field()
     descripcion: str | None = Field(default=None)
-    precio: int = Field(default=0)
+    precio: int = Field()
     stock: int = Field(default=0)
-    imagenURL: str = Field(default=None)
+    imagenURL: str | None = Field(default=None)
     esPersonalizado: bool = Field(default=False)
     opcionesColor: str | None = Field(default=None)
     opcionesTamano: str | None = Field(default=None)
@@ -30,11 +30,11 @@ class Producto(ProductoBase, table=True):
 
 class ProductoCreate(SQLModel):
     nombre: str
-    descripcion: str
+    descripcion: str | None = None
     precio: int
-    stock: int
-    imagenURL: str
-    esPersonalizado: bool
+    stock: int = 0
+    imagenURL: str | None = None
+    esPersonalizado: bool = False
     opcionesColor: str | None = None
     opcionesTamano: str | None = None
     activo: bool = True

@@ -16,9 +16,9 @@ class DetalleCarrito(DetalleCarritoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     carritoID: int = Field(foreign_key="carrito.id")
     carrito: "Carrito" = Relationship(back_populates="detalles")
-    productoID: int = Field(foreign_key="producto.id")
+    productoID: int | None = Field(foreign_key="producto.id")
     producto: "Producto" = Relationship(back_populates="detallesCarrito")
-    disenoID: int = Field(default=None, foreign_key="disenopersonalizado.id")
+    disenoID: int | None = Field(default=None, foreign_key="disenopersonalizado.id")
     disenoPersonalizado: Optional["DisenoPersonalizado"] = Relationship(back_populates="detallesCarrito")
 
 class DetalleCarritoCreate(DetalleCarritoBase):

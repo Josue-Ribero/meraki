@@ -12,7 +12,7 @@ class TransaccionPuntos(TransaccionPuntosBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     clienteID: int = Field(foreign_key="cliente.id")
     cliente: "Cliente" = Relationship(back_populates="transacciones")
-    pedidoID: int = Field(foreign_key="pedido.id")
+    pedidoID: int | None = Field(default=None, foreign_key="pedido.id")
     pedido: Optional["Pedido"] = Relationship(back_populates="transacciones")
 
 class TransaccionPuntosCreate(TransaccionPuntosBase):

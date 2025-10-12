@@ -1,13 +1,12 @@
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
-from fastapi import Form
 from typing import Optional
 
 class ClienteBase(SQLModel):
-    nombre: str = Field(default=None)
-    email: str = Field(default=None, unique=True)
-    contrasenaHash: str = Field(default=None)
-    telefono: str = Field(default=None)
+    nombre: str = Field()
+    email: str = Field(unique=True)
+    contrasenaHash: str = Field()
+    telefono: str | None = Field(default=None)
     puntos: int = Field(default=0)
     activo: bool = Field(default=True)
     fechaCreacion: dt = Field(default_factory=dt.now)
@@ -37,9 +36,9 @@ class ClienteCreate(ClienteBase):
     pass
 
 class ClienteUpdate(SQLModel):
-    nombre: Optional[str] | None = None
-    telefono: Optional[str] | None = None
-    contrasenaHash: Optional[str] | None = None
+    nombre: Optional[str] = None
+    telefono: Optional[str] = None
+    contrasenaHash: Optional[str] = None
 
 class ClienteDelete(ClienteBase):
     pass

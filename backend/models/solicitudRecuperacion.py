@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import secrets
 
 class SolicitudRecuperacionBase(SQLModel):
-    token: str | None = Field(default=lambda: secrets.token_urlsafe(3))
+    token: str = Field(default_factory=lambda: secrets.token_urlsafe(3))
     expiracion: datetime = Field(default_factory=lambda: datetime.now() + timedelta(minutes=5))
     usado: bool = Field(default=False)
 
@@ -18,7 +18,7 @@ class SolicitudRecuperacionBase(SQLModel):
 
 class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    clienteID: int | None = Field(foreign_key="cliente.id")
+    clienteID: int = Field(foreign_key="cliente.id")
     cliente: "Cliente" = Relationship(back_populates="solicitudesRecuperacion")
 
 class SolicitudRecuperacionCreate(SolicitudRecuperacionBase):
