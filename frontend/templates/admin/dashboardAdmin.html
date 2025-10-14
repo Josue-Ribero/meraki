@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meraki - Panel de control</title>
+  <title>Panel de control</title>
 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
@@ -19,7 +19,6 @@
 <body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
   <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
     <div class="flex h-full w-full flex-1">
-      <!-- Barra lateral -->
       <aside class="flex w-64 flex-col bg-[#363636] text-white">
         <div class="flex h-full flex-col justify-between p-4">
           <div class="flex flex-col gap-6">
@@ -54,14 +53,12 @@
         </div>
       </aside>
 
-      <!-- Contenido principal -->
       <main class="flex-1 bg-[#fdfbf3]">
         <div class="p-6 md:p-8">
           <header class="mb-8">
             <h1 class="text-4xl font-bold text-[#363636]">Panel de control</h1>
           </header>
 
-          <!-- Tarjetas -->
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div class="card">
               <p>Ventas totales</p>
@@ -89,7 +86,6 @@
             </div>
           </div>
 
-          <!-- Gráfica y tabla -->
           <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div class="lg:col-span-2">
               <div class="panel">
@@ -131,7 +127,6 @@
             </div>
           </div>
 
-          <!-- Tabla pedidos -->
           <div class="mt-8 panel">
             <h2>Pedidos recientes</h2>
             <table class="w-full text-left">
