@@ -8,29 +8,30 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 
 # CREATE - Crear producto
 @router.post("/crear", response_model=Producto, status_code=201)
-def crearProducto(nuevoProducto: ProductoCreate, session: SessionDep, admin = Depends(adminActual)):
-    producto = Producto.model_validate(nuevoProducto)
+def crearProducto(nuevoProducto: ProductoCreate, session: SessionDep, admin=Depends(adminActual)):
+    producto = Producto.model_validate(nuevoProducto, update={"administradorID": admin.id})
     session.add(producto)
     session.commit()
     session.refresh(producto)
     return producto
 
-# READ - Lista de productos y por ID
+# READ - Lista de productos
 @router.get("/", response_model=list[Producto])
 def listaProductos(session: SessionDep):
-    productos = session.exec(select(Producto)).all()
+    productos = session.exec(select(Producto).where(Producto.activo == True)).all()
     return productos
 
+# # READ - Producto por ID
 @router.get("/{productoID}", response_model=Producto)
 def productoPorID(productoID: int, session: SessionDep):
-    producto = session.get(Producto, productoID)
-    if not producto:
+    productoDB = session.exec(select(Producto).where(Producto.id == productoID, Producto.activo == True)).first()
+    if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
-    return producto
+    return productoDB
 
 # UPDATE - Actualizar producto
 @router.patch("/{productoID}", response_model=Producto)
-def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: SessionDep, admin = Depends(adminActual)):
+def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: SessionDep, _=Depends(adminActual)):
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
@@ -40,11 +41,17 @@ def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: S
     session.refresh(productoActualizado)
     return productoActualizado
 
-# DELETE - Eliminar producto por ID
-@router.delete("/{productoID}", status_code=204)
-def eliminarProducto(productoID: int, session: SessionDep, admin = Depends(adminActual)):
-    producto = session.get(Producto, productoID)
-    if not producto:
+# DELETE - Deshabilitar el producto
+@router.delete("/{productoID}/deshabilitar", status_code=204)
+def deshabilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+    # Verificar si el producto existe
+    productoDB = session.get(Producto, productoID)
+    if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
-    session.delete(producto)
+    
+    # Deshabilitar el producto
+    productoDB.activo = False
+
+    # Guardar el cambio en la DB
+    session.add(productoDB)
     session.commit()

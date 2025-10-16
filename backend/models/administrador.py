@@ -41,15 +41,8 @@ class Administrador(AdministradorBase, table=True):
     pedidos: list["Pedido"] = Relationship(back_populates="administrador")
     pagos: list["Pago"] = Relationship(back_populates="administrador")
 
-class AdministradorCreate(AdministradorBase):
-    pass
-
 class AdministradorUpdate(SQLModel):
     nombre: str | None = None
-    pass
-
-class AdministradorDelete(AdministradorBase):
-    pass
 
 # Importaciones diferidas
 from .categoria import Categoria

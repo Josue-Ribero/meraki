@@ -1,6 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
-
+from typing import Optional, TYPE_CHECKING
 class DetalleCarritoBase(SQLModel):
     cantidad: int = Field(default=0)
     precioUnidad: int = Field(default=0)
@@ -22,8 +21,9 @@ class DetalleCarrito(DetalleCarritoBase, table=True):
     disenoPersonalizado: Optional["DisenoPersonalizado"] = Relationship(back_populates="detallesCarrito")
 
 class DetalleCarritoCreate(DetalleCarritoBase):
-    pass
-
+    productoID: int | None = None
+    disenoID: int | None = None
+    cantidad: int = 1
 class DetalleCarritoUpdate(DetalleCarritoBase):
     pass
 

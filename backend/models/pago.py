@@ -7,6 +7,7 @@ class PagoBase(SQLModel):
     metodo: MetodoPago = Field(default=MetodoPago.NEQUI)
     fechaPago: dt = Field(default_factory=dt.now)
     confirmado: bool = Field(default=False)
+    clienteEliminado: bool = Field(default=False)
 
     # Método
     def confirmarPago(self):
@@ -20,12 +21,9 @@ class Pago(PagoBase, table=True):
     pedido: Optional["Pedido"] = Relationship(back_populates="pagos")
 
 class PagoCreate(PagoBase):
-    pass
+    pedidoID: int
 
 class PagoUpdate(PagoBase):
-    pass
-
-class PagoDelete(PagoBase):
     pass
 
 # Importaciones diferidas

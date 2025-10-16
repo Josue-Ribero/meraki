@@ -1,6 +1,8 @@
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, Request
+from sqlmodel import select
 from ..db.db import SessionDep
-from ..models import Administrador, Cliente
+from ..models.cliente import Cliente
+from ..models.administrador import Administrador
 
 # Dependencia para saber que cliente esta en la sesion
 def clienteActual(peticion: Request, session: SessionDep):
@@ -12,10 +14,12 @@ def clienteActual(peticion: Request, session: SessionDep):
         raise HTTPException(401, "Debes iniciar sesión")
     
     # Caso si no existe el cliente
-    cliente = session.get(Cliente, clienteID)
-    if not cliente:
+    clienteDB = session.get(Cliente, clienteID)
+    if not clienteDB:
         raise HTTPException(404, "Cliente no encontrado")
-    return cliente
+    return clienteDB
+
+
 
 # Dependencia para saber que administrador esta en la sesion
 def adminActual(peticion: Request, session: SessionDep):
@@ -27,7 +31,7 @@ def adminActual(peticion: Request, session: SessionDep):
         raise HTTPException(401, "Acceso restringido a administradores")
     
     # Caso si no existe el administrador
-    admin = session.get(Administrador, administradorID)
-    if not admin:
+    adminDB = session.get(Administrador, administradorID)
+    if not adminDB:
         raise HTTPException(404, "Administrador no encontrado")
-    return admin
+    return adminDB

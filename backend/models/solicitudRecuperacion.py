@@ -27,8 +27,5 @@ class SolicitudRecuperacionCreate(SolicitudRecuperacionBase):
 class SolicitudRecuperacionUpdate(SQLModel):
     usado: bool
 
-class SolicitudRecuperacionDelete(SolicitudRecuperacionBase):
-    pass
-
 # Importaciones diferidas
 from .cliente import Cliente

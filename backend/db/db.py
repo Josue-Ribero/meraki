@@ -4,11 +4,23 @@ from typing import Annotated
 from datetime import datetime as dt
 from passlib.context import CryptContext
 from ..models.administrador import Administrador
+from dotenv import load_dotenv
+import os
 
-# Conexion del motor a la DB
-db_name = "meraki.sqlite3"
-db_url = f"sqlite:///{db_name}"
-engine = create_engine(db_url, echo=True)
+load_dotenv() # Cargar el archivo .env
+
+# Conexion a la DB
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+
+# Url de la base de datos
+db_url = f"postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+# Motor de DB
+engine = create_engine(db_url, echo=True, connect_args={"client_encoding": "utf8"})
 
 # Hash de contrasena
 contrasenaContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -29,6 +41,7 @@ def crearAdminPredeterminado():
         adminDB = session.exec(select(Administrador)).first()
         if not adminDB:
             admin = Administrador(
+                id=1,
                 nombre="Josue",
                 email="josueribero95@gmail.com",
                 contrasenaHash=hashearContrasena("josue123"),

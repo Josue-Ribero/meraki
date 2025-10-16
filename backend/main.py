@@ -79,10 +79,14 @@ def paginaAbout(request: Request):
 
 @app.get("/wishlist")
 def paginaWishlist(request: Request):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("wishlist/wishlist.html", {"request": request})
 
 @app.get("/carrito")
 def paginaCarrito(request: Request):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("carrito/carrito.html", {"request": request})
 
 @app.get("/personal")
@@ -95,55 +99,9 @@ def paginaCliente(request: Request):
 def recuperacionContrasena(request: Request):
     return templates.TemplateResponse("contrasena/recuperacion.html", {"request": request})
 
-@app.get("/token-recuperacion")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("contrasena/token.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
 # Administrador
 @app.get("/dashboard")
-def paginaCarrito(request: Request):
+def paginaDashboard(request: Request):
+    if not request.session.get("administradorID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/dashboardAdmin.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})
-
-@app.get("/carrito")
-def paginaCarrito(request: Request):
-    return templates.TemplateResponse("carrito/carrito.html", {"request": request})

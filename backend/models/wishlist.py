@@ -13,12 +13,6 @@ class Wishlist(WishlistBase, table=True):
 class WishlistCreate(WishlistBase):
     pass
 
-class WishlistUpdate(WishlistBase):
-    pass
-
-class WishlistDelete(WishlistBase):
-    pass
-
 # Importaciones diferidas
 from .cliente import Cliente
 from .wishlistitem import WishlistItem

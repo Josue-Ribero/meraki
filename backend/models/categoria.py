@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field, Relationship
 class CategoriaBase(SQLModel):
     nombre: str = Field()
     descripcion: str | None = Field(default=None)
+    activo: bool = Field(default=True)
 
     def contarProductos(self) -> int:
         return len(self.productos) if hasattr(self, "productos") else 0

@@ -13,7 +13,8 @@ class WishlistItem(WishlistItemBase, table=True):
     producto: "Producto" = Relationship(back_populates="wishlistItems")
 
 class WishlistItemCreate(WishlistItemBase):
-    pass
+    wishlistID: int
+    productoID: int
 
 class WishlistItemUpdate(WishlistItemBase):
     pass

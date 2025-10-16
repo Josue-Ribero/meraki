@@ -32,9 +32,6 @@ class Cliente(ClienteBase, table=True):
     wishlist: "Wishlist" = Relationship(back_populates="cliente")
     solicitudesRecuperacion: list["SolicitudRecuperacion"] = Relationship(back_populates="cliente")
 
-class ClienteCreate(ClienteBase):
-    pass
-
 class ClienteUpdate(SQLModel):
     nombre: Optional[str] = None
     telefono: Optional[str] = None
@@ -42,6 +39,14 @@ class ClienteUpdate(SQLModel):
 
 class ClienteDelete(ClienteBase):
     pass
+
+# Tabla para eliminar los clientes
+class ClienteHistorico(SQLModel, table=True):
+    id: int = Field(primary_key=True)
+    nombre: str
+    email: str
+    telefono: str | None
+    fechaEliminacion: dt = Field(default_factory=dt.now)
 
 # Importaciones diferidas
 from .direccionEnvio import DireccionEnvio

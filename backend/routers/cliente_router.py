@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException, Form, Request
+from fastapi import APIRouter, HTTPException, Form, Request, Depends
 from sqlmodel import select
-from ..models.cliente import Cliente, ClienteCreate, ClienteUpdate
+from ..auth.auth import adminActual
+from ..models.cliente import Cliente, ClienteUpdate, ClienteHistorico
+from ..models.carrito import Carrito
+from ..models.wishlist import Wishlist
 from ..db.db import SessionDep, contrasenaContext
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
@@ -20,12 +22,24 @@ def registrarClienteForm(
     clienteDB = session.exec(select(Cliente).where(Cliente.email == email)).first()
     if clienteDB:
         return RedirectResponse(url="/registrar?error=email_existente", status_code=303)
+    
+    # Crear un objeto cliente
+    nuevoCliente = Cliente(
+        nombre=nombre,
+        email=email,
+        contrasenaHash=contrasenaContext.hash(contrasena),
+    )
 
-    # Crear el nuevo cliente con la contraseña encriptada
-    nuevoCliente = Cliente(nombre=nombre, email=email, contrasenaHash=contrasenaContext.hash(contrasena))
+    # Insertar el usuario a la DB y preparar los cambios
     session.add(nuevoCliente)
+    session.flush()
+
+    # Crear carrito y wishlist para el cliente
+    session.add(Carrito(clienteID=nuevoCliente.id))
+    session.add(Wishlist(clienteID=nuevoCliente.id))
+
+    # Guardar cambios en la DB
     session.commit()
-    session.refresh(nuevoCliente)
 
     # Guardar sesión activa
     request.session["clienteID"] = nuevoCliente.id
@@ -34,15 +48,8 @@ def registrarClienteForm(
     return RedirectResponse(url="/personal", status_code=303)
 
 
-# CREATE - Cerrar sesion
-@router.post("/cerrar-sesion")
-def cerrarSesion(request: Request):
-    request.session.pop("clienteID", None)
-    return RedirectResponse(url="/ingresar", status_code=303)
 
-
-
-# READ - Obtener lista de clientes y por ID
+# READ - Obtener lista de clientes
 @router.get("/", response_model=list[Cliente])
 def listaClientes(session: SessionDep):
     clientes = session.exec(select(Cliente)).all()
@@ -52,7 +59,7 @@ def listaClientes(session: SessionDep):
 
 # READ - Obtener un cliente (solo administrador)
 @router.get("/{clienteID}", response_model=Cliente)
-def clientePorID(clienteID: int, session: SessionDep):
+def clientePorID(clienteID: int, session: SessionDep, _=Depends(adminActual)):
     clienteDB = session.get(Cliente, clienteID)
     if not clienteDB:
         raise HTTPException(404, "Cliente no encontrado")
@@ -94,11 +101,31 @@ def actualizarCliente(clienteID: int, datosCliente: ClienteUpdate, session: Sess
 
 
 # DELETE - Eliminar cliente
-@router.delete("/{clienteID}", status_code=204)
+@router.delete("/eliminar-cuenta/{clienteID}")
 def eliminarCliente(clienteID: int, session: SessionDep):
-    clienteDB = session.get(Cliente, clienteID)
-    if not clienteDB:
+    # Verificar si el cliente existe
+    cliente = session.get(Cliente, clienteID)
+    if not cliente:
         raise HTTPException(404, "Cliente no encontrado")
 
-    session.delete(clienteDB)
+    # Copiar a histórico
+    historico = ClienteHistorico(
+        nombre=cliente.nombre,
+        email=cliente.email,
+        telefono=cliente.telefono
+    )
+    session.add(historico)
+
+    # Insertar pedidos
+    for pedido in cliente.pedidos:
+        pedido.clienteEliminado = True
+        session.add(pedido)
+
+    # Insertar pagos
+    for pago in cliente.pagos:
+        pago.clienteEliminado = True
+        session.add(pago)
+
+    # Eliminar cliente
+    session.delete(cliente)
     session.commit()

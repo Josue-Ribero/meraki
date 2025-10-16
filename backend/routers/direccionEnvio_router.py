@@ -8,10 +8,9 @@ router = APIRouter(prefix="/direcciones", tags=["Direcciones"])
 
 # CREATE - Crear una nueva direccion
 @router.post("/crear", response_model=DireccionEnvio, status_code=201)
-def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cliente = Depends(clienteActual)):
+def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cliente=Depends(clienteActual)):
     # Asignar direccion al cliente
-    direccion = DireccionEnvio(clienteID=cliente.id)
-    #direccion = DireccionEnvio.model_validate(direccionNueva)
+    direccion = DireccionEnvio.model_validate(direccionNueva, update={"clienteID": cliente.id})
     session.add(direccion)
     session.commit()
     session.refresh(direccion)

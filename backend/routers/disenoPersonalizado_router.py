@@ -8,10 +8,9 @@ router = APIRouter(prefix="/disenos", tags=["DiseñosPersonalizados"])
 
 # CREATE - Crear nuevo diseno personalizado
 @router.post("/crear", response_model=DisenoPersonalizado, status_code=201)
-def crearDiseno(disenoNuevo: DisenoPersonalizadoCreate, session: SessionDep, cliente = Depends(clienteActual)):
+def crearDiseno(disenoNuevo: DisenoPersonalizadoCreate, session: SessionDep, cliente=Depends(clienteActual)):
     # Asignar diseno al cliente
-    diseno = DisenoPersonalizado(clienteID=cliente.id)
-    # diseno = DisenoPersonalizado.model_validate(disenoNuevo)
+    diseno = DisenoPersonalizado.model_validate(disenoNuevo, update={"clienteID": cliente.id})
     session.add(diseno)
     session.commit()
     session.refresh(diseno)

@@ -8,6 +8,7 @@ class PedidoBase(SQLModel):
     total: int = Field(default=0)
     pagadoConPuntos: bool = Field(default=False)
     puntosUsados: int = Field(default=0)
+    clienteEliminado: bool = Field(default=False)
 
     # Métodos
     def calcularTotal(self) -> int:
@@ -32,7 +33,7 @@ class Pedido(PedidoBase, table=True):
     cliente: "Cliente" = Relationship(back_populates="pedidos")
     direccionEnvioID: int = Field(foreign_key="direccionenvio.id")
     direccionEnvio: "DireccionEnvio" = Relationship(back_populates="pedidos")
-    detalles: list["DetallePedido"] = Relationship(back_populates="pedido")
+    detalles: list["DetallePedido"] = Relationship(back_populates="pedido", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     pagos: list["Pago"] = Relationship(back_populates="pedido")
     transacciones: list["TransaccionPuntos"] = Relationship(back_populates="pedido")
 

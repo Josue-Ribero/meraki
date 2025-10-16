@@ -8,10 +8,9 @@ router = APIRouter(prefix="/transacciones", tags=["TransaccionesPuntos"])
 
 # CREATE - Crear una nueva transaccion de puntos
 @router.post("/crear", response_model=TransaccionPuntos, status_code=201)
-def crearTransaccion(transaccionNueva: TransaccionPuntosCreate, session: SessionDep, cliente = Depends(clienteActual)):
+def crearTransaccion(transaccionNueva: TransaccionPuntosCreate, session: SessionDep, cliente=Depends(clienteActual)):
     # Asociar transaccion al cliente
-    transaccion = TransaccionPuntos(clienteID=cliente.id)
-    #transaccion = TransaccionPuntos.model_validate(transaccionNueva)
+    transaccion = TransaccionPuntos.model_validate(transaccionNueva, update={"clienteID": cliente.id})
     session.add(transaccion)
     session.commit()
     session.refresh(transaccion)
