@@ -26,7 +26,7 @@ class Cliente(ClienteBase, table=True):
     administrador: "Administrador" = Relationship(back_populates="clientes")
     direcciones: list["DireccionEnvio"] = Relationship(back_populates="cliente")
     transacciones: list["TransaccionPuntos"] = Relationship(back_populates="cliente")
-    carrito: Optional["Carrito"] = Relationship(back_populates="cliente")
+    carrito: Optional["Carrito"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     pedidos: list["Pedido"] = Relationship(back_populates="cliente")
     disenos: list["DisenoPersonalizado"] = Relationship(back_populates="cliente")
     wishlist: "Wishlist" = Relationship(back_populates="cliente")

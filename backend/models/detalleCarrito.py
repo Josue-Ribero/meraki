@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
+from sqlalchemy import Column, ForeignKey
 class DetalleCarritoBase(SQLModel):
     cantidad: int = Field(default=0)
     precioUnidad: int = Field(default=0)
@@ -13,11 +14,11 @@ class DetalleCarritoBase(SQLModel):
 
 class DetalleCarrito(DetalleCarritoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    carritoID: int = Field(foreign_key="carrito.id")
-    carrito: "Carrito" = Relationship(back_populates="detalles")
-    productoID: int | None = Field(foreign_key="producto.id")
+    carritoID: int = Field(sa_column=Column(ForeignKey("carrito.id", ondelete="CASCADE")))
+    carrito: "Carrito" = Relationship(back_populates="detalles", sa_relationship_kwargs={"cascade": "all, delete"})
+    productoID: int | None = Field(sa_column=Column(ForeignKey("producto.id", ondelete="CASCADE")))
     producto: "Producto" = Relationship(back_populates="detallesCarrito")
-    disenoID: int | None = Field(default=None, foreign_key="disenopersonalizado.id")
+    disenoID: int | None = Field(default=None, sa_column=Column(ForeignKey("disenopersonalizado.id", ondelete="CASCADE")))
     disenoPersonalizado: Optional["DisenoPersonalizado"] = Relationship(back_populates="detallesCarrito")
 
 class DetalleCarritoCreate(DetalleCarritoBase):

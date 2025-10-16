@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
+from sqlalchemy import Column, ForeignKey
 from ..utils.enums import EstadoCarrito
 class CarritoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
@@ -14,7 +15,7 @@ class CarritoBase(SQLModel):
 
 class Carrito(CarritoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: Optional["Cliente"] = Relationship(back_populates="carrito")
     detalles: list["DetalleCarrito"] = Relationship(back_populates="carrito", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 

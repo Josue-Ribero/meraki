@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
 from ..utils.enums import EstadoPedido
+from sqlalchemy import Column, ForeignKey
 
 class PedidoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
@@ -27,11 +28,11 @@ class PedidoBase(SQLModel):
 
 class Pedido(PedidoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    administradorID: int | None = Field(default=None, foreign_key="administrador.id")
+    administradorID: int | None = Field(default=None, sa_column=Column(ForeignKey("administrador.id", ondelete="SET NULL")))
     administrador: "Administrador" = Relationship(back_populates="pedidos")
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="pedidos")
-    direccionEnvioID: int = Field(foreign_key="direccionenvio.id")
+    direccionEnvioID: int = Field(sa_column=Column(ForeignKey("direccionenvio.id", ondelete="SET NULL")))
     direccionEnvio: "DireccionEnvio" = Relationship(back_populates="pedidos")
     detalles: list["DetallePedido"] = Relationship(back_populates="pedido", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     pagos: list["Pago"] = Relationship(back_populates="pedido")

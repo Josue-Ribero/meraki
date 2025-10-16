@@ -116,15 +116,34 @@ def eliminarCliente(clienteID: int, session: SessionDep):
     )
     session.add(historico)
 
+    # Eliminar direcciones del cliente
+    for direccion in cliente.direcciones:
+        session.delete(direccion)
+
+    # Eliminar carrito y sus detalles
+    if cliente.carrito:
+        # Primero eliminar detalles del carrito
+        for detalle in cliente.carrito.detalles:
+            session.delete(detalle)
+        session.delete(cliente.carrito)
+        session.flush() # Fuerza a borrar antes de eliminar el cliente
+    
+    # Eliminar wishlist y sus items
+    if cliente.wishlist:
+        for item in cliente.wishlist.items:
+            session.delete(item)
+        session.delete(cliente.wishlist)
+
     # Insertar pedidos
     for pedido in cliente.pedidos:
+        # Insertar pagos
+        for pago in pedido.pagos:
+            pago.clienteEliminado = True
+            session.add(pago)
+        
+        # Marcar el pedido con cliente eliminado
         pedido.clienteEliminado = True
         session.add(pedido)
-
-    # Insertar pagos
-    for pago in cliente.pagos:
-        pago.clienteEliminado = True
-        session.add(pago)
 
     # Eliminar cliente
     session.delete(cliente)
