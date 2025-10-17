@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from .db.db import createAllTables
@@ -32,6 +31,7 @@ from .routers import (
     pago_router,
     pedido_router,
     producto_router,
+    reportes_router,
     solicitudRecuperacion_router,
     transaccionPuntos_router,
     wishlist_router,
@@ -39,22 +39,29 @@ from .routers import (
 )
 
 # Inclusion de los routers en la app
-app.include_router(administrador_router.router)
-app.include_router(auth_router.router)
-app.include_router(carrito_router.router)
-app.include_router(categoria_router.router)
-app.include_router(cliente_router.router)
-app.include_router(detalleCarrito_router.router)
-app.include_router(detallePedido_router.router)
-app.include_router(direccionEnvio_router.router)
-app.include_router(disenoPersonalizado_router.router)
-app.include_router(pago_router.router)
-app.include_router(pedido_router.router)
-app.include_router(producto_router.router)
-app.include_router(solicitudRecuperacion_router.router)
-app.include_router(transaccionPuntos_router.router)
-app.include_router(wishlist_router.router)
-app.include_router(wishlistitem_router.router)
+routers = [
+    administrador_router.router,
+    auth_router.router,
+    carrito_router.router,
+    categoria_router.router,
+    cliente_router.router,
+    detalleCarrito_router.router,
+    detallePedido_router.router,
+    direccionEnvio_router.router,
+    disenoPersonalizado_router.router,
+    pago_router.router,
+    pedido_router.router,
+    producto_router.router,
+    reportes_router.router,
+    solicitudRecuperacion_router.router,
+    transaccionPuntos_router.router,
+    wishlist_router.router,
+    wishlistitem_router.router
+]
+
+for router in routers:
+    app.include_router(router)
+
 
 # Rutas Front-end
 

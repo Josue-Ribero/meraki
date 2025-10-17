@@ -26,11 +26,15 @@ def misDisenos(session: SessionDep, cliente = Depends(clienteActual)):
 
 # UPDATE - Cambiar estado o precio
 @router.patch("/{disenoID}", response_model=DisenoPersonalizado)
-def actualizarDiseno(disenoID: int, data: DisenoPersonalizadoUpdate, session: SessionDep):
+def actualizarDiseno(disenoID: int, disenoData: DisenoPersonalizadoUpdate, session: SessionDep):
     disenoDB = session.get(DisenoPersonalizado, disenoID)
     if not disenoDB:
         raise HTTPException(404, "Diseño no encontrado")
-    disenoDB.sqlmodel_update(data)
+    
+    # Excluir los campos vacios
+    disenoUpdate = disenoDB.model_dump(exclude_none=True)
+    
+    disenoDB.sqlmodel_update(disenoUpdate)
     session.add(disenoDB)
     session.commit()
     session.refresh(disenoDB)

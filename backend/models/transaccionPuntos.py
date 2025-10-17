@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+from sqlalchemy import ForeignKey
 from datetime import datetime as dt
 from typing import Optional
 from ..utils.enums import TipoTransaccion
@@ -10,7 +11,7 @@ class TransaccionPuntosBase(SQLModel):
 
 class TransaccionPuntos(TransaccionPuntosBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="transacciones")
     pedidoID: int | None = Field(default=None, foreign_key="pedido.id")
     pedido: Optional["Pedido"] = Relationship(back_populates="transacciones")

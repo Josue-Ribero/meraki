@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+from sqlalchemy import ForeignKey
 from datetime import datetime as dt
 
 class WishlistBase(SQLModel):
@@ -6,9 +7,9 @@ class WishlistBase(SQLModel):
 
 class Wishlist(WishlistBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="wishlist")
-    items: list["WishlistItem"] = Relationship(back_populates="wishlist")
+    items: list["WishlistItem"] = Relationship(back_populates="wishlist", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 class WishlistCreate(WishlistBase):
     pass

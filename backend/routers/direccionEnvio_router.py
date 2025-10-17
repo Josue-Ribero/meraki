@@ -18,7 +18,7 @@ def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cl
 
 # READ - Obtener las direcciones del cliente
 @router.get("/mis-direcciones", response_model=list[DireccionEnvio])
-def misDirecciones(session: SessionDep, cliente = Depends(clienteActual)):
+def misDirecciones(session: SessionDep, cliente=Depends(clienteActual)):
     direccioesDB = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).all()
     if not direccioesDB:
         raise HTTPException(404, "No tienes direcciones registradas")
@@ -26,11 +26,15 @@ def misDirecciones(session: SessionDep, cliente = Depends(clienteActual)):
 
 # UPDATE - Actualizar direccion para un usuario por ID
 @router.patch("/{direccionID}", response_model=DireccionEnvio)
-def actualizarDireccion(direccionID: int, data: DireccionEnvioUpdate, session: SessionDep):
+def actualizarDireccion(direccionID: int, direccionData: DireccionEnvioUpdate, session: SessionDep):
     direccionDB = session.get(DireccionEnvio, direccionID)
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
-    direccionDB.sqlmodel_update(data)
+    
+    # Excluir los campos vacios
+    direccionUpdate = direccionDB.model_dump(exclude_unset=True)
+
+    direccionDB.sqlmodel_update(direccionUpdate)
     session.add(direccionDB)
     session.commit()
     session.refresh(direccionDB)

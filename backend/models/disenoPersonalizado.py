@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+from sqlalchemy import ForeignKey
 from sqlalchemy import Column, JSON
 from datetime import datetime as dt
 from ..utils.enums import EstadoDiseno
@@ -22,7 +23,7 @@ class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="disenos")
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="disenos")
     detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="disenoPersonalizado")
     detallesPedido: list["DetallePedido"] = Relationship(back_populates="disenoPersonalizado")

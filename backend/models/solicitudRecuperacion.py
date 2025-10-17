@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column
+from sqlalchemy import ForeignKey
 from datetime import datetime, timedelta
 import secrets
 
@@ -18,7 +19,7 @@ class SolicitudRecuperacionBase(SQLModel):
 
 class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    clienteID: int = Field(foreign_key="cliente.id")
+    clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="solicitudesRecuperacion")
 
 class SolicitudRecuperacionCreate(SolicitudRecuperacionBase):

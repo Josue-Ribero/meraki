@@ -8,13 +8,12 @@ class WishlistItemBase(SQLModel):
 class WishlistItem(WishlistItemBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     wishlistID: int = Field(foreign_key="wishlist.id")
-    wishlist: "Wishlist" = Relationship(back_populates="items")
+    wishlist: "Wishlist" = Relationship(back_populates="items", sa_relationship_kwargs={"cascade": "all, delete"})
     productoID: int = Field(foreign_key="producto.id")
     producto: "Producto" = Relationship(back_populates="wishlistItems")
 
-class WishlistItemCreate(WishlistItemBase):
-    wishlistID: int
-    productoID: int
+class WishlistItemCreate(SQLModel):
+    productoID: Optional[int] = None
 
 class WishlistItemUpdate(WishlistItemBase):
     pass

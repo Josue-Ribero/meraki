@@ -133,7 +133,11 @@ def actualizarEstado(pedidoID: int, pedidoData: PedidoUpdate, session: SessionDe
     pedidoDB = session.get(Pedido, pedidoID)
     if not pedidoDB:
         raise HTTPException(404, "Pedido no encontrado")
-    pedidoDB.sqlmodel_update(pedidoData)
+    
+    # Excluir los campos vacios
+    pedidoUpdate = pedidoDB.model_dump(exclude_none=True)
+
+    pedidoDB.sqlmodel_update(pedidoUpdate)
     session.add(pedidoDB)
     session.commit()
     session.refresh(pedidoDB)

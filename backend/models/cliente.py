@@ -24,13 +24,13 @@ class Cliente(ClienteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="clientes")
-    direcciones: list["DireccionEnvio"] = Relationship(back_populates="cliente")
-    transacciones: list["TransaccionPuntos"] = Relationship(back_populates="cliente")
+    direcciones: list["DireccionEnvio"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    transacciones: list["TransaccionPuntos"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     carrito: Optional["Carrito"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    pedidos: list["Pedido"] = Relationship(back_populates="cliente")
-    disenos: list["DisenoPersonalizado"] = Relationship(back_populates="cliente")
-    wishlist: "Wishlist" = Relationship(back_populates="cliente")
-    solicitudesRecuperacion: list["SolicitudRecuperacion"] = Relationship(back_populates="cliente")
+    pedidos: list["Pedido"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    disenos: list["DisenoPersonalizado"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    wishlist: "Wishlist" = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    solicitudesRecuperacion: list["SolicitudRecuperacion"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 class ClienteUpdate(SQLModel):
     nombre: Optional[str] = None

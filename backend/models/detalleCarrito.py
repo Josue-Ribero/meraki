@@ -21,10 +21,10 @@ class DetalleCarrito(DetalleCarritoBase, table=True):
     disenoID: int | None = Field(default=None, sa_column=Column(ForeignKey("disenopersonalizado.id", ondelete="CASCADE")))
     disenoPersonalizado: Optional["DisenoPersonalizado"] = Relationship(back_populates="detallesCarrito")
 
-class DetalleCarritoCreate(DetalleCarritoBase):
-    productoID: int | None = None
-    disenoID: int | None = None
-    cantidad: int = 1
+class DetalleCarritoCreate(SQLModel):
+    productoID: Optional[int] = None
+    disenoID: Optional[int] = None
+    cantidad: int = Field(default=1, gt=0)
 class DetalleCarritoUpdate(DetalleCarritoBase):
     pass
 

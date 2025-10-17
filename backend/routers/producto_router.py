@@ -35,11 +35,15 @@ def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: S
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
-    productoActualizado = productoDB.sqlmodel_update(productoData)
-    session.add(productoActualizado)
+    
+    # Excluir los campos vacios
+    productoUpdate = productoDB.model_dump(exclude_none=True)
+
+    productoDB.sqlmodel_update(productoUpdate)
+    session.add(productoDB)
     session.commit()
-    session.refresh(productoActualizado)
-    return productoActualizado
+    session.refresh(productoDB)
+    return productoDB
 
 # DELETE - Deshabilitar el producto
 @router.delete("/{productoID}/deshabilitar", status_code=204)

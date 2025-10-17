@@ -5,9 +5,9 @@ from ..models.cliente import Cliente
 from ..models.administrador import Administrador
 
 # Dependencia para saber que cliente esta en la sesion
-def clienteActual(peticion: Request, session: SessionDep):
+def clienteActual(request: Request, session: SessionDep):
     # Busca el id del cliente
-    clienteID = peticion.session.get("clienteID")
+    clienteID = request.session.get("clienteID")
 
     # Si no ha iniciado sesion, se lo pide
     if not clienteID:
@@ -22,9 +22,9 @@ def clienteActual(peticion: Request, session: SessionDep):
 
 
 # Dependencia para saber que administrador esta en la sesion
-def adminActual(peticion: Request, session: SessionDep):
+def adminActual(request: Request, session: SessionDep):
     # Busca el id del cliente
-    administradorID = peticion.session.get("administradorID")
+    administradorID = request.session.get("administradorID")
 
     # Si no ha iniciado sesion, se lo pide
     if not administradorID:

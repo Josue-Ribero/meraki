@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import select
 from ..models.detalleCarrito import DetalleCarrito, DetalleCarritoCreate, DetalleCarritoUpdate
 from ..models.disenoPersonalizado import DisenoPersonalizado
+from ..models.cliente import Cliente
 from ..auth.auth import clienteActual
 from ..models.carrito import Carrito
 from ..models.producto import Producto
@@ -10,61 +11,72 @@ from ..db.db import SessionDep
 router = APIRouter(prefix="/detalleCarrito", tags=["DetalleCarrito"])
 
 # CREATE - Crear un nuevo detalle del carrito
-@router.post("/crear", status_code=201)
+@router.post("/crear", status_code=201, response_model=DetalleCarrito)
 def agregarItem(
-    nuevoDetalle: DetalleCarritoCreate, session: SessionDep, cliente=Depends(clienteActual)):
-    
+    nuevoDetalle: DetalleCarritoCreate, 
+    session: SessionDep, 
+    cliente=Depends(clienteActual)
+):
     # Verificar si el carrito existe
-    carrito = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
-    if not carrito:
-        carrito = Carrito(clienteID=cliente.id)
-        session.add(carrito)
+    carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
+    if not carritoDB:
+        carritoDB = Carrito(clienteID=cliente.id)
+        session.add(carritoDB)
         session.flush()  # para tener carrito.id
 
-    # Verificar si es el mismo producto
+    # Verificar si es producto normal o diseño personalizado
+    if nuevoDetalle.productoID:
+        productoDB = session.get(Producto, nuevoDetalle.productoID)
+        if not productoDB or not productoDB.activo:
+            raise HTTPException(404, "Producto no encontrado")
+        if nuevoDetalle.cantidad <= 0:
+            raise HTTPException(400, "La cantidad debe ser mayor que cero")
+    else:
+        productoDB = None  # para diseños personalizados
+
+    # Verificar si ya existe el detalle en el carrito
     detalle = session.exec(
         select(DetalleCarrito).where(
-            DetalleCarrito.carritoID == carrito.id,
+            DetalleCarrito.carritoID == carritoDB.id,
             DetalleCarrito.productoID == nuevoDetalle.productoID,
             DetalleCarrito.disenoID == nuevoDetalle.disenoID,
         )
     ).first()
 
-    # Si existe el detalle
+    # Si ya existe, actualizar cantidad y subtotal
     if detalle:
-        detalle.cantidad += nuevoDetalle.cantidad
-        detalle.subtotal = detalle.cantidad * detalle.precioUnidad
+        nuevaCantidad = detalle.cantidad + nuevoDetalle.cantidad
+        if productoDB and nuevaCantidad > productoDB.stock:
+            raise HTTPException(
+                400, 
+                f"No puedes agregar {nuevoDetalle.cantidad} más. Solo quedan {productoDB.stock - detalle.cantidad} unidades disponibles."
+            )
+        detalle.cantidad = nuevaCantidad
+        detalle.subtotal = detalle.cantidad * (productoDB.precio if productoDB else detalle.precioUnidad)
+        session.add(detalle)
     else:
-        # Obtener precio del producto
-        if nuevoDetalle.productoID:
-            productoDB = session.get(Producto, nuevoDetalle.productoID)
-            if not productoDB or not productoDB.activo or productoDB.stock < nuevoDetalle.cantidad:
-                raise HTTPException(400, "Producto sin stock")
-            
-            # Tomar el precio
-            precio = productoDB.precio
-
-        # Diseño personalizado 
-        else:
-            diseno = session.get(DisenoPersonalizado, nuevoDetalle.disenoID)
-            if not diseno or diseno.clienteID != cliente.id:
-                raise HTTPException(403, "Diseño no encontrado")
-            precio = diseno.precioEstimado
-        
-        # Crea el detalle
+        # Crear nuevo detalle
+        precioUnidad = productoDB.precio if productoDB else 0  # si es diseño personalizado se puede asignar luego
         detalle = DetalleCarrito(
-            carritoID=carrito.id,
+            carritoID=carritoDB.id,
             productoID=nuevoDetalle.productoID,
             disenoID=nuevoDetalle.disenoID,
             cantidad=nuevoDetalle.cantidad,
-            precioUnidad=precio,
-            subtotal=nuevoDetalle.cantidad * precio,
-            esPersonalizado=bool(nuevoDetalle.disenoID),
+            precioUnidad=precioUnidad,
+            subtotal=nuevoDetalle.cantidad * precioUnidad,
+            esPersonalizado=bool(nuevoDetalle.disenoID)
         )
-        session.add(detalle) # Inserta el detalle en la DB
+        session.add(detalle)
 
-    session.commit() # Guarda los cambios
-    session.refresh(detalle)
+    # Recalcular total del carrito
+    session.flush()
+    totalCarrito = session.exec(
+        select(DetalleCarrito.subtotal).where(DetalleCarrito.carritoID == carritoDB.id)
+    ).all()
+    carritoDB.total = sum([x for x in totalCarrito]) if totalCarrito else 0
+
+    session.commit()
+    session.refresh(carritoDB)
     return detalle
 
 
@@ -79,11 +91,15 @@ def listaDetallesPorCarrito(carritoID: int, session: SessionDep):
 
 # UPDATE - Actualizar detalles por ID
 @router.patch("/{detalleID}", response_model=DetalleCarrito)
-def actualizarDetalle(detalleID: int, data: DetalleCarritoUpdate, session: SessionDep):
+def actualizarDetalle(detalleID: int, detalleData: DetalleCarritoUpdate, session: SessionDep):
     detalleDB = session.get(DetalleCarrito, detalleID)
     if not detalleDB:
         raise HTTPException(404, "Detalle no encontrado")
-    detalleDB.sqlmodel_update(data)
+    
+    # Excluir los campos vacios
+    detalleUpdate = detalleDB.model_dump(exclude_none=True)
+
+    detalleDB.sqlmodel_update(detalleUpdate)
     session.add(detalleDB)
     session.commit()
     session.refresh(detalleDB)

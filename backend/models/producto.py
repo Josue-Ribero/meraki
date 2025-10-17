@@ -29,9 +29,9 @@ class Producto(ProductoBase, table=True):
     wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
 
 class ProductoCreate(SQLModel):
-    nombre: str
+    nombre: str | None = None
     descripcion: str | None = None
-    precio: int
+    precio: int | None = None
     stock: int = 0
     imagenURL: str | None = None
     esPersonalizado: bool = False

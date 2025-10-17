@@ -40,8 +40,11 @@ def actualizarCategoria(categoriaID: int, categoriaData: CategoriaUpdate, sessio
     categoriaDB = session.get(Categoria, categoriaID)
     if not categoriaDB:
         raise HTTPException(404, "Categoría no encontrada")
+    
+    # Excluir los campos vacios
+    categoriaUpdate = categoriaDB.model_dump(exclude_none=True)
 
-    categoriaDB.sqlmodel_update(categoriaData)
+    categoriaDB.sqlmodel_update(categoriaUpdate)
     session.add(categoriaDB)
     session.commit()
     session.refresh(categoriaDB)
