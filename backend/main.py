@@ -84,6 +84,14 @@ def inicio(request: Request):
 def paginaAbout(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
+@app.get("/contacto")
+def paginaAbout(request: Request):
+    return templates.TemplateResponse("contacto.html", {"request": request})
+
+@app.get("/producto")
+def paginaAbout(request: Request):
+    return templates.TemplateResponse("producto/detalleProducto.html", {"request": request})
+
 @app.get("/wishlist")
 def paginaWishlist(request: Request):
     if not request.session.get("clienteID"):
@@ -102,13 +110,49 @@ def paginaCliente(request: Request):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("client/panelCliente.html", {"request": request})
 
+@app.get("/mi-cuenta")
+def miCuenta(request: Request):
+    if request.session.get("clienteID"):
+        return RedirectResponse(url="/personal", status_code=303)
+    return RedirectResponse(url="/ingresar", status_code=303)
+
+@app.get("/mi-diseno")
+def disenoPersonalizado(request: Request):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("producto/disenoPersonalizado.html", {"request": request})
+
 @app.get("/recuperar-contrasena")
 def recuperacionContrasena(request: Request):
     return templates.TemplateResponse("contrasena/recuperacion.html", {"request": request})
 
 # Administrador
+@app.get("/clientes")
+def paginaDashboard(request: Request):
+    if not request.session.get("administradorID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("admin/clientesAdmin.html", {"request": request})
+
+@app.get("/categorias")
+def paginaDashboard(request: Request):
+    if not request.session.get("administradorID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("admin/categoriaAdmin.html", {"request": request})
+
 @app.get("/dashboard")
 def paginaDashboard(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/dashboardAdmin.html", {"request": request})
+
+@app.get("/pedidos")
+def paginaDashboard(request: Request):
+    if not request.session.get("administradorID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("admin/pedidosAdmin.html", {"request": request})
+
+@app.get("/productos")
+def paginaDashboard(request: Request):
+    if not request.session.get("administradorID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("admin/productosAdmin.html", {"request": request})

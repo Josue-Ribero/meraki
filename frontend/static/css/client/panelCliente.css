@@ -73,6 +73,45 @@ body {
 
 .logout {
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  border-radius: 6px;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.logout a:hover {
+  background: #f5f5f5;
+  color: var(--primary-color);
+}
+
+.logout {
+  margin-top: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.logout a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  border-radius: 6px;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.logout a:hover {
+  background: #f5f5f5;
+  color: var(--primary-color);
 }
 
 .main-content {
