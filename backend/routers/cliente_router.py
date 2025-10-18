@@ -130,9 +130,8 @@ def eliminarCliente(clienteID: int, session: SessionDep):
     
     # Eliminar wishlist y sus items
     if cliente.wishlist:
-        for item in cliente.wishlist.items:
+        for item in cliente.wishlist:
             session.delete(item)
-        session.delete(cliente.wishlist)
 
     # Insertar pedidos
     for pedido in cliente.pedidos:

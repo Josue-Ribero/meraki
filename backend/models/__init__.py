@@ -13,7 +13,6 @@ from .producto import Producto, ProductoCreate, ProductoUpdate, ProductoDelete
 from .solicitudRecuperacion import SolicitudRecuperacion, SolicitudRecuperacionCreate, SolicitudRecuperacionUpdate
 from .transaccionPuntos import TransaccionPuntos, TransaccionPuntosCreate, TransaccionPuntosUpdate, TransaccionPuntosDelete
 from .wishlist import Wishlist, WishlistCreate
-from .wishlistitem import WishlistItem, WishlistItemCreate, WishlistItemUpdate, WishlistItemDelete
 
 __all__ = [
     "Administrador", "AdministradorCreate", "AdministradorUpdate",
@@ -29,6 +28,5 @@ __all__ = [
     "Producto", "ProductoCreate", "ProductoUpdate", "ProductoDelete",
     "SolicitudRecuperacion", "SolicitudRecuperacionCreate", "SolicitudRecuperacionUpdate", "SolicitudRecuperacionDelete",
     "TransaccionPuntos", "TransaccionPuntosCreate", "TransaccionPuntosUpdate", "TransaccionPuntosDelete",
-    "Wishlist", "WishlistCreate", "WishlistUpdate", "WishlistDelete",
-    "WishlistItem", "WishlistItemCreate", "WishlistItemUpdate", "WishlistItemDelete",
+    "Wishlist", "WishlistCreate", "WishlistUpdate", "WishlistDelete"
 ]

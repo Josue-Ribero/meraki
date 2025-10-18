@@ -18,7 +18,7 @@ class Pago(PagoBase, table=True):
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
     administrador: Optional["Administrador"] = Relationship(back_populates="pagos")
     pedidoID: int = Field(foreign_key="pedido.id")
-    pedido: Optional["Pedido"] = Relationship(back_populates="pagos")
+    pedido: Optional["Pedido"] = Relationship(back_populates="pago")
 
 class PagoCreate(PagoBase):
     pedidoID: int

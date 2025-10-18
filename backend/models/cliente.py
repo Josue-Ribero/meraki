@@ -17,8 +17,8 @@ class ClienteBase(SQLModel):
     
     def solicitarRecuperacion(self):
         from .solicitudRecuperacion import SolicitudRecuperacion
-        token = SolicitudRecuperacion.generarToken
-        solicitud = SolicitudRecuperacion.validarToken()
+        token = SolicitudRecuperacion.generarToken()
+        solicitud = SolicitudRecuperacion.validarToken(token)
 
 class Cliente(ClienteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -29,7 +29,7 @@ class Cliente(ClienteBase, table=True):
     carrito: Optional["Carrito"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     pedidos: list["Pedido"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     disenos: list["DisenoPersonalizado"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    wishlist: "Wishlist" = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    wishlist: list["Wishlist"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     solicitudesRecuperacion: list["SolicitudRecuperacion"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
 class ClienteUpdate(SQLModel):

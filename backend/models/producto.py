@@ -24,9 +24,10 @@ class Producto(ProductoBase, table=True):
     administrador: "Administrador" = Relationship(back_populates="productos")
     categoriaID: int = Field(foreign_key="categoria.id")
     categoria: "Categoria" = Relationship(back_populates="productos")
+    carrito: "Carrito" = Relationship(back_populates="producto")
     detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="producto", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     detallesPedido: list["DetallePedido"] = Relationship(back_populates="producto", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
+    wishlist: list["Wishlist"] = Relationship(back_populates="producto")
 
 class ProductoCreate(SQLModel):
     nombre: str | None = None
@@ -57,6 +58,7 @@ class ProductoDelete(ProductoBase):
 # Importaciones diferidas
 from .administrador import Administrador
 from .categoria import Categoria
+from .carrito import Carrito
 from .detalleCarrito import DetalleCarrito
 from .detallePedido import DetallePedido
-from .wishlistitem import WishlistItem
+from .wishlist import Wishlist

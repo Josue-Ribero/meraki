@@ -34,8 +34,7 @@ from .routers import (
     reportes_router,
     solicitudRecuperacion_router,
     transaccionPuntos_router,
-    wishlist_router,
-    wishlistitem_router
+    wishlist_router
 )
 
 # Inclusion de los routers en la app
@@ -55,8 +54,7 @@ routers = [
     reportes_router.router,
     solicitudRecuperacion_router.router,
     transaccionPuntos_router.router,
-    wishlist_router.router,
-    wishlistitem_router.router
+    wishlist_router.router
 ]
 
 for router in routers:

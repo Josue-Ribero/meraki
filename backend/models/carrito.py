@@ -6,21 +6,25 @@ from ..utils.enums import EstadoCarrito
 class CarritoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoCarrito = Field(default=EstadoCarrito.ACTIVO)
-
-    # Método
-    def calcularTotal(self) -> int:
-        if not hasattr(self, "detalles") or not self.detalles:
-            return 0
-        return sum(detalle.subtotal for detalle in self.detalles)
+    total: int = Field(default=0)
 
 class Carrito(CarritoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: Optional["Cliente"] = Relationship(back_populates="carrito")
+    productoID: int = Field(sa_column=Column(ForeignKey("producto.id", ondelete="CASCADE")))
+    producto: Optional["Producto"] = Relationship(back_populates="carrito")
     detalles: list["DetalleCarrito"] = Relationship(back_populates="carrito", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
+    # Calcular valor del carrito
+    def calcularTotal(self, session):
+        self.total = sum(detalle.subtotal for detalle in self.detalles)
+        session.add(self)
+        session.commit()
+        session.refresh(self)
+
 class CarritoCreate(CarritoBase):
-    pass
+    productoID: Optional[int] = None
 
 class CarritoUpdate(CarritoBase):
     pass
@@ -30,4 +34,5 @@ class CarritoDelete(CarritoBase):
 
 # Importaciones diferidas
 from .cliente import Cliente
+from .producto import Producto
 from .detalleCarrito import DetalleCarrito

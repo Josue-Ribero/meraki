@@ -35,7 +35,7 @@ class Pedido(PedidoBase, table=True):
     direccionEnvioID: int = Field(sa_column=Column(ForeignKey("direccionenvio.id", ondelete="SET NULL")))
     direccionEnvio: "DireccionEnvio" = Relationship(back_populates="pedidos")
     detalles: list["DetallePedido"] = Relationship(back_populates="pedido", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    pagos: list["Pago"] = Relationship(back_populates="pedido")
+    pago: "Pago" = Relationship(back_populates="pedido")
     transacciones: list["TransaccionPuntos"] = Relationship(back_populates="pedido")
 
 class PedidoCreate(PedidoBase):

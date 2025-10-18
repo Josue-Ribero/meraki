@@ -8,7 +8,6 @@ from . import categoria_router
 from . import carrito_router
 from . import detalleCarrito_router
 from . import wishlist_router
-from . import wishlistitem_router
 from . import pedido_router
 from . import detallePedido_router
 from . import pago_router
