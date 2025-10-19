@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Form, Request, Depends
 from sqlmodel import select
+from ..auth.auth import clienteActual
 from ..auth.auth import adminActual
 from ..models.cliente import Cliente, ClienteUpdate, ClienteHistorico
 from ..models.carrito import Carrito
@@ -101,40 +102,41 @@ def actualizarCliente(clienteID: int, datosCliente: ClienteUpdate, session: Sess
 
 
 # DELETE - Eliminar cliente
-@router.delete("/eliminar-cuenta/{clienteID}")
-def eliminarCliente(clienteID: int, session: SessionDep):
+@router.delete("/eliminar-cuenta")
+def eliminarCliente(session: SessionDep,cliente=Depends(clienteActual)):
     # Verificar si el cliente existe
-    cliente = session.get(Cliente, clienteID)
-    if not cliente:
+    clienteDB = session.get(Cliente, cliente.id)
+    if not clienteDB:
         raise HTTPException(404, "Cliente no encontrado")
 
     # Copiar a histórico
     historico = ClienteHistorico(
-        nombre=cliente.nombre,
-        email=cliente.email,
-        telefono=cliente.telefono
+        nombre=clienteDB.nombre,
+        email=clienteDB.email,
+        telefono=clienteDB.telefono
     )
     session.add(historico)
 
-    # Eliminar direcciones del cliente
-    for direccion in cliente.direcciones:
+    """# Eliminar direcciones del cliente
+    for direccion in clienteDB.direcciones:
         session.delete(direccion)
 
     # Eliminar carrito y sus detalles
-    if cliente.carrito:
+    if clienteDB.carrito:
         # Primero eliminar detalles del carrito
-        for detalle in cliente.carrito.detalles:
+        for detalle in clienteDB.carrito.detalles:
             session.delete(detalle)
-        session.delete(cliente.carrito)
+        session.delete(clienteDB.carrito)
         session.flush() # Fuerza a borrar antes de eliminar el cliente
     
     # Eliminar wishlist y sus items
-    if cliente.wishlist:
-        for item in cliente.wishlist:
+    if clienteDB.wishlist:
+        for item in clienteDB.wishlist.items:
             session.delete(item)
+        session.delete(clienteDB.wishlist)
 
     # Insertar pedidos
-    for pedido in cliente.pedidos:
+    for pedido in clienteDB.pedidos:
         # Insertar pagos
         for pago in pedido.pagos:
             pago.clienteEliminado = True
@@ -142,8 +144,10 @@ def eliminarCliente(clienteID: int, session: SessionDep):
         
         # Marcar el pedido con cliente eliminado
         pedido.clienteEliminado = True
-        session.add(pedido)
+        session.add(pedido)"""
 
     # Eliminar cliente
-    session.delete(cliente)
+    session.delete(clienteDB)
     session.commit()
+
+    return {"mensaje": "Cuenta eliminada correctamente"}

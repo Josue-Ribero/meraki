@@ -13,7 +13,6 @@ class Carrito(CarritoBase, table=True):
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: Optional["Cliente"] = Relationship(back_populates="carrito")
     productoID: int = Field(sa_column=Column(ForeignKey("producto.id", ondelete="CASCADE")))
-    producto: Optional["Producto"] = Relationship(back_populates="carrito")
     detalles: list["DetalleCarrito"] = Relationship(back_populates="carrito", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
     # Calcular valor del carrito
