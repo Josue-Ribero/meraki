@@ -15,8 +15,8 @@ def clienteActual(request: Request, session: SessionDep):
     
     # Caso si no existe el cliente
     clienteDB = session.get(Cliente, clienteID)
-    if not clienteDB:
-        raise HTTPException(404, "Cliente no encontrado")
+    if not clienteDB or not clienteDB.activo:
+        raise HTTPException(404, "Cliente inactivo no encontrado")
     return clienteDB
 
 

@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
 from ..utils.enums import EstadoPedido
 from sqlalchemy import Column, ForeignKey
+from typing import Optional
 
 class PedidoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
@@ -27,8 +28,8 @@ class PedidoBase(SQLModel):
         return {"Message": "Pedido concretado"}
 
 class Pedido(PedidoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    administradorID: int | None = Field(default=None, sa_column=Column(ForeignKey("administrador.id", ondelete="SET NULL")))
+    id: Optional[int] = Field(default=None, primary_key=True)
+    administradorID: Optional[int] = Field(default=None, sa_column=Column(ForeignKey("administrador.id", ondelete="SET NULL")))
     administrador: "Administrador" = Relationship(back_populates="pedidos")
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="pedidos")

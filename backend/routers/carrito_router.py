@@ -4,6 +4,7 @@ from sqlmodel import select, delete
 from ..models.carrito import Carrito
 from ..models.detalleCarrito import DetalleCarrito, DetalleCarritoCreate
 from ..models.producto import Producto
+from ..models.pedido import Pedido
 from ..db.db import SessionDep
 
 router = APIRouter(prefix="/carrito", tags=["Carrito"])
@@ -48,6 +49,11 @@ def agregarCarrito(
     session.commit()
     session.refresh(productoCarrito)
     return productoCarrito
+
+
+
+# CREATE - Convertir el carrito en un pedido
+router.post("/pedir", response_model=Pedido)
 
 
 

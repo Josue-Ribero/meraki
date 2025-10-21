@@ -3,13 +3,13 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Column, JSON
 from datetime import datetime as dt
 from ..utils.enums import EstadoDiseno
-import json
+from typing import Optional
 
 class DisenoPersonalizadoBase(SQLModel):
-    imagenURL: str | None = Field(default=None)
+    imagenURL: Optional[str] = Field(default=None)
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoDiseno = Field(default=EstadoDiseno.EN_PRODUCCION)
-    data: dict | None = Field(default=None, sa_column=Column(JSON))
+    data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
     precioEstimado: int = Field(default=0)
 
     # Métodos
@@ -20,8 +20,8 @@ class DisenoPersonalizadoBase(SQLModel):
         return self.precioEstimado
 
 class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    administradorID: int | None = Field(default=None, foreign_key="administrador.id")
+    id: Optional[int] = Field(default=None, primary_key=True)
+    administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="disenos")
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="disenos")

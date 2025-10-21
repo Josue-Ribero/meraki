@@ -23,7 +23,7 @@ class Carrito(CarritoBase, table=True):
         session.refresh(self)
 
 class CarritoCreate(CarritoBase):
-    productoID: Optional[int] = None
+    pass
 
 class CarritoUpdate(CarritoBase):
     pass

@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy import ForeignKey
+from typing import Optional
 
 class DireccionEnvioBase(SQLModel):
     nombre: str = Field()
@@ -13,7 +14,7 @@ class DireccionEnvioBase(SQLModel):
         self.esPredeterminada = True
 
 class DireccionEnvio(DireccionEnvioBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="direcciones")
     pedidos: list["Pedido"] = Relationship(back_populates="direccionEnvio")

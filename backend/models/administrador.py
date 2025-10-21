@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
+from typing import Optional
 
 class AdministradorBase(SQLModel):
     nombre: str = Field()
@@ -28,12 +29,9 @@ class AdministradorBase(SQLModel):
     
     def actualizarEstadoPedido():
         print("Aun no")
-    
-    def actualizarEstadoDiseno():
-        print("Aun no")
 
 class Administrador(AdministradorBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     categorias: list["Categoria"] = Relationship(back_populates="administrador")
     clientes: list["Cliente"] = Relationship(back_populates="administrador")
     disenos: list["DisenoPersonalizado"] = Relationship(back_populates="administrador")
@@ -42,7 +40,7 @@ class Administrador(AdministradorBase, table=True):
     pagos: list["Pago"] = Relationship(back_populates="administrador")
 
 class AdministradorUpdate(SQLModel):
-    nombre: str | None = None
+    nombre: Optional[str] = None
 
 # Importaciones diferidas
 from .categoria import Categoria

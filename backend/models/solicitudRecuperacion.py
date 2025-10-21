@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy import ForeignKey
 from datetime import datetime, timedelta
+from typing import Optional
 import secrets
 
 class SolicitudRecuperacionBase(SQLModel):
@@ -18,7 +19,7 @@ class SolicitudRecuperacionBase(SQLModel):
         return self.token == token and not self.usado and datetime.now() < self.expiracion
 
 class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="solicitudesRecuperacion")
 

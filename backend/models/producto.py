@@ -1,14 +1,15 @@
 from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional
 
 class ProductoBase(SQLModel):
     nombre: str = Field()
-    descripcion: str | None = Field(default=None)
+    descripcion: str = Field(default=None)
     precio: int = Field()
     stock: int = Field(default=0)
-    imagenURL: str | None = Field(default=None)
+    imagenURL: str = Field(default=None)
     esPersonalizado: bool = Field(default=False)
-    opcionesColor: str | None = Field(default=None)
-    opcionesTamano: str | None = Field(default=None)
+    opcionesColor: Optional[str] = Field(default=None)
+    opcionesTamano: Optional[str] = Field(default=None)
     activo: bool = Field(default=True)
 
     # Métodos
@@ -19,8 +20,8 @@ class ProductoBase(SQLModel):
         return self.precio
 
 class Producto(ProductoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    administradorID: int | None = Field(default=None, foreign_key="administrador.id")
+    id: Optional[int] = Field(default=None, primary_key=True)
+    administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="productos")
     categoriaID: int = Field(foreign_key="categoria.id")
     categoria: "Categoria" = Relationship(back_populates="productos")
@@ -29,26 +30,26 @@ class Producto(ProductoBase, table=True):
     wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
 
 class ProductoCreate(SQLModel):
-    nombre: str | None = None
-    descripcion: str | None = None
-    precio: int | None = None
+    nombre: Optional[str] = None
+    descripcion: Optional[str] = None
+    precio: Optional[int] = None
     stock: int = 0
-    imagenURL: str | None = None
+    imagenURL: Optional[str] = None
     esPersonalizado: bool = False
-    opcionesColor: str | None = None
-    opcionesTamano: str | None = None
+    opcionesColor: Optional[str] = None
+    opcionesTamano: Optional[str] = None
     activo: bool = True
     categoriaID: int
 
 class ProductoUpdate(ProductoBase):
     nombre: str
-    descripcion: str | None = None
+    descripcion: Optional[str] = None
     precio: int
     stock: int = 0
-    imagenURL: str | None = None
+    imagenURL: Optional[str] = None
     esPersonalizado: bool = False
-    opcionesColor: str | None = None
-    opcionesTamano: str | None = None
+    opcionesColor: Optional[str] = None
+    opcionesTamano: Optional[str] = None
     categoriaID: int
 
 class ProductoDelete(ProductoBase):

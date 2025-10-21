@@ -6,7 +6,7 @@ class ClienteBase(SQLModel):
     nombre: str = Field()
     email: str = Field(unique=True)
     contrasenaHash: str = Field()
-    telefono: str | None = Field(default=None)
+    telefono: Optional[str] = Field(default=None)
     puntos: int = Field(default=0)
     activo: bool = Field(default=True)
     fechaCreacion: dt = Field(default_factory=dt.now)
@@ -21,7 +21,7 @@ class ClienteBase(SQLModel):
         solicitud = SolicitudRecuperacion.validarToken(token)
 
 class Cliente(ClienteBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
     administrador: "Administrador" = Relationship(back_populates="clientes")
     direcciones: list["DireccionEnvio"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
@@ -45,7 +45,7 @@ class ClienteHistorico(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
     email: str
-    telefono: str | None
+    telefono: Optional[str]
     fechaEliminacion: dt = Field(default_factory=dt.now)
 
 # Importaciones diferidas

@@ -65,6 +65,11 @@ def moverWishlistAlCarrito(productoID: int, session: SessionDep, cliente=Depends
     # Si no existe el item en la wishlist
     if not itemDB:
         raise HTTPException(404, "El producto no está en tu wishlist")
+    
+    # Obtener el producto para validar informacion
+    productoDB = session.get(Producto, productoID)
+    if not productoDB:
+        raise HTTPException(404, "Producto no encontrado")
 
     # Obtener o crear el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
@@ -84,14 +89,16 @@ def moverWishlistAlCarrito(productoID: int, session: SessionDep, cliente=Depends
     # Si ya esta en el carrito
     if productoEnCarrito:
         productoEnCarrito.cantidad += 1
-        productoEnCarrito.subtotal = productoEnCarrito.precioUnidad * productoEnCarrito.cantidad
+        productoEnCarrito.subtotal = productoDB.precio * productoEnCarrito.cantidad
         session.add(productoEnCarrito)
     # Si no esta en el carrito
     else:
         nuevoDetalle = DetalleCarrito(
             carritoID=carrito.id,
             productoID=productoID,
-            cantidad=1
+            cantidad=1,
+            precioUnidad=productoDB.precio,
+            subtotal=productoDB.precio * 1
         )
         session.add(nuevoDetalle) # Agregar a la DB
 

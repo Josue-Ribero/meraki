@@ -10,10 +10,10 @@ class TransaccionPuntosBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
 
 class TransaccionPuntos(TransaccionPuntosBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="transacciones")
-    pedidoID: int | None = Field(default=None, foreign_key="pedido.id")
+    pedidoID: Optional[int] = Field(default=None, foreign_key="pedido.id")
     pedido: Optional["Pedido"] = Relationship(back_populates="transacciones")
 
 class TransaccionPuntosCreate(TransaccionPuntosBase):

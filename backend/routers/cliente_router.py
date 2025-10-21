@@ -22,7 +22,7 @@ def registrarClienteForm(
     # Verificar si ya existe el email
     clienteDB = session.exec(select(Cliente).where(Cliente.email == email)).first()
     if clienteDB:
-        return RedirectResponse(url="/registrar?error=email_existente", status_code=303)
+        return HTTPException(400, "Este email ya tiene una cuenta asociada")
     
     # Crear un objeto cliente
     nuevoCliente = Cliente(
@@ -33,7 +33,7 @@ def registrarClienteForm(
 
     # Insertar el usuario a la DB y preparar los cambios
     session.add(nuevoCliente)
-    session.flush()
+    session.flush() # Obtiene el id antes de guardar los cambios
 
     # Crear carrito y wishlist para el cliente
     session.add(Carrito(clienteID=nuevoCliente.id))
@@ -45,14 +45,14 @@ def registrarClienteForm(
     # Guardar sesión activa
     request.session["clienteID"] = nuevoCliente.id
 
-    # Redirigir a la página principal o perfil del cliente
-    return RedirectResponse(url="/personal", status_code=303)
+    # Redirigir a la página principal
+    return RedirectResponse(url="/", status_code=303)
 
 
 
 # READ - Obtener lista de clientes
 @router.get("/", response_model=list[Cliente])
-def listaClientes(session: SessionDep):
+def listaClientes(session: SessionDep, _=Depends(adminActual)):
     clientes = session.exec(select(Cliente)).all()
     return clientes
 
@@ -116,35 +116,6 @@ def eliminarCliente(session: SessionDep,cliente=Depends(clienteActual)):
         telefono=clienteDB.telefono
     )
     session.add(historico)
-
-    """# Eliminar direcciones del cliente
-    for direccion in clienteDB.direcciones:
-        session.delete(direccion)
-
-    # Eliminar carrito y sus detalles
-    if clienteDB.carrito:
-        # Primero eliminar detalles del carrito
-        for detalle in clienteDB.carrito.detalles:
-            session.delete(detalle)
-        session.delete(clienteDB.carrito)
-        session.flush() # Fuerza a borrar antes de eliminar el cliente
-    
-    # Eliminar wishlist y sus items
-    if clienteDB.wishlist:
-        for item in clienteDB.wishlist.items:
-            session.delete(item)
-        session.delete(clienteDB.wishlist)
-
-    # Insertar pedidos
-    for pedido in clienteDB.pedidos:
-        # Insertar pagos
-        for pago in pedido.pagos:
-            pago.clienteEliminado = True
-            session.add(pago)
-        
-        # Marcar el pedido con cliente eliminado
-        pedido.clienteEliminado = True
-        session.add(pedido)"""
 
     # Eliminar cliente
     session.delete(clienteDB)

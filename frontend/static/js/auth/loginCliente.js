@@ -41,7 +41,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     });
 
     if (response.ok) {
-      window.location.href = '/ingresar';
+      window.location.href = '/';
     } else {
       console.error('Error en el registro:', response.status);
     }

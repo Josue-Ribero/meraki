@@ -13,12 +13,12 @@ class DetallePedidoBase(SQLModel):
         return self.subtotal
 
 class DetallePedido(DetallePedidoBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     pedidoID: int = Field(foreign_key="pedido.id")
     pedido: "Pedido" = Relationship(back_populates="detalles", sa_relationship_kwargs={"cascade": "all, delete"})
-    productoID: int | None = Field(default=None, foreign_key="producto.id")
+    productoID: Optional[int] = Field(default=None, foreign_key="producto.id")
     producto: "Producto" = Relationship(back_populates="detallesPedido")
-    disenoID: int | None = Field(default=None, foreign_key="disenopersonalizado.id")
+    disenoID: Optional[int] = Field(default=None, foreign_key="disenopersonalizado.id")
     disenoPersonalizado: Optional["DisenoPersonalizado"] = Relationship(back_populates="detallesPedido")
 
 class DetallePedidoCreate(DetallePedidoBase):
