@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from .db.db import createAllTables
+from .utils.bucket import cargarArchivo
 
 # Instancia del objeto FastAPI
 app = FastAPI(title="Meraki", lifespan=createAllTables)
@@ -13,6 +14,8 @@ app.add_middleware(SessionMiddleware, secret_key="josue", max_age=60 * 60 * 24)
 
 # Montar los archivos estáticos
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+
+app.mount("/uploads", StaticFiles(directory="bucket"), name="uploads")
 
 # Indicar dónde están los templates
 templates = Jinja2Templates(directory="frontend/templates")
@@ -62,6 +65,13 @@ for router in routers:
 
 
 # Rutas Front-end
+
+# Imagenes
+@app.post("/bucket")
+async def subirImagen(archivo: UploadFile = File(...)):
+    resultado = await cargarArchivo(archivo)
+    return resultado
+
 
 # Híbridas
 @app.get("/registrar")
