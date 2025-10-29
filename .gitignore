@@ -11,7 +11,7 @@ __pycache__/
 *.DS_Store
 
 # DB
-backend/db/db.py
+*.db
 
 # Archivos y dependencias
 entorno/
