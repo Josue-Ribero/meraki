@@ -1,0 +1,18 @@
+# Datos de la DB (variables de entorno)
+.env
+.env.*
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Configuracion del sistema
+*.log
+*.DS_Store
+
+# DB
+backend/db/db.py
+
+# Archivos y dependencias
+entorno/
+.env/
