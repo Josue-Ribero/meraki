@@ -70,21 +70,7 @@ def crearPago(
         confirmado=confirmado
     )
     
-    # Si el pago se confirma automáticamente (pago completo con puntos), otorgar puntos de recompensa
-    if confirmado:
-        # Calcular 5% del valor de la compra en puntos
-        puntosGanados = int(pedido.total * 0.05)
-        if puntosGanados > 0:
-            cliente.puntos += puntosGanados
-            
-            # Registrar transacción de puntos ganados
-            transaccionGanados = TransaccionPuntos(
-                clienteID=cliente.id,
-                pedidoID=pedido.id,
-                tipo=TipoTransaccion.GANADOS,
-                cantidad=puntosGanados
-            )
-            session.add(transaccionGanados)
+    # NOTA: Se eliminó la parte que otorgaba puntos cuando se paga con puntos
     
     session.add(pago)
     session.add(cliente)
@@ -131,8 +117,8 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
     if pedido:
         pedido.estado = EstadoPedido.PAGADO
         
-        # Otorgar 5% del total en puntos al cliente (solo si no pagó completamente con puntos)
-        if not pedido.pagadoConPuntos or pedido.puntosUsados < pedido.total:
+        # Otorgar 5% del total en puntos al cliente (SOLO si NO pagó con puntos)
+        if not pedido.pagadoConPuntos:
             puntosGanados = int(pedido.total * 0.05)
             if puntosGanados > 0:
                 cliente = session.get(Cliente, pedido.clienteID)
