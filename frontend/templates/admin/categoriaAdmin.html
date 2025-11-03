@@ -12,19 +12,44 @@
 
 <body>
   <div class="contenedor">
-    <aside class="sidebar">
-      <div class="logo">
-        <h1>Meraki</h1>
-      </div>
-      <nav class="menu">
-        <a href="#"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-        <a href="#"><span class="material-symbols-outlined">shopping_bag</span>Pedidos</a>
-        <a href="#"><span class="material-symbols-outlined">inventory_2</span>Productos</a>
-        <a href="#" class="activo"><span class="material-symbols-outlined">category</span>Categorías</a>
-        <a href="#"><span class="material-symbols-outlined">group</span>Clientes</a>
-      </nav>
-      <div class="logout">
-        <a href="#"><span class="material-symbols-outlined">logout</span>Cerrar Sesión</a>
+
+    <aside class="flex w-64 flex-col bg-[#363636] text-white">
+      <div class="flex h-full flex-col justify-between p-4">
+        <div class="flex flex-col gap-6">
+          <h1 class="text-2xl font-bold text-center text-[#aa8744]">Meraki</h1>
+          <nav class="flex flex-col gap-2">
+            <a class="nav-item active" href="/dashboard">
+              <span class="material-symbols-outlined">home</span>
+              <p>Inicio</p>
+            </a>
+            <a class="nav-item" href="/pedidos">
+              <span class="material-symbols-outlined">package_2</span>
+              <p>Pedidos</p>
+            </a>
+            <a class="nav-item" href="/productos">
+              <span class="material-symbols-outlined">list_alt</span>
+              <p>Productos</p>
+            </a>
+            <a class="nav-item" href="/categorias">
+              <span class="material-symbols-outlined">category</span>
+              <p>Categorías</p>
+            </a>
+            <a class="nav-item" href="/clientes">
+              <span class="material-symbols-outlined">group</span>
+              <p>Clientes</p>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="material-symbols-outlined">bar_chart</span>
+              <p>Reportes</p>
+            </a>
+          </nav>
+        </div>
+        <div class="nav-item">
+          <a href="/auth/logout">
+            <span class="material-symbols-outlined">logout</span>
+            <p>Cerrar sesión</p>
+          </a>
+        </div>
       </div>
     </aside>
 
@@ -51,50 +76,8 @@
             </tr>
           </thead>
           <tbody id="categoriaBody">
-            <tr>
-              <td>Collares</td>
-              <td>Piezas elegantes para adornar el cuello.</td>
-              <td class="centro">15</td>
-              <td class="derecha">
-                <button class="editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Pulseras</td>
-              <td>Variedad de estilos para muñecas.</td>
-              <td class="centro">23</td>
-              <td class="derecha">
-                <button class="editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Anillos</td>
-              <td>Diseños únicos para tus dedos.</td>
-              <td class="centro">31</td>
-              <td class="derecha">
-                <button class="editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Pendientes</td>
-              <td>Complementos perfectos para tus orejas.</td>
-              <td class="centro">18</td>
-              <td class="derecha">
-                <button class="editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Tobilleras</td>
-              <td>Joyas delicadas para lucir en el tobillo.</td>
-              <td class="centro">9</td>
-              <td class="derecha">
-                <button class="editar"><span class="material-symbols-outlined">edit</span></button>
-                <button class="eliminar"><span class="material-symbols-outlined">delete</span></button>
-              </td>
+            <tr id="loadingRow">
+              <td colspan="4" class="centro">Cargando categorías...</td>
             </tr>
           </tbody>
         </table>

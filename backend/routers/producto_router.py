@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from ..auth.auth import adminActual
 from sqlmodel import select
 from ..models.producto import Producto, ProductoCreate, ProductoUpdate
@@ -8,8 +8,31 @@ router = APIRouter(prefix="/productos", tags=["Productos"])
 
 # CREATE - Crear producto
 @router.post("/crear", response_model=Producto, status_code=201)
-def crearProducto(nuevoProducto: ProductoCreate, session: SessionDep, admin=Depends(adminActual)):
-    producto = Producto.model_validate(nuevoProducto, update={"administradorID": admin.id})
+def crearProducto(
+    nombre: str = Form(...),
+    descripcion: str = Form(None),
+    precio: int = Form(...),
+    stock: int = Form(0),
+    imagenURL: str = Form(None),
+    esPersonalizado: bool = Form(False),
+    opcionesColor: str = Form(None),
+    opcionesTamano: str = Form(None),
+    categoriaID: int = Form(...),
+    session: SessionDep = None,
+    admin=Depends(adminActual)
+):
+    producto = Producto(
+        nombre=nombre,
+        descripcion=descripcion,
+        precio=precio,
+        stock=stock,
+        imagenURL=imagenURL,
+        esPersonalizado=esPersonalizado,
+        opcionesColor=opcionesColor,
+        opcionesTamano=opcionesTamano,
+        categoriaID=categoriaID,
+        administradorID=admin.id
+    )
     session.add(producto)
     session.commit()
     session.refresh(producto)
@@ -21,7 +44,7 @@ def listaProductos(session: SessionDep):
     productos = session.exec(select(Producto).where(Producto.activo == True)).all()
     return productos
 
-# # READ - Producto por ID
+# READ - Producto por ID
 @router.get("/{productoID}", response_model=Producto)
 def productoPorID(productoID: int, session: SessionDep):
     productoDB = session.exec(select(Producto).where(Producto.id == productoID, Producto.activo == True)).first()
@@ -31,15 +54,43 @@ def productoPorID(productoID: int, session: SessionDep):
 
 # UPDATE - Actualizar producto
 @router.patch("/{productoID}", response_model=Producto)
-def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: SessionDep, _=Depends(adminActual)):
+def actualizarProducto(
+    productoID: int,
+    nombre: str = Form(None),
+    descripcion: str = Form(None),
+    precio: int = Form(None),
+    stock: int = Form(None),
+    imagenURL: str = Form(None),
+    esPersonalizado: bool = Form(None),
+    opcionesColor: str = Form(None),
+    opcionesTamano: str = Form(None),
+    categoriaID: int = Form(None),
+    session: SessionDep = None,
+    _=Depends(adminActual)
+):
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
-    # Excluir los campos vacios
-    productoUpdate = productoDB.model_dump(exclude_none=True)
-
-    productoDB.sqlmodel_update(productoUpdate)
+    if nombre:
+        productoDB.nombre = nombre
+    if descripcion is not None:
+        productoDB.descripcion = descripcion
+    if precio:
+        productoDB.precio = precio
+    if stock is not None:
+        productoDB.stock = stock
+    if imagenURL is not None:
+        productoDB.imagenURL = imagenURL
+    if esPersonalizado is not None:
+        productoDB.esPersonalizado = esPersonalizado
+    if opcionesColor is not None:
+        productoDB.opcionesColor = opcionesColor
+    if opcionesTamano is not None:
+        productoDB.opcionesTamano = opcionesTamano
+    if categoriaID:
+        productoDB.categoriaID = categoriaID
+    
     session.add(productoDB)
     session.commit()
     session.refresh(productoDB)
@@ -48,14 +99,10 @@ def actualizarProducto(productoID: int, productoData: ProductoUpdate, session: S
 # DELETE - Deshabilitar el producto
 @router.delete("/{productoID}/deshabilitar", status_code=204)
 def deshabilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
-    # Verificar si el producto existe
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
-    # Deshabilitar el producto
     productoDB.activo = False
-
-    # Guardar el cambio en la DB
     session.add(productoDB)
     session.commit()

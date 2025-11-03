@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from ..auth.auth import clienteActual
 from sqlmodel import select
 from ..models.direccionEnvio import DireccionEnvio, DireccionEnvioCreate, DireccionEnvioUpdate
@@ -8,9 +8,23 @@ router = APIRouter(prefix="/direcciones", tags=["Direcciones"])
 
 # CREATE - Crear una nueva direccion
 @router.post("/crear", response_model=DireccionEnvio, status_code=201)
-def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cliente=Depends(clienteActual)):
-    # Asignar direccion al cliente
-    direccion = DireccionEnvio.model_validate(direccionNueva, update={"clienteID": cliente.id})
+def crearDireccion(
+    nombre: str = Form(...),
+    calle: str = Form(...),
+    localidad: str = Form(...),
+    codigoPostal: str = Form(...),
+    esPredeterminada: bool = Form(False),
+    session: SessionDep = None,
+    cliente=Depends(clienteActual)
+):
+    direccion = DireccionEnvio(
+        nombre=nombre,
+        calle=calle,
+        localidad=localidad,
+        codigoPostal=codigoPostal,
+        esPredeterminada=esPredeterminada,
+        clienteID=cliente.id
+    )
     session.add(direccion)
     session.commit()
     session.refresh(direccion)
@@ -19,22 +33,37 @@ def crearDireccion(direccionNueva: DireccionEnvioCreate, session: SessionDep, cl
 # READ - Obtener las direcciones del cliente
 @router.get("/mis-direcciones", response_model=list[DireccionEnvio])
 def misDirecciones(session: SessionDep, cliente=Depends(clienteActual)):
-    direccioesDB = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).all()
-    if not direccioesDB:
+    direccionesDB = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).all()
+    if not direccionesDB:
         raise HTTPException(404, "No tienes direcciones registradas")
-    return direccioesDB
+    return direccionesDB
 
 # UPDATE - Actualizar direccion para un usuario por ID
 @router.patch("/{direccionID}", response_model=DireccionEnvio)
-def actualizarDireccion(direccionID: int, direccionData: DireccionEnvioUpdate, session: SessionDep):
+def actualizarDireccion(
+    direccionID: int,
+    nombre: str = Form(None),
+    calle: str = Form(None),
+    localidad: str = Form(None),
+    codigoPostal: str = Form(None),
+    esPredeterminada: bool = Form(None),
+    session: SessionDep = None
+):
     direccionDB = session.get(DireccionEnvio, direccionID)
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
     
-    # Excluir los campos vacios
-    direccionUpdate = direccionDB.model_dump(exclude_unset=True)
-
-    direccionDB.sqlmodel_update(direccionUpdate)
+    if nombre:
+        direccionDB.nombre = nombre
+    if calle:
+        direccionDB.calle = calle
+    if localidad:
+        direccionDB.localidad = localidad
+    if codigoPostal:
+        direccionDB.codigoPostal = codigoPostal
+    if esPredeterminada is not None:
+        direccionDB.esPredeterminada = esPredeterminada
+    
     session.add(direccionDB)
     session.commit()
     session.refresh(direccionDB)

@@ -3,7 +3,7 @@ from typing import Optional
 
 class CategoriaBase(SQLModel):
     nombre: str = Field()
-    descripcion: str | None = Field(default=None)
+    descripcion: Optional[str] = Field(default=None)
     activo: bool = Field(default=True)
 
     def contarProductos(self) -> int:
@@ -19,8 +19,8 @@ class CategoriaCreate(CategoriaBase):
     pass
 
 class CategoriaUpdate(SQLModel):
-    nombre: Optional[str]
-    descripcion: Optional[str]
+    nombre: Optional[str] = None
+    descripcion: Optional[str] = None
 
 class CategoriaDelete(CategoriaBase):
     pass

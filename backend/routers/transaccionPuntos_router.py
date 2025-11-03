@@ -1,20 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from ..auth.auth import clienteActual
 from sqlmodel import select
-from ..models.transaccionPuntos import TransaccionPuntos, TransaccionPuntosCreate
+from ..models.transaccionPuntos import TransaccionPuntos
 from ..db.db import SessionDep
 
 router = APIRouter(prefix="/transacciones", tags=["TransaccionesPuntos"])
-
-# CREATE - Crear una nueva transaccion de puntos
-@router.post("/crear", response_model=TransaccionPuntos, status_code=201)
-def crearTransaccion(transaccionNueva: TransaccionPuntosCreate, session: SessionDep, cliente=Depends(clienteActual)):
-    # Asociar transaccion al cliente
-    transaccion = TransaccionPuntos.model_validate(transaccionNueva, update={"clienteID": cliente.id})
-    session.add(transaccion)
-    session.commit()
-    session.refresh(transaccion)
-    return transaccion
 
 # READ - Obtener la lista de transacciones del cliente
 @router.get("/mis-transacciones", response_model=list[TransaccionPuntos])

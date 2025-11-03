@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form
 from fastapi.responses import StreamingResponse
 from sqlmodel import select
 from sqlalchemy.orm import joinedload
@@ -14,14 +14,13 @@ router = APIRouter(prefix="/reportes", tags=["Reportes"])
 
 @router.get("/pedidos.csv")
 def reportepedidosCsv(
-    estado: str | None = None,
-    fechaInicio: str | None = None,
-    fechaFin: str | None = None,
+    estado: str = Form(None),
+    fechaInicio: str = Form(None),
+    fechaFin: str = Form(None),
     session: SessionDep = None,
     _=Depends(adminActual)
     ):
 
-    # Informacion de pedido
     reporte = (
         select(DetallePedido).options(
             joinedload(DetallePedido.pedido)
@@ -54,10 +53,9 @@ def reportepedidosCsv(
         for detalle in detalles
     ]
 
-    # Creacion del DataFrame
     df = pd.DataFrame(filas)
-    stream = io.StringIO() # Entradas y salidas
-    df.to_csv(stream, index=False) # Conversion a CSV
+    stream = io.StringIO()
+    df.to_csv(stream, index=False)
     stream.seek(0)
 
     return StreamingResponse(

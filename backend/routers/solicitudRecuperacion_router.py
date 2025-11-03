@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from ..auth.auth import clienteActual
 from sqlmodel import select
 from datetime import datetime
@@ -9,12 +9,13 @@ router = APIRouter(prefix="/recuperacion", tags=["Recuperacion"])
 
 # CREATE - Crear una solicitud
 @router.post("/crear", response_model=SolicitudRecuperacion, status_code=201)
-def crearSolicitud(solicitudNueva: SolicitudRecuperacionCreate, session: SessionDep, cliente=Depends(clienteActual)):
-    # Asegurar que el cliente se asigne
-    solicitudDict = solicitudNueva.model_dump()
-    solicitudDict["clienteID"] = cliente.id
-    
-    solicitud = SolicitudRecuperacion.model_validate(solicitudDict)
+def crearSolicitud(
+    session: SessionDep = None,
+    cliente=Depends(clienteActual)
+):
+    solicitud = SolicitudRecuperacion(
+        clienteID=cliente.id
+    )
     session.add(solicitud)
     session.commit()
     session.refresh(solicitud)

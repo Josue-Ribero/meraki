@@ -274,3 +274,32 @@ button#abrir-modal:hover {
 .modal.activo {
   display: flex;
 }
+
+/* Estados de carga */
+#loadingRow {
+  text-align: center;
+  color: var(--c-brown);
+  font-style: italic;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #d32f2f;
+}
+
+/* Botones deshabilitados */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animación de carga */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
