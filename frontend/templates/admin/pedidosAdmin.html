@@ -15,17 +15,19 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
   <link rel="stylesheet" href="../../static/css/admin/pedidosAdmin.css">
+  <link rel="stylesheet" href="../../static/css/admin/sidebarAdmin.css">
 </head>
 
-<body class="bg-[var(--c-fdfbf3)]" style='font-family: Manrope, "Noto Sans", sans-serif;'>
-  <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
-    <div class="flex flex-1">
+<body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
+  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div class="flex h-full w-full flex-1">
 
-      <aside class="flex w-64 flex-col bg-[#363636] text-white">
-        <div class="flex h-full flex-col justify-between p-4">
-          <div class="flex flex-col gap-6">
-            <h1 class="text-2xl font-bold text-center text-[#aa8744]">Meraki</h1>
-            <nav class="flex flex-col gap-2">
+      <!-- Sidebar unificado -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-container">
+          <div class="sidebar-header">
+            <h1 class="sidebar-title">Meraki</h1>
+            <nav class="sidebar-nav">
               <a class="nav-item" href="/dashboard">
                 <span class="material-symbols-outlined">home</span>
                 <p>Inicio</p>
@@ -52,8 +54,8 @@
               </a>
             </nav>
           </div>
-          <div class="nav-item">
-            <a href="/auth/logout">
+          <div class="sidebar-footer">
+            <a class="nav-item" href="/auth/logout">
               <span class="material-symbols-outlined">logout</span>
               <p>Cerrar sesión</p>
             </a>

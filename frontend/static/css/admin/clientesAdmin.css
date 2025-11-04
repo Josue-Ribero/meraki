@@ -32,64 +32,6 @@ body {
   align-items: stretch
 }
 
-.sidebar {
-  width: 260px;
-  background: #fff;
-  box-shadow: var(--shadow);
-  border-right: 1px solid rgba(0, 0, 0, 0.03);
-}
-
-.sidebar-inner {
-  display: flex;
-  flex-direction: column;
-  height: 100%
-}
-
-.brand {
-  padding: 20px
-}
-
-.brand-name {
-  font-weight: 800;
-  color: var(--c1);
-  font-size: 20px
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 0 12px 12px
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: var(--c2);
-  transition: all .15s;
-}
-
-.nav-item .icon {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
-  color: currentColor
-}
-
-.nav-item:hover {
-  background: var(--c3);
-  color: var(--c1)
-}
-
-.nav-item.active {
-  background: var(--c1);
-  color: #fff
-}
-
 .main {
   flex: 1;
   padding: 28px
@@ -209,13 +151,13 @@ body {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  color: var(--c5);
+  color: var(--c3);
   font-weight: 700;
   transition: all .12s;
 }
 
 .view-btn:hover {
-  color: var(--c1);
+  color: var(--c3);
   background: rgba(170, 135, 68, 0.06)
 }
 

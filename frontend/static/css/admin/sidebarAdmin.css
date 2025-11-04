@@ -1,0 +1,133 @@
+/* sidebarAdmin.css - Estilos unificados para el sidebar */
+:root {
+    --aa8744: #aa8744;
+    --363636: #363636;
+    --fdfbf3: #fdfbf3;
+    --d1bc97: #d1bc97;
+    --9c642d: #9c642d;
+}
+
+/* Estilos base del sidebar */
+.admin-sidebar {
+    width: 16rem;
+    background-color: var(--363636);
+    color: var(--fdfbf3);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    padding: 1rem;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sidebar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--aa8744);
+    margin: 0;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(209, 188, 151, 0.2);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--fdfbf3);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    background-color: #4a4a4a;
+    transform: translateX(4px);
+    color: var(--fdfbf3) !important;
+}
+
+.nav-item:hover .material-symbols-outlined {
+    color: var(--fdfbf3) !important;
+}
+
+.nav-item.active {
+    background-color: var(--aa8744);
+    color: white;
+    font-weight: 600;
+}
+
+/* ESTO ES IMPORTANTE - Asegurar que los iconos sean visibles */
+.nav-item .material-symbols-outlined {
+    font-size: 1.25rem;
+    width: 1.5rem;
+    text-align: center;
+    color: inherit !important;
+    /* Forzar color heredado */
+    opacity: 1 !important;
+    /* Forzar visibilidad */
+    visibility: visible !important;
+    /* Forzar visibilidad */
+}
+
+/* Footer del sidebar */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(209, 188, 151, 0.2);
+}
+
+/* Contenido principal ajustado para el sidebar */
+.main-content {
+    margin-left: 0;
+    flex: 1;
+    min-height: 100vh;
+    background-color: var(--fdfbf3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.25rem;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        min-width: 80px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}

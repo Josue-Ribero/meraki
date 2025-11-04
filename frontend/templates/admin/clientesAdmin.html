@@ -4,145 +4,226 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clientes - Panel de Administración</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?display=swap&family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900"
-    rel="stylesheet" />
-  <title>Clientes</title>
-  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-  <link rel="stylesheet" href="../../static/css/admin/clientesAdmin.css" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Work+Sans:wght@400;500;700;900&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="stylesheet" href="../../static/css/admin/clientesAdmin.css">
+  <link rel="stylesheet" href="../../static/css/admin/sidebarAdmin.css">
 </head>
 
-<body>
-  <div class="app-root">
-    <aside class="flex w-64 flex-col bg-[#363636] text-white">
-      <div class="flex h-full flex-col justify-between p-4">
-        <div class="flex flex-col gap-6">
-          <h1 class="text-2xl font-bold text-center text-[#aa8744]">Meraki</h1>
-          <nav class="flex flex-col gap-2">
-            <a class="nav-item active" href="/dashboard">
-              <span class="material-symbols-outlined">home</span>
-              <p>Inicio</p>
-            </a>
-            <a class="nav-item" href="/pedidos">
-              <span class="material-symbols-outlined">package_2</span>
-              <p>Pedidos</p>
-            </a>
-            <a class="nav-item" href="/productos">
-              <span class="material-symbols-outlined">list_alt</span>
-              <p>Productos</p>
-            </a>
-            <a class="nav-item" href="/categorias">
-              <span class="material-symbols-outlined">category</span>
-              <p>Categorías</p>
-            </a>
-            <a class="nav-item" href="/clientes">
-              <span class="material-symbols-outlined">group</span>
-              <p>Clientes</p>
-            </a>
-            <a class="nav-item" href="#">
-              <span class="material-symbols-outlined">bar_chart</span>
-              <p>Reportes</p>
-            </a>
-          </nav>
-        </div>
-        <div class="nav-item">
-          <a href="/auth/logout">
-            <span class="material-symbols-outlined">logout</span>
-            <p>Cerrar sesión</p>
-          </a>
-        </div>
-      </div>
-    </aside>
+<body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
+  <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div class="flex h-full w-full flex-1">
 
-    <main class="main">
-      <header class="main-header">
-        <h1>Clientes</h1>
-        <div class="search-wrap">
-          <div class="search-icon" aria-hidden="true">
-            <svg viewBox="0 0 256 256" class="icon">
-              <path
-                d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z" />
-            </svg>
+      <!-- Sidebar unificado -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-container">
+          <div class="sidebar-header">
+            <h1 class="sidebar-title">Meraki</h1>
+            <nav class="sidebar-nav">
+              <a class="nav-item" href="/dashboard">
+                <span class="material-symbols-outlined">home</span>
+                <p>Inicio</p>
+              </a>
+              <a class="nav-item" href="/pedidos">
+                <span class="material-symbols-outlined">package_2</span>
+                <p>Pedidos</p>
+              </a>
+              <a class="nav-item" href="/productos">
+                <span class="material-symbols-outlined">list_alt</span>
+                <p>Productos</p>
+              </a>
+              <a class="nav-item" href="/categorias">
+                <span class="material-symbols-outlined">category</span>
+                <p>Categorías</p>
+              </a>
+              <a class="nav-item active" href="/clientes">
+                <span class="material-symbols-outlined">group</span>
+                <p>Clientes</p>
+              </a>
+              <a class="nav-item" href="#">
+                <span class="material-symbols-outlined">bar_chart</span>
+                <p>Reportes</p>
+              </a>
+            </nav>
           </div>
-          <input id="searchInput" class="search-input" type="text"
-            placeholder="Buscar clientes por nombre, correo o teléfono..." />
+          <div class="sidebar-footer">
+            <a class="nav-item" href="/auth/logout">
+              <span class="material-symbols-outlined">logout</span>
+              <p>Cerrar sesión</p>
+            </a>
+          </div>
         </div>
-      </header>
+      </aside>
 
-      <section class="card">
-        <div class="table-wrap">
-          <table id="clientsTable" class="clients-table" aria-describedby="clients-desc">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Contacto</th>
-                <th class="center">Puntos de fidelidad</th>
-                <th class="center">Historial de pedidos</th>
-              </tr>
-            </thead>
-            <tbody id="clientsBody">
-              <tr data-cliente="1">
-                <td>
-                  <p class="client-name">Sofía Rodríguez</p>
-                </td>
-                <td>
-                  <p class="client-email">sofia.rodriguez@example.com</p>
-                  <p class="client-phone">555-123-4567</p>
-                </td>
-                <td class="center"><span class="badge">1500</span></td>
-                <td class="center"><button class="view-btn">Ver</button></td>
-              </tr>
-              <tr data-cliente="2">
-                <td>
-                  <p class="client-name">Carlos López</p>
-                </td>
-                <td>
-                  <p class="client-email">carlos.lopez@example.com</p>
-                  <p class="client-phone">555-987-6543</p>
-                </td>
-                <td class="center"><span class="badge">800</span></td>
-                <td class="center"><button class="view-btn">Ver</button></td>
-              </tr>
-              <tr data-cliente="3">
-                <td>
-                  <p class="client-name">Ana García</p>
-                </td>
-                <td>
-                  <p class="client-email">ana.garcia@example.com</p>
-                  <p class="client-phone">555-246-8013</p>
-                </td>
-                <td class="center"><span class="badge">2200</span></td>
-                <td class="center"><button class="view-btn">Ver</button></td>
-              </tr>
-              <tr data-cliente="4">
-                <td>
-                  <p class="client-name">Javier Martínez</p>
-                </td>
-                <td>
-                  <p class="client-email">javier.martinez@example.com</p>
-                  <p class="client-phone">555-369-1470</p>
-                </td>
-                <td class="center"><span class="badge">500</span></td>
-                <td class="center"><button class="view-btn">Ver</button></td>
-              </tr>
-              <tr data-cliente="5">
-                <td>
-                  <p class="client-name">Isabel Fernández</p>
-                </td>
-                <td>
-                  <p class="client-email">isabel.fernandez@example.com</p>
-                  <p class="client-phone">555-789-0123</p>
-                </td>
-                <td class="center"><span class="badge">1800</span></td>
-                <td class="center"><button class="view-btn">Ver</button></td>
-              </tr>
-            </tbody>
-          </table>
-          <p id="clients-desc" class="sr-only">Lista de clientes con contacto, puntos y acceso a historial.</p>
+      <!-- Contenido principal -->
+      <main class="main-content">
+        <div class="p-6 md:p-8">
+          <!-- Header -->
+          <header class="mb-8">
+            <div class="flex items-center justify-between">
+              <h1 class="text-4xl font-bold text-[#363636]">Gestión de Clientes</h1>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500">Hola, Admin</span>
+                <div class="w-10 h-10 rounded-full bg-[#d1bc97] flex items-center justify-center text-white font-bold">
+                  A
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <!-- Barra de búsqueda -->
+          <div class="mb-6 bg-white p-6 rounded-xl shadow-sm border border-[#d1bc97]">
+            <div class="relative max-w-2xl">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9c642d]">
+                search
+              </span>
+              <input id="searchInput" type="text" placeholder="Buscar clientes por nombre, correo o teléfono..."
+                class="w-full pl-10 pr-4 py-3 border border-[#d1bc97] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#aa8744] focus:border-transparent">
+            </div>
+          </div>
+
+          <!-- Tabla de clientes -->
+          <div class="bg-white rounded-xl shadow-sm border border-[#d1bc97] overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-[#fdfbf3] border-b border-[#d1bc97]">
+                  <tr>
+                    <th class="py-4 px-6 text-left font-semibold text-[#9c642d] uppercase tracking-wider text-sm">Nombre
+                    </th>
+                    <th class="py-4 px-6 text-left font-semibold text-[#9c642d] uppercase tracking-wider text-sm">
+                      Contacto</th>
+                    <th class="py-4 px-6 text-center font-semibold text-[#9c642d] uppercase tracking-wider text-sm">
+                      Puntos de Fidelidad</th>
+                    <th class="py-4 px-6 text-center font-semibold text-[#9c642d] uppercase tracking-wider text-sm">
+                      Historial de Pedidos</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#d1bc97]">
+                  <!-- Cliente 1 -->
+                  <tr class="hover:bg-[#fdfbf3] transition-colors">
+                    <td class="py-4 px-6">
+                      <p class="font-semibold text-[#363636] text-base">Sofía Rodríguez</p>
+                    </td>
+                    <td class="py-4 px-6">
+                      <p class="text-[#9c642d] text-sm">sofia.rodriguez@example.com</p>
+                      <p class="text-gray-600 text-sm">555-123-4567</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[#aa8744] text-white">
+                        1500 pts
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button
+                        class="px-4 py-2 bg-transparent border border-[#aa8744] text-[#aa8744] rounded-lg font-semibold hover:bg-[#aa8744] hover:text-white transition-colors text-sm">
+                        Ver Historial
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Cliente 2 -->
+                  <tr class="hover:bg-[#fdfbf3] transition-colors">
+                    <td class="py-4 px-6">
+                      <p class="font-semibold text-[#363636] text-base">Carlos López</p>
+                    </td>
+                    <td class="py-4 px-6">
+                      <p class="text-[#9c642d] text-sm">carlos.lopez@example.com</p>
+                      <p class="text-gray-600 text-sm">555-987-6543</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[#aa8744] text-white">
+                        800 pts
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button
+                        class="px-4 py-2 bg-transparent border border-[#aa8744] text-[#aa8744] rounded-lg font-semibold hover:bg-[#aa8744] hover:text-white transition-colors text-sm">
+                        Ver Historial
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Cliente 3 -->
+                  <tr class="hover:bg-[#fdfbf3] transition-colors">
+                    <td class="py-4 px-6">
+                      <p class="font-semibold text-[#363636] text-base">Ana García</p>
+                    </td>
+                    <td class="py-4 px-6">
+                      <p class="text-[#9c642d] text-sm">ana.garcia@example.com</p>
+                      <p class="text-gray-600 text-sm">555-246-8013</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[#aa8744] text-white">
+                        2200 pts
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button
+                        class="px-4 py-2 bg-transparent border border-[#aa8744] text-[#aa8744] rounded-lg font-semibold hover:bg-[#aa8744] hover:text-white transition-colors text-sm">
+                        Ver Historial
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Cliente 4 -->
+                  <tr class="hover:bg-[#fdfbf3] transition-colors">
+                    <td class="py-4 px-6">
+                      <p class="font-semibold text-[#363636] text-base">Javier Martínez</p>
+                    </td>
+                    <td class="py-4 px-6">
+                      <p class="text-[#9c642d] text-sm">javier.martinez@example.com</p>
+                      <p class="text-gray-600 text-sm">555-369-1470</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[#aa8744] text-white">
+                        500 pts
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button
+                        class="px-4 py-2 bg-transparent border border-[#aa8744] text-[#aa8744] rounded-lg font-semibold hover:bg-[#aa8744] hover:text-white transition-colors text-sm">
+                        Ver Historial
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Cliente 5 -->
+                  <tr class="hover:bg-[#fdfbf3] transition-colors">
+                    <td class="py-4 px-6">
+                      <p class="font-semibold text-[#363636] text-base">Isabel Fernández</p>
+                    </td>
+                    <td class="py-4 px-6">
+                      <p class="text-[#9c642d] text-sm">isabel.fernandez@example.com</p>
+                      <p class="text-gray-600 text-sm">555-789-0123</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[#aa8744] text-white">
+                        1800 pts
+                      </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <button
+                        class="px-4 py-2 bg-transparent border border-[#aa8744] text-[#aa8744] rounded-lg font-semibold hover:bg-[#aa8744] hover:text-white transition-colors text-sm">
+                        Ver Historial
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </section>
-    </main>
+      </main>
+    </div>
   </div>
 
   <script src="../../static/js/admin/clientesAdmin.js"></script>

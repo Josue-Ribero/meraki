@@ -12,32 +12,46 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
   <link rel="stylesheet" href="../../static/css/admin/productosAdmin.css">
+  <link rel="stylesheet" href="../../static/css/admin/sidebarAdmin.css">
 </head>
 
 <body class="bg-[var(--brand-off-white)] font-sans">
   <div class="flex min-h-screen">
 
-    <aside class="flex w-64 flex-col bg-[#363636] text-white">
-      <div class="flex h-full flex-col justify-between p-4">
-        <div class="flex flex-col gap-6">
-          <h1 class="text-2xl font-bold text-center text-[#aa8744]">Meraki</h1>
-          
-          <nav class="flex-grow">
-            <ul>
-              <li><a class="menu-item" href="/dashboard"><span class="material-symbols-outlined">home</span>Inicio</a>
-              </li>
-              <li><a class="menu-item" href="/pedidos"><span
-                    class="material-symbols-outlined">package_2</span>Pedidos</a></li>
-              <li><a class="menu-item active" href="/productos"><span class="material-symbols-outlined">list_alt</span>Productos</a>
-              </li>
-              <li><a class="menu-item" href="/clientes"><span class="material-symbols-outlined">group</span>Clientes</a></li>
-              <li><a class="menu-item" href="#"><span class="material-symbols-outlined">bar_chart</span>Reportes</a>
-              </li>
-            </ul>
+    <!-- Sidebar unificado -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-container">
+        <div class="sidebar-header">
+          <h1 class="sidebar-title">Meraki</h1>
+          <nav class="sidebar-nav">
+            <a class="nav-item" href="/dashboard">
+              <span class="material-symbols-outlined">home</span>
+              <p>Inicio</p>
+            </a>
+            <a class="nav-item" href="/pedidos">
+              <span class="material-symbols-outlined">package_2</span>
+              <p>Pedidos</p>
+            </a>
+            <a class="nav-item active" href="/productos">
+              <span class="material-symbols-outlined">list_alt</span>
+              <p>Productos</p>
+            </a>
+            <a class="nav-item" href="/categorias">
+              <span class="material-symbols-outlined">category</span>
+              <p>Categorías</p>
+            </a>
+            <a class="nav-item" href="/clientes">
+              <span class="material-symbols-outlined">group</span>
+              <p>Clientes</p>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="material-symbols-outlined">bar_chart</span>
+              <p>Reportes</p>
+            </a>
           </nav>
         </div>
-        <div class="nav-item">
-          <a href="/auth/logout">
+        <div class="sidebar-footer">
+          <a class="nav-item" href="/auth/logout">
             <span class="material-symbols-outlined">logout</span>
             <p>Cerrar sesión</p>
           </a>
@@ -54,11 +68,16 @@
         </button>
       </div>
 
-      <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
-        <div class="relative flex-grow max-w-lg">
-          <span class="material-symbols-outlined search-icon">search</span>
-          <input id="searchInput" class="input-search" placeholder="Buscar por nombre, SKU o categoría..."
-            type="text" />
+      <div class="mb-6 bg-white p-6 rounded-xl shadow-sm border border-[var(--brand-light-tan)]">
+        <div class="flex flex-wrap gap-4 justify-between items-center">
+          <div class="relative flex-grow max-w-2xl">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--brand-brown)]">
+              search
+            </span>
+            <input id="searchInput" type="text" placeholder="Buscar clientes por nombre, correo o teléfono..."
+              class="w-full pl-10 pr-4 py-3 border border-[var(--brand-light-tan)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] focus:border-transparent" />
+          </div>
         </div>
       </div>
 
