@@ -1,4 +1,6 @@
 /* categoriaAdmin.css - Estilos específicos para categorías */
+
+/* Variables CSS para colores consistentes */
 :root {
   --c-gold: #aa8744;
   --c-dark-gray: #363636;
@@ -7,6 +9,7 @@
   --c-brown: #9c642d;
 }
 
+/* Panel principal de contenido */
 .panel {
   background: white;
   border: 1px solid var(--c-light-tan);
@@ -15,6 +18,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Modal para añadir/editar categorías */
 .modal {
   display: none;
   position: fixed;
@@ -73,7 +77,8 @@
 
 /* Botones de acción */
 .editar,
-.eliminar {
+.eliminar,
+.activar {
   background: none;
   border: none;
   cursor: pointer;
@@ -97,4 +102,81 @@
 
 .eliminar:hover {
   background-color: rgba(220, 38, 38, 0.1);
+}
+
+.activar {
+  color: #16a34a;
+  margin-left: 0.5rem;
+}
+
+.activar:hover {
+  background-color: rgba(22, 163, 74, 0.1);
+}
+
+/* Estilos para categorías desactivadas */
+.categoria-inactiva {
+  opacity: 0.6;
+  background-color: #f9fafb !important;
+}
+
+.categoria-inactiva td {
+  color: #6b7280 !important;
+}
+
+/* Badge de estado */
+.badge-inactivo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Filtros activos */
+.filtro-activo {
+  background-color: var(--c-gold) !important;
+  color: white !important;
+  border-color: var(--c-gold) !important;
+}
+
+/* Paginación - EXACTAMENTE como en pedidosAdmin */
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.page-btn {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-dark-gray);
+  background: none;
+  border: 1px solid var(--c-light-tan);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn.active {
+  background-color: var(--c-gold);
+  color: white;
+  border-color: var(--c-gold);
+}
+
+.page-btn:hover:not(.active) {
+  background-color: #f3f3f3;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#infoPaginacion {
+  color: var(--c-brown);
+  font-size: 0.875rem;
 }
