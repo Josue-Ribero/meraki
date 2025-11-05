@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const clientesPorPagina = 10;
 
   // Configuración de API
-  const API_BASE = 'http://127.0.0.1:8000 ';
+  const API_BASE = 'http://127.0.0.1:8000';
   const CLIENTES_ENDPOINT = `${API_BASE}/clientes/`;
 
   console.log("🔗 Endpoint de API:", CLIENTES_ENDPOINT);
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams({
         estado: filtroActual,
         pagina: paginaActual.toString(),
-        items_por_pagina: clientesPorPagina.toString()
+        itemsPorPagina: clientesPorPagina.toString()
       });
 
       if (busquedaActual) {
@@ -101,10 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         console.warn("⚠️ No hay datos de paginación en la respuesta");
         renderizarClientes({
-          total_items: clientes.length,
-          pagina_actual: paginaActual,
-          items_por_pagina: clientesPorPagina,
-          total_paginas: Math.ceil(clientes.length / clientesPorPagina)
+          totalItems: clientes.length,
+          paginaActual: paginaActual,
+          itemsPorPagina: clientesPorPagina,
+          totalPaginas: Math.ceil(clientes.length / clientesPorPagina)
         });
       }
 

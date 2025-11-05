@@ -1,3 +1,5 @@
+/* clientesAdmin.css - Estilos para la gestión de clientes */
+
 :root {
   --c1: #aa8744;
   --c2: #363636;
@@ -8,6 +10,7 @@
   --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
+/* Badges de estado */
 .badge {
   display: inline-block;
   padding: 6px 12px;
@@ -29,6 +32,7 @@
   background: #6b7280;
 }
 
+/* Botones de paginación */
 .page-btn {
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
@@ -56,6 +60,7 @@
   cursor: not-allowed;
 }
 
+/* Estilo para clientes eliminados */
 .cliente-eliminado {
   opacity: 0.7;
   background-color: #f9fafb !important;
@@ -65,6 +70,7 @@
   color: #6b7280 !important;
 }
 
+/* Animación de carga */
 .animate-spin {
   animation: spin 1s linear infinite;
 }
