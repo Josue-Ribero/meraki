@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="px-6 py-4 text-sm">${formatDateLong(o.date)}</td>
         <td class="px-6 py-4 text-sm">${escapeHtml(o.client)}</td>
         <td class="px-6 py-4 text-sm">${escapeHtml(o.total)}</td>
-        <td class="px-6 py-4 text-center"><span class="${badgeClassesFor(o.status)}">${o.status}</span></td>
-        <td class="px-6 py-4 text-center">
+        <td class="px-6 py-4 text-sm"><span class="${badgeClassesFor(o.status)}">${o.status}</span></td>
+        <td class="px-6 py-4 text-sm">
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 edit-btn" data-id="${o.id}" title="Editar"><span class="material-symbols-outlined text-base">edit</span></button>
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 print-btn" data-id="${o.id}" title="Imprimir"><span class="material-symbols-outlined text-base">print</span></button>
           <button class="text-[var(--c-aa8744)] hover:text-[var(--c-9c642d)] p-1 mail-btn" data-id="${o.id}" title="Mail"><span class="material-symbols-outlined text-base">mail</span></button>

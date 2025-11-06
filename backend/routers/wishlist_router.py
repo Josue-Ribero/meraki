@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from ..auth.auth import clienteActual
 from sqlmodel import select
 from ..models.wishlist import Wishlist
@@ -12,13 +12,15 @@ router = APIRouter(prefix="/wishlist", tags=["Wishlist"])
 
 # CREATE - Agregar producto a la wishlist
 @router.post("/agregar-producto", status_code=201, response_model=WishlistItem)
-def agregarProductoAWishlist(nuevoProducto: WishlistItemCreate, session: SessionDep, cliente=Depends(clienteActual)):
-    # Verificar si el producto existe
-    productoDB = session.get(Producto, nuevoProducto.productoID)
+def agregarProductoAWishlist(
+    productoID: int = Form(...),
+    session: SessionDep = None, 
+    cliente=Depends(clienteActual)
+):
+    productoDB = session.get(Producto, productoID)
     if not productoDB or not productoDB.activo:
         raise HTTPException(404, "Producto no encontrado")
     
-    # Obtener o crear wishlist del cliente (una sola wishlist por cliente)
     wishlistDB = session.exec(select(Wishlist).where(Wishlist.clienteID == cliente.id)).first()
     if not wishlistDB:
         wishlistDB = Wishlist(clienteID=cliente.id)
@@ -26,19 +28,17 @@ def agregarProductoAWishlist(nuevoProducto: WishlistItemCreate, session: Session
         session.commit()
         session.refresh(wishlistDB)
 
-    # Verificar si el producto ya está en la wishlist
     productoWishlist = session.exec(
         select(WishlistItem)
-        .where(WishlistItem.wishlistID == wishlistDB.id, WishlistItem.productoID == nuevoProducto.productoID)
+        .where(WishlistItem.wishlistID == wishlistDB.id, WishlistItem.productoID == productoID)
     ).first()
 
-    # Si el producto ya está en la wishlist
     if productoWishlist:
         raise HTTPException(400, "El producto ya está en tu lista de deseos")
     
     wishlistItem = WishlistItem(
         wishlistID=wishlistDB.id,
-        productoID=nuevoProducto.productoID
+        productoID=productoID
     )
 
     session.add(wishlistItem)
@@ -46,32 +46,25 @@ def agregarProductoAWishlist(nuevoProducto: WishlistItemCreate, session: Session
     session.refresh(wishlistItem)
     return wishlistItem
 
-
-
 # POST - Mover producto al carrito
 @router.post("/mover-al-carrito/{productoID}")
 def moverWishlistAlCarrito(productoID: int, session: SessionDep, cliente=Depends(clienteActual)):
-    # Verificar que exista la wishlist
     wishlistDB = session.exec(select(Wishlist).where(Wishlist.clienteID == cliente.id)).first()
     if not wishlistDB:
         raise HTTPException(404, "No tienes una wishlist")
 
-    # Buscar el producto en la wishlist del cliente
     itemDB = session.exec(
         select(WishlistItem).where(
             WishlistItem.wishlistID == wishlistDB.id, WishlistItem.productoID == productoID
         )
     ).first()
-    # Si no existe el item en la wishlist
     if not itemDB:
         raise HTTPException(404, "El producto no está en tu wishlist")
     
-    # Obtener el producto para validar informacion
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
 
-    # Obtener o crear el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     if not carritoDB:
         carrito = Carrito(clienteID=cliente.id)
@@ -81,17 +74,15 @@ def moverWishlistAlCarrito(productoID: int, session: SessionDep, cliente=Depends
     else:
         carrito = carritoDB
 
-    # Verificar si el producto ya está en el carrito. Si ya esta, aumenta cantidad
     productoEnCarrito = session.exec(
         select(DetalleCarrito)
         .where(DetalleCarrito.carritoID == carrito.id, DetalleCarrito.productoID == productoID)
     ).first()
-    # Si ya esta en el carrito
+    
     if productoEnCarrito:
         productoEnCarrito.cantidad += 1
         productoEnCarrito.subtotal = productoDB.precio * productoEnCarrito.cantidad
         session.add(productoEnCarrito)
-    # Si no esta en el carrito
     else:
         nuevoDetalle = DetalleCarrito(
             carritoID=carrito.id,
@@ -100,46 +91,36 @@ def moverWishlistAlCarrito(productoID: int, session: SessionDep, cliente=Depends
             precioUnidad=productoDB.precio,
             subtotal=productoDB.precio * 1
         )
-        session.add(nuevoDetalle) # Agregar a la DB
+        session.add(nuevoDetalle)
 
-    # Eliminar el producto de la wishlist
     session.delete(itemDB)
-    session.commit() # Guardar los cambios
+    session.commit()
     return {"mensaje": "Producto movido de la wishlist al carrito"}
-
-
 
 # READ - Obtener el wishlist del cliente
 @router.get("/mi-wishlist", response_model=list[WishlistItem])
 def miWishlist(session: SessionDep, cliente=Depends(clienteActual)):
-    # Verificar que exista la wishlist
     wishlistDB = session.exec(select(Wishlist).where(Wishlist.clienteID == cliente.id)).first()
     if not wishlistDB:
         raise HTTPException(404, "No tienes una wishlist")
     
-    # Obtener los items de la wishlist
     items = session.exec(select(WishlistItem).where(WishlistItem.wishlistID == wishlistDB.id)).all()
-    return items # Devuelve la lista de items
-
-
+    return items
 
 # DELETE - Eliminar un producto de la wishlist
 @router.delete("/{productoID}", status_code=204)
 def eliminarProductoDeWishlist(productoID: int, session: SessionDep, cliente=Depends(clienteActual)):
-    # Verificar que exista la wishlist
     wishlistDB = session.exec(select(Wishlist).where(Wishlist.clienteID == cliente.id)).first()
     if not wishlistDB:
         raise HTTPException(404, "No tienes una wishlist")
 
-    # Verifica que exista el producto en la wishlist
     productoWishlist = session.exec(
         select(WishlistItem)
         .where(WishlistItem.wishlistID == wishlistDB.id, WishlistItem.productoID == productoID)
     ).first()
 
-    # Si el producto no esta en la lista
     if not productoWishlist:
         raise HTTPException(404, "El producto no está en tu lista de deseos")
 
-    session.delete(productoWishlist) # Elimina el producto
-    session.commit() # Guarda los cambios
+    session.delete(productoWishlist)
+    session.commit()

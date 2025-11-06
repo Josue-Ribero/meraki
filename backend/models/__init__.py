@@ -9,7 +9,7 @@ from .direccionEnvio import DireccionEnvio, DireccionEnvioCreate, DireccionEnvio
 from .disenoPersonalizado import DisenoPersonalizado, DisenoPersonalizadoCreate, DisenoPersonalizadoUpdate, DisenoPersonalizadoDelete
 from .pago import Pago, PagoCreate, PagoUpdate
 from .pedido import Pedido, PedidoCreate, PedidoUpdate, PedidoDelete
-from .producto import Producto, ProductoCreate, ProductoUpdate, ProductoDelete
+from .producto import Producto, ProductoCreate, ProductoUpdate
 from .solicitudRecuperacion import SolicitudRecuperacion, SolicitudRecuperacionCreate, SolicitudRecuperacionUpdate
 from .transaccionPuntos import TransaccionPuntos, TransaccionPuntosCreate, TransaccionPuntosUpdate, TransaccionPuntosDelete
 from .wishlist import Wishlist
@@ -26,7 +26,7 @@ __all__ = [
     "DisenoPersonalizado", "DisenoPersonalizadoCreate", "DisenoPersonalizadoUpdate", "DisenoPersonalizadoDelete",
     "Pago", "PagoCreate", "PagoUpdate", "PagoDelete",
     "Pedido", "PedidoCreate", "PedidoUpdate", "PedidoDelete",
-    "Producto", "ProductoCreate", "ProductoUpdate", "ProductoDelete",
+    "Producto", "ProductoCreate", "ProductoUpdate",
     "SolicitudRecuperacion", "SolicitudRecuperacionCreate", "SolicitudRecuperacionUpdate", "SolicitudRecuperacionDelete",
     "TransaccionPuntos", "TransaccionPuntosCreate", "TransaccionPuntosUpdate", "TransaccionPuntosDelete",
     "Wishlist", "WishlistCreate", "WishlistUpdate", "WishlistDelete",
