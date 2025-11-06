@@ -1,3 +1,6 @@
+/* productosAdmin.css - Estilos para la gestión de productos */
+
+/* Variables de colores de la marca */
 :root {
   --brand-gold: #aa8744;
   --brand-dark-gray: #363636;
@@ -6,6 +9,7 @@
   --brand-brown: #9c642d;
 }
 
+/* Configuración de iconos de Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
@@ -113,6 +117,8 @@
 }
 
 /* Estilos específicos de productos */
+
+/* Botón para agregar productos */
 .btn-add {
   display: inline-flex;
   align-items: center;
@@ -132,6 +138,7 @@
   background: var(--brand-brown);
 }
 
+/* Icono de búsqueda */
 .search-icon {
   position: absolute;
   left: 12px;
@@ -140,6 +147,7 @@
   color: gray;
 }
 
+/* Campo de búsqueda */
 .input-search {
   width: 100%;
   padding: 8px 12px 8px 36px;
@@ -149,6 +157,7 @@
   background: white;
 }
 
+/* Campos de entrada generales */
 .input {
   width: 100%;
   padding: 8px 10px;
@@ -164,6 +173,7 @@
   border-color: var(--brand-gold);
 }
 
+/* Botón primario */
 .btn-primary {
   background: var(--brand-gold);
   color: white;
@@ -179,6 +189,7 @@
   background: var(--brand-brown);
 }
 
+/* Botón de eliminar */
 .btn-delete {
   background: #fff6f6;
   color: #b91c1c;
@@ -188,6 +199,7 @@
   cursor: pointer;
 }
 
+/* Botón secundario */
 .btn {
   background: #f3f3f3;
   padding: 8px 12px;
@@ -196,6 +208,7 @@
   cursor: pointer;
 }
 
+/* Badge para productos visibles */
 .badge-visible {
   display: inline-flex;
   align-items: center;
@@ -208,6 +221,7 @@
   font-size: 0.75rem;
 }
 
+/* Badge para productos ocultos */
 .badge-hidden {
   display: inline-flex;
   align-items: center;
@@ -220,6 +234,7 @@
   font-size: 0.75rem;
 }
 
+/* Modal de productos */
 .modal {
   position: fixed;
   inset: 0;
@@ -244,6 +259,7 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
+/* Estilos de tabla */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -268,6 +284,7 @@ table tbody tr:hover {
   background-color: rgba(209, 188, 151, 0.1);
 }
 
+/* Miniaturas de productos */
 img.product-thumb {
   width: 48px;
   height: 48px;
@@ -275,7 +292,7 @@ img.product-thumb {
   object-fit: cover;
 }
 
-/* Responsive */
+/* Estilos responsivos */
 @media (max-width: 768px) {
   .flex.w-64 {
     width: 100%;
@@ -299,8 +316,6 @@ img.product-thumb {
     font-size: 13px;
   }
 }
-
-/* Agrega esto a productosAdmin.css */
 
 /* Estilos para sugerencias de categorías */
 .relative {
@@ -359,4 +374,51 @@ img.product-thumb {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* Estilos para paginación */
+.page-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--brand-dark-gray);
+  background: none;
+  border: 1px solid var(--brand-light-tan);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn.active {
+  background-color: var(--brand-gold);
+  color: white;
+  border-color: var(--brand-gold);
+}
+
+.page-btn:hover:not(.active) {
+  background-color: #f3f3f3;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#infoPaginacion {
+  color: var(--brand-brown);
+  font-size: 0.875rem;
+}
+
+/* Estilos para botón de activar */
+.activate-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.activate-btn:hover {
+  background-color: rgba(34, 197, 94, 0.1);
 }

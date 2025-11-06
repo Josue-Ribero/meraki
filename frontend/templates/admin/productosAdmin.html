@@ -78,9 +78,20 @@
             <input id="searchInput" type="text" placeholder="Buscar productos por nombre, SKU o categoría..."
               class="w-full pl-10 pr-4 py-3 border border-[var(--brand-light-tan)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] focus:border-transparent" />
           </div>
+
+          <!-- Filtros de estado y paginación -->
+          <div class="flex gap-4 items-center">
+            <select id="filtroEstado"
+              class="px-4 py-3 border border-[var(--brand-light-tan)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] focus:border-transparent">
+              <option value="todos">Todos</option>
+              <option value="activos">Activos</option>
+              <option value="inactivos">Inactivos</option>
+            </select>
+          </div>
         </div>
       </div>
 
+      <!-- Tabla de productos -->
       <div class="bg-white shadow-md rounded-lg overflow-hidden">
         <table class="min-w-full divide-y divide-[var(--brand-light-tan)]" id="productTable">
           <thead class="bg-gray-50">
@@ -117,11 +128,11 @@
           <input id="product-sku" class="input" required />
         </label>
 
+        <!-- Se hacen sugerencias de categoría -->
         <label class="text-sm relative">
           Categoría
           <input id="product-category" class="input"
             placeholder="Escriba el nombre exacto de la categoría (ej: Collares, Aretes...)" required />
-          <!-- Las sugerencias se mostrarán dinámicamente -->
         </label>
 
         <label class="text-sm">

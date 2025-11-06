@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Form, UploadFile, File
 from ..auth.auth import adminActual
 from sqlmodel import select
-from ..models.producto import Producto, ProductoCreate, ProductoUpdate
+from ..models.producto import Producto
 from ..db.db import SessionDep
 from ..utils.bucket import cargarArchivo
 import os
@@ -25,9 +25,9 @@ async def crearProducto(
     session: SessionDep = None,
     admin=Depends(adminActual)
 ):
-    # Verificar si el SKU ya existe
-    producto_existente = session.exec(select(Producto).where(Producto.sku == sku)).first()
-    if producto_existente:
+    # Verificar si ya existe un producto con ese SKU
+    productoDB = session.exec(select(Producto).where(Producto.sku == sku)).first()
+    if productoDB:
         raise HTTPException(400, "El SKU ya existe")
     
     # Manejar la imagen
@@ -40,6 +40,7 @@ async def crearProducto(
         except Exception as e:
             raise HTTPException(500, f"Error al subir la imagen: {str(e)}")
     
+    # Crear el objeto del producto
     producto = Producto(
         nombre=nombre,
         sku=sku,
@@ -54,24 +55,46 @@ async def crearProducto(
         administradorID=admin.id
     )
     
+    # Insertar en la DB y guardar los cambios
     session.add(producto)
     session.commit()
     session.refresh(producto)
+
     return producto
+
+
 
 # READ - Lista de productos
 @router.get("/", response_model=list[Producto])
 def listaProductos(session: SessionDep):
+    # Obtener la lista de todos los productos de la DB que estén activos
     productos = session.exec(select(Producto).where(Producto.activo == True)).all()
+
     return productos
+
+
+
+# READ - Lista de todos los productos (incluyendo inactivos) - solo admin
+@router.get("/todas", response_model=list[Producto])
+def listaTodosProductos(session: SessionDep, _=Depends(adminActual)):
+    # Obtener la lista de todos los productos de la DB
+    productos = session.exec(select(Producto)).all()
+
+    return productos
+
+
 
 # READ - Producto por ID
 @router.get("/{productoID}", response_model=Producto)
 def productoPorID(productoID: int, session: SessionDep):
+    # Verificar que el producto exista en la DB
     productoDB = session.exec(select(Producto).where(Producto.id == productoID, Producto.activo == True)).first()
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
+    
     return productoDB
+
+
 
 # UPDATE - Actualizar producto con imagen
 @router.patch("/{productoID}", response_model=Producto)
@@ -86,19 +109,20 @@ async def actualizarProducto(
     opcionesColor: str = Form(None),
     opcionesTamano: str = Form(None),
     categoriaID: int = Form(None),
-    activo: bool = Form(None),  # <-- AGREGAR ESTE PARÁMETRO
+    activo: bool = Form(None),
     imagen: UploadFile = File(None),
     session: SessionDep = None,
     _=Depends(adminActual)
 ):
+    # Verificar que el producto exista en la DB
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
     # Verificar si el SKU ya existe (excluyendo el producto actual)
     if sku and sku != productoDB.sku:
-        producto_existente = session.exec(select(Producto).where(Producto.sku == sku, Producto.id != productoID)).first()
-        if producto_existente:
+        productoDB = session.exec(select(Producto).where(Producto.sku == sku, Producto.id != productoID)).first()
+        if productoDB:
             raise HTTPException(400, "El SKU ya existe")
     
     # Manejar la imagen
@@ -128,21 +152,49 @@ async def actualizarProducto(
         productoDB.opcionesTamano = opcionesTamano
     if categoriaID:
         productoDB.categoriaID = categoriaID
-    if activo is not None:  # <-- AGREGAR ESTA LÍNEA
-        productoDB.activo = activo  # <-- AGREGAR ESTA LÍNEA
-    
+    if activo is not None:
+        productoDB.activo = activo
+
+    # Insertar en la DB y guardar los cambios
     session.add(productoDB)
     session.commit()
     session.refresh(productoDB)
+
     return productoDB
 
-# DELETE - Deshabilitar el producto
-@router.delete("/{productoID}/deshabilitar", status_code=204)
-def deshabilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+
+
+# UPDATE - Reactivar un producto
+@router.patch("/{productoID}/habilitar", response_model=Producto)
+def habilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+    # Verificar que el producto exista en la DB
     productoDB = session.get(Producto, productoID)
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
+    # Reactivar el producto
+    productoDB.activo = True
+    
+    # Insertar en la DB y guardar los cambios
+    session.add(productoDB)
+    session.commit()
+    session.refresh(productoDB)
+
+    return productoDB
+
+
+
+# DELETE - Deshabilitar el producto
+@router.delete("/{productoID}/deshabilitar", status_code=204)
+def deshabilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+    # Verificar que el producto exista en la DB
+    productoDB = session.get(Producto, productoID)
+    if not productoDB:
+        raise HTTPException(404, "Producto no encontrado")
+    
+    # Desactivar el producto
     productoDB.activo = False
+
+    # Insertar en la DB y guardar los cambios
     session.add(productoDB)
     session.commit()
