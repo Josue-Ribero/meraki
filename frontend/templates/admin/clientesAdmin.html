@@ -114,11 +114,12 @@
                       Puntos de Fidelidad</th>
                     <th class="py-4 px-6 text-center font-semibold text-[#9c642d] uppercase tracking-wider text-sm">
                       Estado</th>
+                    
                   </tr>
                 </thead>
                 <tbody id="clientesBody" class="divide-y divide-[#d1bc97]">
                   <tr id="loadingRow">
-                    <td colspan="4" class="py-8 px-6 text-center text-[#9c642d]">
+                    <td colspan="5" class="py-8 px-6 text-center text-[#9c642d]">
                       <div class="flex items-center justify-center">
                         <span class="material-symbols-outlined animate-spin mr-2">refresh</span>
                         Cargando clientes...
@@ -130,8 +131,8 @@
             </div>
           </div>
 
-          <!-- Paginación -->
-          <div class="flex justify-between items-center mt-6">
+          <!-- Paginación - MEJORADA -->
+          <div id="paginacionContainer" class="flex justify-between items-center mt-6 hidden">
             <span id="infoPaginacion" class="text-sm text-gray-500">Mostrando 0 de 0 clientes</span>
             <div id="paginacion" class="flex items-center gap-2">
               <!-- Los botones de paginación se generarán dinámicamente -->
