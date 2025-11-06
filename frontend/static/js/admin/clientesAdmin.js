@@ -8,24 +8,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("searchInput");
   const filtroEstado = document.getElementById("filtroEstado");
   const btnBuscar = document.getElementById("btnBuscar");
-  const paginacionEl = document.getElementById("paginacion");
-  const infoPaginacionEl = document.getElementById("infoPaginacion");
 
   // Variables de estado
   let clientes = [];
   let filtroActual = "activos";
   let busquedaActual = "";
   let paginaActual = 1;
-  const clientesPorPagina = 10;
+  const clientesPorPagina = 5;
 
   // Configuración de API
   const API_BASE = 'http://127.0.0.1:8000';
   const CLIENTES_ENDPOINT = `${API_BASE}/clientes/`;
 
+  // Contenedor para paginación
+  let paginacionContainer;
+
   console.log("🔗 Endpoint de API:", CLIENTES_ENDPOINT);
 
+  // Función para inicializar la paginación (igual que productosAdmin.js)
+  function inicializarPaginacion() {
+    if (!document.getElementById('paginacion-container')) {
+      const table = document.querySelector('table');
+      const paginacionDiv = document.createElement('div');
+      paginacionDiv.id = 'paginacion-container';
+      paginacionDiv.className = 'flex justify-between items-center mt-6';
+      paginacionDiv.innerHTML = `
+        <span id="infoPaginacion" class="text-sm text-gray-500">Mostrando 0 de 0 clientes</span>
+        <div id="paginacion" class="flex items-center gap-2"></div>
+      `;
+      table.parentNode.insertBefore(paginacionDiv, table.nextSibling);
+    }
+    paginacionContainer = document.getElementById('paginacion');
+  }
+
   // Verificar que todos los elementos del DOM existen
-  if (!tbody || !paginacionEl || !infoPaginacionEl) {
+  if (!tbody) {
     console.error("❌ Elementos del DOM no encontrados");
     showError("Error: No se pudieron cargar los elementos de la página");
     return;
@@ -139,9 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </td>
         </tr>`;
 
-      const total = paginacion.total_items || 0;
+      const total = paginacion.totalItems || 0;
       actualizarInfoPaginacion(0, total);
-      renderizarPaginacion(paginacion.total_paginas || 1);
+      renderizarPaginacion(paginacion.totalPaginas || 1);
       return;
     }
 
@@ -205,23 +222,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Actualizar información de paginación
-    const total = paginacion.total_items || clientes.length;
+    const total = paginacion.totalItems || clientes.length;
     const mostrando = Math.min(clientes.length, clientesPorPagina);
     actualizarInfoPaginacion(mostrando, total);
-    renderizarPaginacion(paginacion.total_paginas || 1);
+    renderizarPaginacion(paginacion.totalPaginas || 1);
   }
 
-  /* ---------- Funciones de paginación ---------- */
+  /* ---------- Funciones de paginación (IGUAL QUE productosAdmin.js) ---------- */
   function actualizarInfoPaginacion(mostrando, total) {
-    if (infoPaginacionEl) {
-      infoPaginacionEl.textContent = `Mostrando ${mostrando} de ${total} clientes`;
+    const infoPaginacion = document.getElementById('infoPaginacion');
+    if (infoPaginacion) {
+      infoPaginacion.textContent = `Mostrando ${mostrando} de ${total} clientes`;
     }
   }
 
   function renderizarPaginacion(totalPaginas) {
-    paginacionEl.innerHTML = '';
+    if (!paginacionContainer) return;
 
-    if (totalPaginas <= 1) return;
+    paginacionContainer.innerHTML = '';
 
     // Botón Anterior
     const btnAnterior = document.createElement("button");
@@ -234,13 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
         cargarClientes();
       }
     });
-    paginacionEl.appendChild(btnAnterior);
+    paginacionContainer.appendChild(btnAnterior);
 
     // Botones de números de página
-    const inicio = Math.max(1, paginaActual - 2);
-    const fin = Math.min(totalPaginas, inicio + 4);
-
-    for (let i = inicio; i <= fin; i++) {
+    for (let i = 1; i <= totalPaginas; i++) {
       const btnPagina = document.createElement("button");
       btnPagina.textContent = i;
       btnPagina.className = "page-btn" + (i === paginaActual ? " active" : "");
@@ -248,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paginaActual = i;
         cargarClientes();
       });
-      paginacionEl.appendChild(btnPagina);
+      paginacionContainer.appendChild(btnPagina);
     }
 
     // Botón Siguiente
@@ -262,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cargarClientes();
       }
     });
-    paginacionEl.appendChild(btnSiguiente);
+    paginacionContainer.appendChild(btnSiguiente);
   }
 
   /* ---------- UI Functions ---------- */
@@ -409,5 +424,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Inicializar la aplicación
   console.log("🚀 Inicializando aplicación de clientes...");
+  inicializarPaginacion();
   cargarClientes();
 });
