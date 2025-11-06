@@ -1,8 +1,10 @@
+# models/producto.py
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
 
 class ProductoBase(SQLModel):
     nombre: str = Field()
+    sku: str = Field(unique=True)  # Agregar SKU
     descripcion: str = Field(default=None)
     precio: int = Field()
     stock: int = Field(default=0)
@@ -30,19 +32,8 @@ class Producto(ProductoBase, table=True):
     wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
 
 class ProductoCreate(SQLModel):
-    nombre: Optional[str] = None
-    descripcion: Optional[str] = None
-    precio: Optional[int] = None
-    stock: int = 0
-    imagenURL: Optional[str] = None
-    esPersonalizado: bool = False
-    opcionesColor: Optional[str] = None
-    opcionesTamano: Optional[str] = None
-    activo: bool = True
-    categoriaID: int
-
-class ProductoUpdate(ProductoBase):
     nombre: str
+    sku: str
     descripcion: Optional[str] = None
     precio: int
     stock: int = 0
@@ -50,10 +41,21 @@ class ProductoUpdate(ProductoBase):
     esPersonalizado: bool = False
     opcionesColor: Optional[str] = None
     opcionesTamano: Optional[str] = None
+    activo: bool = True
     categoriaID: int
 
-class ProductoDelete(ProductoBase):
-    activo: bool = True
+class ProductoUpdate(SQLModel):
+    nombre: Optional[str] = None
+    sku: Optional[str] = None
+    descripcion: Optional[str] = None
+    precio: Optional[int] = None
+    stock: Optional[int] = None
+    imagenURL: Optional[str] = None
+    esPersonalizado: Optional[bool] = None
+    opcionesColor: Optional[str] = None
+    opcionesTamano: Optional[str] = None
+    activo: Optional[bool] = None
+    categoriaID: Optional[int] = None
 
 # Importaciones diferidas
 from .administrador import Administrador

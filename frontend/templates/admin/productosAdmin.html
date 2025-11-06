@@ -75,7 +75,7 @@
               class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--brand-brown)]">
               search
             </span>
-            <input id="searchInput" type="text" placeholder="Buscar clientes por nombre, correo o teléfono..."
+            <input id="searchInput" type="text" placeholder="Buscar productos por nombre, SKU o categoría..."
               class="w-full pl-10 pr-4 py-3 border border-[var(--brand-light-tan)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] focus:border-transparent" />
           </div>
         </div>
@@ -104,7 +104,7 @@
     <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <h3 id="modal-title" class="text-xl font-bold mb-2">Producto</h3>
 
-      <form id="productForm" class="grid gap-3">
+      <form id="productForm" class="grid gap-3" enctype="multipart/form-data">
         <input type="hidden" id="product-id" />
 
         <label class="text-sm">
@@ -117,28 +117,38 @@
           <input id="product-sku" class="input" required />
         </label>
 
-        <label class="text-sm">
+        <label class="text-sm relative">
           Categoría
-          <input id="product-category" class="input" />
+          <input id="product-category" class="input"
+            placeholder="Escriba el nombre exacto de la categoría (ej: Collares, Aretes...)" required />
+          <!-- Las sugerencias se mostrarán dinámicamente -->
         </label>
 
         <label class="text-sm">
           Stock
-          <input id="product-stock" type="number" min="0" class="input" />
+          <input id="product-stock" type="number" min="0" class="input" required />
         </label>
 
         <label class="text-sm">
           Precio (COP)
-          <input id="product-price" type="number" step="0.01" min="0" class="input" />
+          <input id="product-price" type="number" step="0.01" min="0" class="input" required />
         </label>
 
         <label class="text-sm">
-          URL imagen
-          <input id="product-image" class="input" />
+          Descripción
+          <textarea id="product-description" class="input" rows="3"></textarea>
+        </label>
+
+        <label class="text-sm">
+          Imagen
+          <input id="product-image" type="file" accept="image/*" class="input" />
+          <div id="image-preview" class="mt-2 hidden">
+            <img id="preview-img" class="w-32 h-32 object-cover rounded-lg border" />
+          </div>
         </label>
 
         <label class="inline-flex items-center gap-2">
-          <input id="product-visible" type="checkbox" />
+          <input id="product-visible" type="checkbox" checked />
           <span>Visible</span>
         </label>
 
