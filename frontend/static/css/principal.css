@@ -9,39 +9,66 @@
 .bg-fondo-principal {
   background-color: var(--c-fdfbf3);
 }
+
 .text-color-principal {
   color: var(--c-aa8744);
 }
+
 .bg-color-principal {
   background-color: var(--c-aa8744);
 }
+
 .border-color-principal {
   border-color: var(--c-aa8744);
 }
+
 .text-color-texto-oscuro {
   color: var(--c-363636);
 }
+
 .text-color-secundario {
   color: var(--c-9c642d);
 }
+
 .text-color-blanco {
   color: white;
 }
+
 .border-color-borde-input {
   border-color: var(--c-d1bc97);
 }
+
 .hover\:bg-color-principal-oscuro:hover {
   background-color: var(--c-9c642d);
 }
+
 .hover\:bg-fondo-principal:hover {
   background-color: var(--c-fdfbf3);
 }
+
 .ring-color-principal {
   --tw-ring-color: var(--c-aa8744);
 }
+
 .accent-color-principal {
   accent-color: var(--c-aa8744);
 }
+
 .relative.flex.size-full.min-h-screen {
   min-height: 100vh;
+}
+
+/* Estilos para los estados de los botones */
+.btn-agregar-carrito:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-agregar-carrito:disabled:hover {
+  background-color: var(--c-aa8744);
+}
+
+/* Transiciones suaves */
+.producto-card {
+  transition: all 0.3s ease;
 }

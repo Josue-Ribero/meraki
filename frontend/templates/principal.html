@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <title>Inicio</title>
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+    rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link rel="stylesheet" href="../static/css/principal.css" />
   <link rel="stylesheet" href="../static/css/sidebar.css" />
   <script defer src="/static/js/principal.js"></script>
 </head>
+
 <body class="bg-fondo-principal">
-  <div class="relative flex size-full min-h-screen flex-row group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
-    <aside class="flex flex-col items-center justify-between bg-white w-24 py-8 border-r border-gray-200 shadow-lg z-10">
+  <div class="relative flex size-full min-h-screen flex-row group/design-root overflow-x-hidden"
+    style='font-family: Inter, "Noto Sans", sans-serif;'>
+    <aside
+      class="flex flex-col items-center justify-between bg-white w-24 py-8 border-r border-gray-200 shadow-lg z-10">
       <div class="flex flex-col items-center gap-10">
         <a class="flex items-center" href="/">
           <img alt="Meraki logo" class="h-12 w-12" src="../static/img/UI/logo.png" />
         </a>
         <nav class="flex flex-col items-center gap-6">
-        
-          <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/about" title="Sobre nosotros">
+
+          <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/about"
+            title="Sobre nosotros">
             <span class="material-symbols-outlined">info</span>
           </a>
           <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/contacto" title="Contacto">
@@ -29,12 +36,15 @@
         </nav>
       </div>
       <div class="flex flex-col items-center gap-6">
-        <a class="relative flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal text-color-texto-oscuro hover:text-color-principal transition-colors" href="/carrito" title="Carrito">
+        <a class="relative flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal text-color-texto-oscuro hover:text-color-principal transition-colors"
+          href="/carrito" title="Carrito">
           <span class="material-symbols-outlined">shopping_cart</span>
         </a>
 
-        <a class="flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal" href="/mi-cuenta" title="Cuenta">
-          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g");'>
+        <a class="flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal" href="/mi-cuenta"
+          title="Cuenta">
+          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g");'>
           </div>
         </a>
       </div>
@@ -48,11 +58,14 @@
         <div class="flex-1 flex justify-center">
           <div class="w-full max-w-lg relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input class="form-input w-full rounded-full border-2 border-color-borde-input bg-white pl-12 pr-4 py-3 text-base focus:border-color-principal focus:ring-color-principal placeholder:text-gray-400" placeholder="Buscar collares, anillos..." value="" />
+            <input
+              class="form-input w-full rounded-full border-2 border-color-borde-input bg-white pl-12 pr-4 py-3 text-base focus:border-color-principal focus:ring-color-principal placeholder:text-gray-400"
+              placeholder="Buscar collares, anillos..." value="" />
             <div class="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg z-20 hidden">
               <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Collares de oro</a>
               <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Pulseras de plata</a>
-              <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Anillos con perlas</a>
+              <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Anillos con
+                perlas</a>
             </div>
           </div>
         </div>
@@ -75,15 +88,18 @@
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Material</h3>
               <div class="space-y-2">
                 <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal" type="checkbox" />
+                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
+                    type="checkbox" />
                   <span class="ml-2 text-color-texto-oscuro">Oro</span>
                 </label>
                 <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal" type="checkbox" />
+                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
+                    type="checkbox" />
                   <span class="ml-2 text-color-texto-oscuro">Plata</span>
                 </label>
                 <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal" type="checkbox" />
+                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
+                    type="checkbox" />
                   <span class="ml-2 text-color-texto-oscuro">Perlas</span>
                 </label>
               </div>
@@ -98,7 +114,8 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Popularidad</h3>
-              <select class="form-select w-full rounded-md border-gray-300 focus:border-color-principal focus:ring-color-principal text-color-texto-oscuro">
+              <select
+                class="form-select w-full rounded-md border-gray-300 focus:border-color-principal focus:ring-color-principal text-color-texto-oscuro">
                 <option>Más populares</option>
                 <option>Novedades</option>
                 <option>Mejor valorados</option>
@@ -107,142 +124,10 @@
           </div>
         </aside>
         <section class="flex-1">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Collar de Perlas Elegante" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_JDX50IX_kVelyWjVIMrGfkKZxozXdmtNAxO7S2Ijtgfii1Kc9SIlB9AnRL_eiIk3PNj4rzizcGePcXxAAqVvI8A7k7tVxODuVS__omCZcLHEcCyE4PpGqI2ojo_ydlK8hCA2HkdOKoTlwq6l0SpY2RVf7Q5xwuPal0Aub1SZYBGZBCEnp1zFQTMNE14nXQs9onBK-nYxl5k4_YWNxWf2G1HpCgna6GqXkcXYkWsh228i01H1zReX1DHq8rEE2HNF9fJ7DnMYOH6F" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Collar de Perlas Elegante</h3>
-                  <p class="text-sm text-gray-500">Oro, Perlas</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$120.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Pulsera de Dijes de Plata" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZsFfp9Ylf1so-e8nytyAx_1ZEhBs_NTilmyRUWKeESCkebNS3buWhIwVbqMKsGorbouMra9tK48w54OKF1gGO0nG4ymH3nlW3ze_zZD8Ii-CBCYVBITUw2ueJTi8y0NWXeFW2rsFWPCAvFUPacVZNW4bRM0DPRRryFYNgdcA_fMpYG5WsUsBbEaSPhlGlloCyAQxPMU4g319rxtYytDjYiEY3phWCx-OGbnuIzzH0wSHKJgDFUDQxqczfBT3XFpM4gK-9sfPkJFBr" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Pulsera de Dijes de Plata</h3>
-                  <p class="text-sm text-gray-500">Plata</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$85.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Pendientes de Diamante" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBo72nkKr02xKgY2hkTfCRrM3mtC-IHDpkIOTi0AtZhsOodSiGre-K5U1ZnuxzJHF1Nc2iHA2qnRecRjfXNhGRAPY0vsvbe8CjftdzDXzW-VzCIfANm8llrzEPCN2Wxv7JSTUpjnP7Z5mSzkyEng-YJneG4b-kak9s4_G3a42g5gNpITJZakCXIHtO8GVbaBk4qd-wwg6Tk5tUnpLmoGQMoFXtcfnSim0Hq51elA62LJmCp3l7XpzBBUwiJpnERFoZIU5TnM0ciIi1g" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Pendientes de Diamante</h3>
-                  <p class="text-sm text-gray-500">Plata</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$250.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Anillo de Banda de Oro" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7PPZ4_KM9FOapej6kj3WQoXYuySVjXUYOWyki3CyPpK29bdCH1rwEBKw8DsbZz7YaWnUUyt0zxLWH4jIT-xsxkSSkSQVKiYAfsVcgL3LRBIoeeyUjCtwY2BaWd5Hizc7dbfnkSlnfYOoNevwu4z-RxhLtMtJpHs2To9llgKAEkWNeoi1EMzP7jaoJhfgUDxFPwg_GEWAS88zTN1tKIG1gb-JUsBoeLti17YoifRTxDBa7uOvaSlG-Em6JF4tjvyh6jm2me3Oyor6N" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Anillo de Banda de Oro</h3>
-                  <p class="text-sm text-gray-500">Oro</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$180.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Conjunto de Joyas de Zafiro" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVJIb-HPkzaw7B7MXOfzZtyjVNxok8j7rkqR4Qqp8NvZfLN_vyttM5xUqOvR5FBpwrMoYD_CviPUyArhYt4-HOQYHrMgea4WXDpleXq-SuNHFsq64iZpAe2WRNg3VtN5iVvhukwbcM3FlkMGD37V9ZgHZ71oXZb-S6gCLlMP3WQdpVoUXYDpL3lASIcQ1oOYpQYgkm_ofeyW250zql7ndLCf7bhdxaprQenscjtUSkBV4VlesWI-ajz0Hfi4FwMvVa6zD-_mrVXYrA" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Conjunto de Joyas de Zafiro</h3>
-                  <p class="text-sm text-gray-500">Oro, Zafiro</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$450.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Collar con Colgante de Rubí" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDPya87rlw1th7jkVCN3GQffEH1QoNScodpNtyxNtiytREgmIqRjVup1PwykBsDfdha5S77o3vjVUaj5iNjmBl5Z4bq8srgY0iouENACscF8bBXnvUtclq5tBa1EovLUUp8AmEev_LAiX4GkfFzz3oDzbWQd6qs9qREJiTQAUoMhH9KCDQMJGrG4abiyBZVGP-a28nRdh56z8Ky5jAl-uwdXL-GdnYgOpIL9SfytUII1fMwjjAiXTnUqkt4ZLuQrpUMCQVgeh0GT5v" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Collar con Colgante de Rubí</h3>
-                  <p class="text-sm text-gray-500">Oro, Rubí</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$320.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Pulsera de Cuero" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNoa9evQ8ZWvIVUR6o855GNLuzjyzrzSSKVeHesAo8u4O9b9jM5rZi-sobsWYTjrNATTRX0NYzcPuvwXnaG2mbMkO09ZNBDJbh0JS_rQu6PYt5_B_YOfEMWQ6mGX7xYkRJk79Ts_p08NeEGmkuP6GyBzNIobv1PNnBLIhDeqHjCZKpX_6JxtMt66CqQ9kAcgOmCeLSbaFT9ZdbPtOaNtOEezW_gw2rdhSk09Csy6vtVPR_ZCVxF6L53rnUty0jeUp_5zWOqbzGxq1k" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Pulsera de Cuero real y Plata</h3>
-                  <p class="text-sm text-gray-500">Cuero, Plata</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$65.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-              <div class="aspect-square w-full overflow-hidden">
-                <img alt="Pendientes de Gota de Cristal" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcKm4ZJ7ZkxVLgcKt-qkqphdtZAMa6-_c3vi4g7SaTlXPjD0oE5RbQcR3Q5QoWRLc4nFK5Q4ggb16fV3I5GA6la6m6rk5Bkhrb5jYeyVQpDFCQxll2sdBZ8FqA93jVsVGbum1J4PA6xdm0KsWQJ9IdcbeRNbdwZRREzNOcI4XqIuqb5cWtrwhwc2RFV8cAL5_t1oA2h5z7v_FSW9gAt_FnkKbavHkwbliS3lwAUbDZhZJ4N5uXGunGpjl2Lpbyj7_DeNZo1jAfhND7" />
-              </div>
-              <div class="p-4 flex flex-col flex-grow">
-                <a href="/producto">
-                  <h3 class="text-base font-semibold text-color-texto-oscuro">Pendientes de Gota de Cristal</h3>
-                  <p class="text-sm text-gray-500">Plata, Cristal</p>
-                  <div class="flex items-center justify-between mt-4">
-                    <p class="text-xl font-bold text-color-secundario">$95.00</p>
-                    <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors">
-                      <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-                    </button>
-                  </div>
-                </a>
-              </div>
+          <div id="productos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Los productos se cargarán aquí dinámicamente -->
+            <div class="text-center py-8 col-span-full">
+              <p class="text-color-texto-oscuro">Cargando productos...</p>
             </div>
           </div>
         </section>
@@ -250,4 +135,5 @@
     </main>
   </div>
 </body>
+
 </html>
