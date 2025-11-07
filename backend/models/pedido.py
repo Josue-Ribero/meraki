@@ -4,6 +4,7 @@ from ..utils.enums import EstadoPedido
 from sqlalchemy import Column, ForeignKey
 from typing import Optional
 
+# Modelo base de pedido
 class PedidoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoPedido = Field(default=EstadoPedido.PENDIENTE)
@@ -12,7 +13,7 @@ class PedidoBase(SQLModel):
     puntosUsados: int = Field(default=0)
     clienteEliminado: bool = Field(default=False)
 
-    # Métodos
+    # Métodos del modelo
     def calcularTotal(self) -> int:
         if not hasattr(self, "detalles") or not self.detalles:
             return 0
@@ -27,6 +28,7 @@ class PedidoBase(SQLModel):
     def enviarNotificacionEmail(self):
         return {"Message": "Pedido concretado"}
 
+# Modelo con ID autoincrementable
 class Pedido(PedidoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: Optional[int] = Field(default=None, sa_column=Column(ForeignKey("administrador.id", ondelete="SET NULL")))
@@ -36,9 +38,10 @@ class Pedido(PedidoBase, table=True):
     direccionEnvioID: int = Field(sa_column=Column(ForeignKey("direccionenvio.id", ondelete="SET NULL")))
     direccionEnvio: "DireccionEnvio" = Relationship(back_populates="pedidos")
     detalles: list["DetallePedido"] = Relationship(back_populates="pedido", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    pago: "Pago" = Relationship(back_populates="pedido")
+    pago: Optional["Pago"] = Relationship(back_populates="pedido", sa_relationship_kwargs={"uselist": False})
     transacciones: list["TransaccionPuntos"] = Relationship(back_populates="pedido")
 
+# Modelos de creacion, actualizacion y eliminacion
 class PedidoCreate(PedidoBase):
     pass
 
