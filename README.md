@@ -2,11 +2,11 @@
   <h1>🛍️ Meraki</h1>
   <p><em>Donde la creatividad se encuentra con la joyería.</em></p>
 
-  [![Version](https://img.shields.io/badge/Version-0.0.1-blue.svg)](https://github.com/Josue-Ribero/meraki/releases)
-  [![FastAPI](https://img.shields.io/badge/FastAPI-v0.118.3-green.svg)](https://github.com/Josue-Ribero/meraki/releases)
-  [![SQLModel](https://img.shields.io/badge/SQLModel-v0.0.24-green.svg)](https://github.com/Josue-Ribero/meraki/releases)
-  [![Python](https://img.shields.io/badge/Python-3.13.5-yellow.svg)](https://github.com/Josue-Ribero/meraki/releases)
-  [![SQLModel](https://img.shields.io/badge/SQLite-v3.51.0-orange.svg)](https://github.com/Josue-Ribero/meraki/releases)
+  [![Version](https://img.shields.io/badge/Version-0.0.1-blue.svg)]
+  [![FastAPI](https://img.shields.io/badge/FastAPI-v0.118.3-green.svg)]
+  [![SQLModel](https://img.shields.io/badge/SQLModel-v0.0.24-green.svg)]
+  [![Python](https://img.shields.io/badge/Python-3.13.5-yellow.svg)]
+  [![SQLModel](https://img.shields.io/badge/SQLite-v3.51.0-orange.svg)]
 
 </div>
 
