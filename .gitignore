@@ -5,6 +5,7 @@
 # Archivos temporales de Python
 __pycache__/
 *.pyc
+*/__pycache__/
 
 # Configuracion del sistema
 *.log
