@@ -155,7 +155,7 @@ async def actualizarProducto(
     if activo is not None:
         productoDB.activo = activo
 
-    # Guardar cambios
+    # Guardar cambios en la DB
     session.add(productoDB)
     session.commit()
     session.refresh(productoDB)

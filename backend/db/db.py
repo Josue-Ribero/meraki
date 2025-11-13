@@ -4,9 +4,6 @@ from typing import Annotated
 from datetime import datetime as dt
 from passlib.context import CryptContext
 from ..models.administrador import Administrador
-from dotenv import load_dotenv
-import os
-import psycopg2
 
 db_name = "meraki.sqlite3"
 db_url = f"sqlite:///{db_name}"
