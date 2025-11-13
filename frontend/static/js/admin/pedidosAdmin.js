@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusFilter = document.getElementById("status-filter");
   const dateFilter = document.getElementById("date-filter");
   const clientFilter = document.getElementById("client-filter");
-  const productFilter = document.getElementById("product-filter");
+  // CAMBIO: Cambiar productFilter por orderIdFilter
+  const orderIdFilter = document.getElementById("order-id-filter");
   const filterBtn = document.getElementById("filter-button");
   const resultsInfo = document.querySelector(".results-info");
   const paginationEl = document.querySelector(".pagination");
@@ -203,14 +204,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'Cliente no disponible';
   }
 
-  // Función para aplicar filtros
+  // CAMBIO: Función para aplicar filtros - ahora incluye filtro por ID de pedido
   function applyFilters() {
     const status = statusFilter.value || "Todos";
     const date = dateFilter.value || "";
     const client = (clientFilter.value || "").trim().toLowerCase();
-    const product = (productFilter.value || "").trim().toLowerCase();
+    // CAMBIO: Usar orderIdFilter en lugar de productFilter
+    const orderId = (orderIdFilter.value || "").trim();
 
-    console.log('Aplicando filtros:', { status, date, client, product });
+    console.log('Aplicando filtros:', { status, date, client, orderId });
 
     return allOrders.filter(o => {
       // Filtrar por estado
@@ -230,6 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (client) {
         const nombreCliente = obtenerNombreCliente(o).toLowerCase();
         if (!nombreCliente.includes(client)) return false;
+      }
+
+      // CAMBIO: Filtrar por ID de pedido
+      if (orderId) {
+        const pedidoIdStr = o.id.toString();
+        if (!pedidoIdStr.includes(orderId)) return false;
       }
 
       return true;
@@ -440,9 +448,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable();
   });
 
-  [statusFilter, dateFilter, clientFilter, productFilter].forEach(el => {
+  // CAMBIO: Incluir orderIdFilter en los event listeners
+  [statusFilter, dateFilter, clientFilter, orderIdFilter].forEach(el => {
     if (el) {
       el.addEventListener("change", () => {
+        currentPage = 1;
+        renderTable();
+      });
+
+      // Agregar event listener para input (para búsqueda en tiempo real)
+      el.addEventListener("input", () => {
         currentPage = 1;
         renderTable();
       });
