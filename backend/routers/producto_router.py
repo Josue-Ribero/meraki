@@ -121,15 +121,15 @@ async def actualizarProducto(
     
     # Verificar si el SKU ya existe (excluyendo el producto actual)
     if sku and sku != productoDB.sku:
-        productoDB = session.exec(select(Producto).where(Producto.sku == sku, Producto.id != productoID)).first()
-        if productoDB:
+        productoExistente = session.exec(select(Producto).where(Producto.sku == sku, Producto.id != productoID)).first()
+        if productoExistente:
             raise HTTPException(400, "El SKU ya existe")
     
     # Manejar la imagen
     if imagen and imagen.filename:
         try:
             archivo_info = await cargarArchivo(imagen)
-            productoDB.imagenURL = f"/static/{archivo_info['nombre_archivo']}"
+            productoDB.imagenURL = f"/uploads/{archivo_info['nombre_archivo']}"
         except Exception as e:
             raise HTTPException(500, f"Error al subir la imagen: {str(e)}")
     
@@ -155,7 +155,7 @@ async def actualizarProducto(
     if activo is not None:
         productoDB.activo = activo
 
-    # Insertar en la DB y guardar los cambios
+    # Guardar cambios
     session.add(productoDB)
     session.commit()
     session.refresh(productoDB)
