@@ -37,6 +37,7 @@ pillow==11.2.1
 pluggy==1.6.0
 psycopg==3.2.10
 psycopg-binary==3.2.10
+psycopg2-binary==2.9.11
 pydantic==2.11.7
 pydantic_core==2.33.2
 Pygments==2.19.2
@@ -64,6 +65,7 @@ typing_extensions==4.15.0
 tzdata==2025.2
 urllib3==2.5.0
 uvicorn==0.35.0
+uvloop==0.22.1
 watchfiles==1.1.0
 websockets==15.0.1
 Werkzeug==3.1.3
