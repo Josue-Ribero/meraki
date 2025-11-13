@@ -58,15 +58,9 @@
         <div class="flex-1 flex justify-center">
           <div class="w-full max-w-lg relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input
+            <input id="search-input"
               class="form-input w-full rounded-full border-2 border-color-borde-input bg-white pl-12 pr-4 py-3 text-base focus:border-color-principal focus:ring-color-principal placeholder:text-gray-400"
               placeholder="Buscar collares, anillos..." value="" />
-            <div class="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg z-20 hidden">
-              <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Collares de oro</a>
-              <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Pulseras de plata</a>
-              <a class="block px-4 py-2 text-color-texto-oscuro hover:bg-fondo-principal" href="#">Anillos con
-                perlas</a>
-            </div>
           </div>
         </div>
         <div class="flex-1"></div>
@@ -76,54 +70,56 @@
           <div class="space-y-8">
             <div>
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Categorías</h3>
-              <div class="space-y-2">
-                <a class="block text-color-texto-oscuro hover:text-color-principal font-medium" href="#">Collares</a>
-                <a class="block text-color-texto-oscuro hover:text-color-principal" href="#">Pulseras</a>
-                <a class="block text-color-texto-oscuro hover:text-color-principal" href="#">Anillos</a>
-                <a class="block text-color-texto-oscuro hover:text-color-principal" href="#">Pendientes</a>
-                <a class="block text-color-texto-oscuro hover:text-color-principal" href="#">Conjuntos</a>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-color-secundario mb-4">Material</h3>
-              <div class="space-y-2">
-                <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
-                    type="checkbox" />
-                  <span class="ml-2 text-color-texto-oscuro">Oro</span>
-                </label>
-                <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
-                    type="checkbox" />
-                  <span class="ml-2 text-color-texto-oscuro">Plata</span>
-                </label>
-                <label class="flex items-center">
-                  <input class="form-checkbox rounded text-color-principal focus:ring-color-principal"
-                    type="checkbox" />
-                  <span class="ml-2 text-color-texto-oscuro">Perlas</span>
-                </label>
+              <div class="space-y-2" id="categorias-filtro">
+                <!-- Las categorías se cargarán dinámicamente -->
               </div>
             </div>
             <div>
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Precio</h3>
-              <input class="w-full accent-color-principal" max="1000" min="50" type="range" />
+              <input id="precio-range" type="range" min="0" max="75000" value="75000"
+                class="w-full accent-color-principal precio-range" />
               <div class="flex justify-between text-sm text-color-texto-oscuro mt-1">
-                <span>$3000</span>
-                <span>$75000</span>
+                <span id="precio-min">$0</span>
+                <span id="precio-max">$75.000</span>
+              </div>
+              <div class="flex space-x-2 mt-2">
+                <input type="number" id="precio-min-input" placeholder="Mín"
+                  class="w-1/2 border border-color-borde-input rounded px-2 py-1 text-sm">
+                <input type="number" id="precio-max-input" placeholder="Máx"
+                  class="w-1/2 border border-color-borde-input rounded px-2 py-1 text-sm">
               </div>
             </div>
             <div>
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Popularidad</h3>
-              <select
+              <select id="filtro-popularidad"
                 class="form-select w-full rounded-md border-gray-300 focus:border-color-principal focus:ring-color-principal text-color-texto-oscuro">
-                <option>Más populares</option>
-                <option>Novedades</option>
-                <option>Mejor valorados</option>
+                <option value="todos">Todos</option>
+                <option value="novedades">Novedades</option>
+                <option value="populares">Más populares</option>
               </select>
+            </div>
+            <div>
+              <button id="limpiar-filtros"
+                class="w-full bg-gray-200 text-color-texto-oscuro py-2 rounded hover:bg-gray-300 transition-colors">
+                Limpiar Filtros
+              </button>
             </div>
           </div>
         </aside>
         <section class="flex-1">
+          <div class="flex justify-between items-center mb-6">
+            <p id="contador-productos" class="text-color-texto-oscuro">Cargando productos...</p>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-color-texto-oscuro">Ordenar por:</span>
+              <select id="ordenar-por"
+                class="form-select rounded-md border-gray-300 focus:border-color-principal focus:ring-color-principal text-color-texto-oscuro text-sm">
+                <option value="relevancia">Relevancia</option>
+                <option value="novedades">Novedades</option>
+                <option value="precio-asc">Precio: Menor a Mayor</option>
+                <option value="precio-desc">Precio: Mayor a Menor</option>
+              </select>
+            </div>
+          </div>
           <div id="productos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Los productos se cargarán aquí dinámicamente -->
             <div class="text-center py-8 col-span-full">
