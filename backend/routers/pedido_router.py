@@ -12,14 +12,13 @@ router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 # READ - Obtener la lista de pedidos del cliente
 @router.get("/mis-pedidos", response_model=list[Pedido])
 def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
-    # Usar join para cargar el cliente junto con los pedidos
+    # Verificar los pedidos que existen y que sean de x cliente
     pedidosDB = session.exec(select(Pedido).join(Cliente, Pedido.clienteID == Cliente.id).where(Pedido.clienteID == cliente.id)).all()
     if not pedidosDB:
         raise HTTPException(404, "No tienes pedidos")
     
     # Cargar relaciones para cada pedido
     for pedido in pedidosDB:
-        # El cliente ya está cargado por el join
         # Cargar pago si existe
         pago = session.exec(select(Pago).where(Pago.pedidoID == pedido.id)).first()
         pedido.pago = pago
@@ -31,7 +30,7 @@ def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
 # READ - Obtener lista de pedidos (solo administrador)
 @router.get("/", response_model=list[Pedido])
 def listaPedidos(session: SessionDep, _=Depends(adminActual)):
-    # Cargar pedidos con información del cliente usando join
+    # Lista de pedidos de un cliente
     pedidos = session.exec(select(Pedido).join(Cliente, Pedido.clienteID == Cliente.id)).all()
     
     # Cargar pagos para cada pedido
@@ -46,7 +45,7 @@ def listaPedidos(session: SessionDep, _=Depends(adminActual)):
 # READ - Obtener pedido por ID (solo administrador)
 @router.get("/{pedidoID}", response_model=Pedido)
 def pedidoPorID(pedidoID: int, session: SessionDep, _=Depends(adminActual)):
-    # Usar join para cargar el cliente junto con el pedido
+    # Pedido con con id de cliente específico
     pedidoDB = session.exec(select(Pedido).join(Cliente, Pedido.clienteID == Cliente.id).where(Pedido.id == pedidoID)).first()
     if not pedidoDB:
         raise HTTPException(404, "Pedido no encontrado")
@@ -74,6 +73,29 @@ def actualizarEstado(
     
     # Cambiar estado del pedido
     pedidoDB.estado = estado
+
+    # Insertar pedido en la DB y guardar los cambios
+    session.add(pedidoDB)
+    session.commit()
+    session.refresh(pedidoDB)
+    return pedidoDB
+
+
+
+# UPDATE - Confirmar pedido
+@router.patch("/{pedidoID}/confirmar", response_model=Pedido)
+def confirmarPedido(
+    pedidoID: int,
+    session: SessionDep = None,
+    _=Depends(adminActual)
+):
+    # Obtener pedido con ese ID desde la DB
+    pedidoDB = session.get(Pedido, pedidoID)
+    if not pedidoDB:
+        raise HTTPException(404, "Pedido no encontrado")
+    
+    # Cambiar estado del pedido a PAGADO
+    pedidoDB.estado = EstadoPedido.PAGADO
 
     # Insertar pedido en la DB y guardar los cambios
     session.add(pedidoDB)
