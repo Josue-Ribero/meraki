@@ -76,10 +76,10 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold text-color-secundario mb-4">Precio</h3>
-              <input id="precio-range" type="range" min="0" max="75000" value="75000"
+              <input id="precio-range" type="range" min="3000" max="75000" value="75000"
                 class="w-full accent-color-principal precio-range" />
               <div class="flex justify-between text-sm text-color-texto-oscuro mt-1">
-                <span id="precio-min">$0</span>
+                <span id="precio-min">$3000</span>
                 <span id="precio-max">$75.000</span>
               </div>
               <div class="flex space-x-2 mt-2">
@@ -125,6 +125,10 @@
             <div class="text-center py-8 col-span-full">
               <p class="text-color-texto-oscuro">Cargando productos...</p>
             </div>
+          </div>
+          <!-- CONTENEDOR DE PAGINACIÓN -->
+          <div id="paginacion-container" class="mt-8 flex justify-center items-center space-x-4">
+            <!-- La paginación se generará dinámicamente aquí -->
           </div>
         </section>
       </div>

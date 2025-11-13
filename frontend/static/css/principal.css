@@ -72,3 +72,43 @@
 .producto-card {
   transition: all 0.3s ease;
 }
+
+/* ESTILOS PARA PAGINACIÓN */
+.paginacion-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--c-d1bc97);
+  border-radius: 6px;
+  background-color: white;
+  color: var(--c-363636);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.paginacion-btn:hover:not(.paginacion-btn-active):not(:disabled) {
+  background-color: var(--c-fdfbf3);
+  border-color: var(--c-aa8744);
+}
+
+.paginacion-btn-active {
+  background-color: var(--c-aa8744);
+  color: white;
+  border-color: var(--c-aa8744);
+}
+
+.paginacion-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginacion-info {
+  color: var(--c-363636);
+  font-size: 14px;
+  margin: 0 16px;
+}
+
+.paginacion-ellipsis {
+  padding: 8px 12px;
+  color: var(--c-363636);
+}
