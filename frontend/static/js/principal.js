@@ -19,6 +19,16 @@ async function cargarProductos() {
   }
 }
 
+function formatearPrecio(precio) {
+  if (!precio && precio !== 0) return '0';
+
+  // Convertir a string y eliminar decimales si los hay
+  const precioString = Math.floor(Number(precio)).toString();
+
+  // Agregar puntos cada 3 dígitos de derecha a izquierda
+  return precioString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 function mostrarProductos(productos) {
   const container = document.getElementById('productos-container');
 
@@ -46,7 +56,7 @@ function mostrarProductos(productos) {
           <h3 class="text-base font-semibold text-color-texto-oscuro">${producto.nombre}</h3>
           <p class="text-sm text-gray-500">${obtenerCategoriaMaterial(producto)}</p>
           <div class="flex items-center justify-between mt-4">
-            <p class="text-xl font-bold text-color-secundario">$${(producto.precio / 100).toFixed(2)}</p>
+            <p class="text-xl font-bold text-color-secundario">$${formatearPrecio(producto.precio)} COP</p>
             <button 
               class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-agregar-carrito"
               data-producto-id="${producto.id}"
