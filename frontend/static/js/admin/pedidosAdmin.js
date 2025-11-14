@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusFilter = document.getElementById("status-filter");
   const dateFilter = document.getElementById("date-filter");
   const clientFilter = document.getElementById("client-filter");
-  const productFilter = document.getElementById("product-filter");
+  // CAMBIO: Cambiar productFilter por orderIdFilter
+  const orderIdFilter = document.getElementById("order-id-filter");
   const filterBtn = document.getElementById("filter-button");
   const resultsInfo = document.querySelector(".results-info");
   const paginationEl = document.querySelector(".pagination");
@@ -87,27 +88,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para confirmar pago
-  async function confirmarPago(pagoID) {
+  // NUEVA FUNCIÓN: Confirmar pedido
+  async function confirmarPedido(pedidoID) {
     try {
-      console.log('Confirmando pago ID:', pagoID);
-      const response = await fetch(`/pagos/${pagoID}/confirmar`, {
+      console.log('Confirmando pedido ID:', pedidoID);
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`/pedidos/${pedidoID}/confirmar`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          'Authorization': `Bearer ${token || ''}`,
           'Content-Type': 'application/json'
         }
       });
 
-      // Si la respuesta no es exitosa
+      console.log('Respuesta de confirmación:', response.status);
+
       if (!response.ok) {
-        throw new Error('Error al confirmar pago');
+        const errorText = await response.text();
+        console.error('Error en la respuesta:', response.status, errorText);
+        throw new Error(`Error ${response.status}: ${errorText}`);
       }
 
-      return await response.json();
+      const resultado = await response.json();
+      console.log('Pedido confirmado:', resultado);
+      return resultado;
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error al confirmar el pago');
+      console.error('Error confirmando pedido:', error);
+      alert('Error al confirmar el pedido: ' + error.message);
       throw error;
     }
   }
@@ -121,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Si la respuesta no es exitosa
       if (!response.ok) {
         throw new Error('Error al obtener detalles del pedido');
       }
@@ -197,14 +204,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'Cliente no disponible';
   }
 
-  // Función para aplicar filtros
+  // CAMBIO: Función para aplicar filtros - ahora incluye filtro por ID de pedido
   function applyFilters() {
     const status = statusFilter.value || "Todos";
     const date = dateFilter.value || "";
     const client = (clientFilter.value || "").trim().toLowerCase();
-    const product = (productFilter.value || "").trim().toLowerCase();
+    // CAMBIO: Usar orderIdFilter en lugar de productFilter
+    const orderId = (orderIdFilter.value || "").trim();
 
-    console.log('Aplicando filtros:', { status, date, client, product });
+    console.log('Aplicando filtros:', { status, date, client, orderId });
 
     return allOrders.filter(o => {
       // Filtrar por estado
@@ -224,6 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (client) {
         const nombreCliente = obtenerNombreCliente(o).toLowerCase();
         if (!nombreCliente.includes(client)) return false;
+      }
+
+      // CAMBIO: Filtrar por ID de pedido
+      if (orderId) {
+        const pedidoIdStr = o.id.toString();
+        if (!pedidoIdStr.includes(orderId)) return false;
       }
 
       return true;
@@ -274,9 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-50";
 
-      // Verificar si el pago está confirmado
-      const tienePagoConfirmado = o.pago && o.pago.confirmado;
-      const mostrarConfirmar = !tienePagoConfirmado && o.estado === 'PENDIENTE';
+      // Mostrar botón de confirmar solo para pedidos pendientes
+      const mostrarConfirmar = o.estado === 'PENDIENTE';
 
       // Obtener nombre del cliente
       const nombreCliente = obtenerNombreCliente(o);
@@ -292,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="px-2 py-4 text-center">
           <div class="acciones-container">
             ${mostrarConfirmar ? `
-              <button class="action-btn confirmar confirm-btn" data-id="${o.id}" data-pagoid="${o.pago?.id}" title="Confirmar Pago">
+              <button class="action-btn confirmar confirm-btn" data-id="${o.id}" title="Confirmar Pedido">
                 <span class="material-symbols-outlined text-base">check_circle</span>
               </button>
             ` : ''}
@@ -398,27 +411,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
 
     const id = btn.dataset.id;
-    const pagoId = btn.dataset.pagoid;
 
     if (!id) return;
 
     const order = allOrders.find(o => o.id == id);
     if (!order) return;
 
-    // Si se hace clic en el botón de confirmar pago
+    // Si se hace clic en el botón de confirmar pedido
     if (btn.classList.contains("confirm-btn")) {
-      if (confirm('¿Estás seguro de que deseas confirmar el pago de este pedido?')) {
+      if (confirm('¿Estás seguro de que deseas confirmar este pedido? Esta acción cambiará el estado a "PAGADO".')) {
         try {
           btn.disabled = true;
           btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">refresh</span>';
 
-          await confirmarPago(pagoId);
-          alert('Pago confirmado exitosamente');
+          await confirmarPedido(id);
+          alert('Pedido confirmado exitosamente');
 
           // Recargar los pedidos para actualizar el estado
           await loadPedidos();
         } catch (error) {
-          alert('Error al confirmar el pago');
+          alert('Error al confirmar el pedido: ' + error.message);
           btn.disabled = false;
           btn.innerHTML = '<span class="material-symbols-outlined text-base">check_circle</span>';
         }
@@ -436,9 +448,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTable();
   });
 
-  [statusFilter, dateFilter, clientFilter, productFilter].forEach(el => {
+  // CAMBIO: Incluir orderIdFilter en los event listeners
+  [statusFilter, dateFilter, clientFilter, orderIdFilter].forEach(el => {
     if (el) {
       el.addEventListener("change", () => {
+        currentPage = 1;
+        renderTable();
+      });
+
+      // Agregar event listener para input (para búsqueda en tiempo real)
+      el.addEventListener("input", () => {
         currentPage = 1;
         renderTable();
       });

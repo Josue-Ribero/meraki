@@ -16,7 +16,7 @@
 
   <link rel="stylesheet" href="../../static/css/admin/sidebarAdmin.css">
   <link rel="stylesheet" href="../../static/css/admin/pedidosAdmin.css">
-  
+
 </head>
 
 <body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
@@ -74,10 +74,10 @@
             <div>
               <label for="status-filter" class="label">Estado</label>
               <select id="status-filter" class="input">
-                <option>Todos</option>
-                <option>Pendiente</option>
-                <option>Pagado</option>
-                <option>Cancelado</option>
+                <option value="Todos">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Pagado">Pagado</option>
+                <option value="Cancelado">Cancelado</option>
               </select>
             </div>
 
@@ -91,9 +91,10 @@
               <input id="client-filter" type="text" placeholder="Nombre del cliente" class="input" />
             </div>
 
+            <!-- CAMBIO: Filtro de Producto cambiado a ID de Pedido -->
             <div>
-              <label for="product-filter" class="label">Producto</label>
-              <input id="product-filter" type="text" placeholder="Nombre del producto" class="input" />
+              <label for="order-id-filter" class="label">ID Pedido</label>
+              <input id="order-id-filter" type="text" placeholder="Número de pedido" class="input" />
             </div>
 
             <div class="self-end">
