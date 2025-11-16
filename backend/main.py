@@ -93,11 +93,11 @@ def paginaAbout(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.get("/contacto")
-def paginaAbout(request: Request):
+def paginaContacto(request: Request):
     return templates.TemplateResponse("contacto.html", {"request": request})
 
-@app.get("/producto")
-def paginaAbout(request: Request):
+@app.get("/producto/{productoID}")
+def paginaProducto(request: Request, productoID: int):
     return templates.TemplateResponse("producto/detalleProducto.html", {"request": request})
 
 @app.get("/wishlist")

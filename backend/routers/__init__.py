@@ -15,7 +15,7 @@ from . import disenoPersonalizado_router
 from . import transaccionPuntos_router
 
 __all__ = [
-    "Usuario", "PerfilCliente", "Categoria", "Producto", "Carrito", "Pedido",
-    "DireccionEnvio", "Wishlist", "Pago", "DisenoPersonalizado",
-    "TransaccionPuntos", "SolicitudRecuperacion"
+    "administrador_router", "solicitudRecuperacion_router", "cliente_router", "direccionEnvio_router", "producto_router", "categoria_router",
+    "carrito_router", "detalleCarrito_router", "wishlist_router", "pedido_router", "detallePedido_router", "pago_router", "disenoPersonalizado_router",
+    "transaccionPuntos_router", "dashboardAdmin_router"
 ]
