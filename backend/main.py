@@ -34,7 +34,6 @@ from .routers import (
     pago_router,
     pedido_router,
     producto_router,
-    reportes_router,
     solicitudRecuperacion_router,
     transaccionPuntos_router,
     wishlist_router
@@ -54,7 +53,6 @@ routers = [
     pago_router.router,
     pedido_router.router,
     producto_router.router,
-    reportes_router.router,
     solicitudRecuperacion_router.router,
     transaccionPuntos_router.router,
     wishlist_router.router

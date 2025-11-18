@@ -4,9 +4,13 @@ from typing import Annotated
 from datetime import datetime as dt
 from passlib.context import CryptContext
 from ..models.administrador import Administrador
+import os
+from dotenv import load_dotenv
 
-db_name = "meraki.sqlite3"
-db_url = f"sqlite:///{db_name}"
+load_dotenv()
+
+db_url = os.getenv("DB_URL")
+
 engine = create_engine(db_url)
 
 # Hash de contrasena

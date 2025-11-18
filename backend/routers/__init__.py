@@ -17,5 +17,5 @@ from . import transaccionPuntos_router
 __all__ = [
     "administrador_router", "solicitudRecuperacion_router", "cliente_router", "direccionEnvio_router", "producto_router", "categoria_router",
     "carrito_router", "detalleCarrito_router", "wishlist_router", "pedido_router", "detallePedido_router", "pago_router", "disenoPersonalizado_router",
-    "transaccionPuntos_router", "dashboardAdmin_router"
+    "transaccionPuntos_router"
 ]
