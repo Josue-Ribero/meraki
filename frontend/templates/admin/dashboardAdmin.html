@@ -12,9 +12,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <link rel="stylesheet" href="../../static/css/admin/dashboardAdmin.css">
-  <link rel="stylesheet" href="../../static/css/admin/sidebarAdmin.css">
+  <!-- Corregir rutas CSS -->
+  <link rel="stylesheet" href="/static/css/admin/dashboardAdmin.css">
+  <link rel="stylesheet" href="/static/css/admin/sidebarAdmin.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    /* Estilos de respaldo en caso de que los archivos CSS no carguen */
+    .admin-sidebar {
+      background-color: #363636;
+      color: white;
+      width: 250px;
+      min-height: 100vh;
+    }
+    
+    .card {
+      background: white;
+      border: 1px solid #d1bc97;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 
 <body class="bg-[#fdfbf3] font-['Work_Sans','Noto_Sans',sans-serif]">
@@ -68,115 +87,107 @@
             <h1 class="text-4xl font-bold text-[#363636]">Panel de control</h1>
           </header>
 
+          <!-- Tarjetas de resumen -->
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div class="card">
-              <p>Ventas totales</p>
-              <h3>$12,500</h3>
-              <div class="text-green-500 flex items-center"><span
-                  class="material-symbols-outlined">arrow_upward</span>10%</div>
+              <p class="text-[#9c642d] font-medium">Ventas totales</p>
+              <h3 class="text-[#363636] font-bold text-2xl">${{ ventasTotales }}</h3>
+              <div class="text-green-500 flex items-center text-sm">
+                <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                Este mes
+              </div>
             </div>
             <div class="card">
-              <p>Pedidos recientes</p>
-              <h3>35</h3>
-              <div class="text-green-500 flex items-center"><span
-                  class="material-symbols-outlined">arrow_upward</span>5%</div>
+              <p class="text-[#9c642d] font-medium">Pedidos recientes</p>
+              <h3 class="text-[#363636] font-bold text-2xl">{{ pedidosRecientesCount }}</h3>
+              <div class="text-green-500 flex items-center text-sm">
+                <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                Últimos 7 días
+              </div>
             </div>
             <div class="card">
-              <p>Productos más vendidos</p>
-              <h3>Collar de perlas</h3>
-              <div class="text-green-500 flex items-center"><span
-                  class="material-symbols-outlined">arrow_upward</span>8%</div>
+              <p class="text-[#9c642d] font-medium">Producto más vendido</p>
+              <h3 class="text-[#363636] font-bold text-2xl">{{ productoMasVendido }}</h3>
+              <div class="text-green-500 flex items-center text-sm">
+                <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                Destacado
+              </div>
             </div>
             <div class="card">
-              <p>Clientes activos</p>
-              <h3>120</h3>
-              <div class="text-green-500 flex items-center"><span
-                  class="material-symbols-outlined">arrow_upward</span>12%</div>
+              <p class="text-[#9c642d] font-medium">Clientes activos</p>
+              <h3 class="text-[#363636] font-bold text-2xl">{{ clientesActivos }}</h3>
+              <div class="text-green-500 flex items-center text-sm">
+                <span class="material-symbols-outlined text-base mr-1">arrow_upward</span>
+                Total activos
+              </div>
             </div>
           </div>
 
           <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div class="lg:col-span-2">
               <div class="panel">
-                <h2>Ventas Totales</h2>
-                <p class="text-4xl font-bold text-[#363636]">$12,500</p>
-                <p class="text-[#9c642d]">Este mes <span class="text-green-500">▲ 10%</span></p>
+                <h2 class="text-xl font-bold text-[#363636] mb-4">Ventas Mensuales</h2>
+                <p class="text-4xl font-bold text-[#363636]">${{ ventasTotales }}</p>
+                <p class="text-[#9c642d]">Este mes</p>
                 <div class="mt-4 h-64"><canvas id="ventasChart"></canvas></div>
               </div>
             </div>
 
             <div class="panel">
-              <h2>Productos más vendidos</h2>
+              <h2 class="text-xl font-bold text-[#363636] mb-4">Productos más vendidos</h2>
               <table class="w-full text-left">
                 <thead class="border-b border-[#d1bc97]">
                   <tr>
-                    <th>Producto</th>
-                    <th>Ventas</th>
-                    <th>Ingresos</th>
+                    <th class="pb-2 font-medium text-[#363636]">Producto</th>
+                    <th class="pb-2 font-medium text-[#363636]">Ventas</th>
+                    <th class="pb-2 font-medium text-[#363636]">Ingresos</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-[#d1bc97]">
+                  {% for producto in productosMasVendidos %}
                   <tr>
-                    <td>Collar de perlas</td>
-                    <td>50</td>
-                    <td>$2,500</td>
+                    <td class="py-2 text-[#363636]">{{ producto.nombre }}</td>
+                    <td class="py-2 text-[#363636]">{{ producto.totalVendido }}</td>
+                    <td class="py-2 text-[#363636]">${{ producto.ingresosTotales }}</td>
                   </tr>
-                  <tr>
-                    <td>Pendientes de aro</td>
-                    <td>40</td>
-                    <td>$2,000</td>
-                  </tr>
-                  <tr>
-                    <td>Pulsera de cuero</td>
-                    <td>30</td>
-                    <td>$1,500</td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
 
           <div class="mt-8 panel">
-            <h2>Pedidos recientes</h2>
+            <h2 class="text-xl font-bold text-[#363636] mb-4">Pedidos recientes</h2>
             <table class="w-full text-left">
               <thead class="border-b border-[#d1bc97]">
                 <tr>
-                  <th>ID</th>
-                  <th>Cliente</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
-                  <th class="text-right">Total</th>
+                  <th class="pb-2 font-medium text-[#363636]">ID</th>
+                  <th class="pb-2 font-medium text-[#363636]">Cliente</th>
+                  <th class="pb-2 font-medium text-[#363636]">Fecha</th>
+                  <th class="pb-2 font-medium text-[#363636]">Estado</th>
+                  <th class="pb-2 font-medium text-[#363636] text-right">Total</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-[#d1bc97]">
+                {% for pedido in pedidosRecientes %}
                 <tr>
-                  <td>#12345</td>
-                  <td>Sofía Rodríguez</td>
-                  <td>2024-07-26</td>
-                  <td><span class="estado azul">Enviado</span></td>
-                  <td class="text-right">$150</td>
+                  <td class="py-2 text-[#363636]">#{{ pedido.id }}</td>
+                  <td class="py-2 text-[#363636]">{{ pedido.clienteNombre }}</td>
+                  <td class="py-2 text-[#363636]">{{ pedido.fecha }}</td>
+                  <td class="py-2">
+                    {% if pedido.estado in ['PAGADO', 'ENVIADO'] %}
+                      <span class="estado azul">{{ pedido.estado }}</span>
+                    {% elif pedido.estado == 'ENTREGADO' %}
+                      <span class="estado verde">{{ pedido.estado }}</span>
+                    {% elif pedido.estado == 'PENDIENTE' %}
+                      <span class="estado amarillo">{{ pedido.estado }}</span>
+                    {% else %}
+                      <span class="estado rojo">{{ pedido.estado }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="py-2 text-[#363636] text-right">${{ pedido.total }}</td>
                 </tr>
-                <tr>
-                  <td>#12346</td>
-                  <td>Diego Martínez</td>
-                  <td>2024-07-25</td>
-                  <td><span class="estado verde">Entregado</span></td>
-                  <td class="text-right">$200</td>
-                </tr>
-                <tr>
-                  <td>#12347</td>
-                  <td>Isabel García</td>
-                  <td>2024-07-24</td>
-                  <td><span class="estado amarillo">Procesando</span></td>
-                  <td class="text-right">$100</td>
-                </tr>
-                <tr>
-                  <td>#12348</td>
-                  <td>Carlos López</td>
-                  <td>2024-07-23</td>
-                  <td><span class="estado rojo">Cancelado</span></td>
-                  <td class="text-right">$50</td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -185,7 +196,26 @@
     </div>
   </div>
 
-  <script src="../../static/js/admin/dashboardAdmin.js"></script>
+  <!-- Script para pasar datos de Python a JavaScript -->
+  <script>
+    // Datos para la gráfica - con manejo de error si no existen
+    const datosGrafica = {{ datosGrafica | tojson | default({}) }};
+    
+    // Si no hay datos, crear estructura vacía
+    if (!datosGrafica.meses || !datosGrafica.ventas) {
+      window.datosGrafica = {
+        meses: [],
+        ventas: []
+      };
+    } else {
+      window.datosGrafica = datosGrafica;
+    }
+    
+    console.log('Datos de gráfica cargados:', window.datosGrafica);
+  </script>
+
+  <!-- Corregir ruta del JS -->
+  <script src="/static/js/admin/dashboardAdmin.js"></script>
 </body>
 
 </html>

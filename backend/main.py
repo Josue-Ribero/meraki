@@ -4,7 +4,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from .db.db import createAllTables
-from .utils.bucket import cargarArchivo
 
 # Instancia del objeto FastAPI
 app = FastAPI(title="Meraki", lifespan=createAllTables)
@@ -14,7 +13,6 @@ app.add_middleware(SessionMiddleware, secret_key="josue", max_age=60 * 60 * 24)
 
 # Montar los archivos estáticos
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
-
 app.mount("/uploads", StaticFiles(directory="bucket"), name="uploads")
 
 # Indicar dónde están los templates
@@ -27,6 +25,7 @@ from .routers import (
     carrito_router,
     categoria_router,
     cliente_router,
+    dashboardAdmin_router,
     detalleCarrito_router,
     detallePedido_router,
     direccionEnvio_router,
@@ -46,6 +45,7 @@ routers = [
     carrito_router.router,
     categoria_router.router,
     cliente_router.router,
+    dashboardAdmin_router.router,
     detalleCarrito_router.router,
     detallePedido_router.router,
     direccionEnvio_router.router,
@@ -61,15 +61,14 @@ routers = [
 for router in routers:
     app.include_router(router)
 
-
 # Rutas Front-end
 
 # Imagenes
 @app.post("/bucket")
 async def subirImagen(archivo: UploadFile = File(...)):
+    from .utils.bucket import cargarArchivo
     resultado = await cargarArchivo(archivo)
     return resultado
-
 
 # Híbridas
 @app.get("/registrar")
@@ -79,7 +78,6 @@ def paginaRegistro(request: Request):
 @app.get("/ingresar")
 def paginaIngreso(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
-
 
 # Cliente
 @app.get("/")
@@ -132,33 +130,27 @@ def disenoPersonalizado(request: Request):
 def recuperacionContrasena(request: Request):
     return templates.TemplateResponse("contrasena/recuperacion.html", {"request": request})
 
-# Administrador
+# Administrador - Rutas simples que solo verifican sesión
 @app.get("/clientes")
-def paginaDashboard(request: Request):
+def paginaClientes(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/clientesAdmin.html", {"request": request})
 
 @app.get("/categorias")
-def paginaDashboard(request: Request):
+def paginaCategorias(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/categoriaAdmin.html", {"request": request})
 
-@app.get("/dashboard")
-def paginaDashboard(request: Request):
-    if not request.session.get("administradorID"):
-        return RedirectResponse(url="/ingresar", status_code=303)
-    return templates.TemplateResponse("admin/dashboardAdmin.html", {"request": request})
-
 @app.get("/pedidos")
-def paginaDashboard(request: Request):
+def paginaPedidos(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/pedidosAdmin.html", {"request": request})
 
 @app.get("/productos")
-def paginaDashboard(request: Request):
+def paginaProductos(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/productosAdmin.html", {"request": request})
