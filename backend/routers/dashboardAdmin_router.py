@@ -153,6 +153,8 @@ def paginaDashboard(request: Request, session: SessionDep):
             "productosMasVendidos": [],
             "datosGrafica": {"meses": [], "ventas": []}
         })
+    
+
 
 # Función para obtener las ventas mensuales
 def obtenerDatosVentasMensuales(session: SessionDep):
@@ -196,7 +198,9 @@ def obtenerDatosVentasMensuales(session: SessionDep):
         return {"meses": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
                 "ventas": [0.0] * 12}
 
-# Endpoints API para actualizaciones en tiempo real
+
+
+# READ - Obtener resumen de ventas mensuales
 @router.get("/api/dashboard/resumen", response_model=Dict[str, Any])
 def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
     try:
@@ -212,6 +216,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         else:
             finMesActual = datetime(anioActual, mesActual + 1, 1)
         
+        # Obtener las ventas del mes
         ventasMesActual = session.exec(
             select(func.coalesce(func.sum(Pedido.total), 0)).where(
                 and_(
@@ -230,12 +235,14 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
             mesAnterior = mesActual - 1
             anioAnterior = anioActual
         
+        # Fecha de inicio del mes pasado
         inicioMesAnterior = datetime(anioAnterior, mesAnterior, 1)
         if mesAnterior == 12:
             finMesAnterior = datetime(anioAnterior + 1, 1, 1)
         else:
             finMesAnterior = datetime(anioAnterior, mesAnterior + 1, 1)
         
+        # Obtener las ventas del mes pasado
         ventasMesAnterior = session.exec(
             select(func.coalesce(func.sum(Pedido.total), 0)).where(
                 and_(
@@ -246,7 +253,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
             )
         ).first() or 0
 
-        # Cálculo de porcentaje
+        # Cálculo de porcentaje de aumento o decremento
         if ventasMesAnterior > 0:
             porcentajeCambio = ((ventasMesActual - ventasMesAnterior) / ventasMesAnterior) * 100
         else:
@@ -278,6 +285,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
             .limit(1)
         ).first()
 
+        # Devolver los datos del resumen
         return {
             "ventasTotales": ventasMesActual,
             "porcentajeCambio": round(porcentajeCambio, 2),
@@ -288,13 +296,20 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
     except Exception as e:
         raise HTTPException(500, f"Error al obtener resumen: {str(e)}")
 
+
+
+# READ - Obtener las ventas mensuales
 @router.get("/api/dashboard/ventas-mensuales", response_model=Dict[str, Any])
 def obtenerVentasMensuales(session: SessionDep, _=Depends(adminActual)):
     return obtenerDatosVentasMensuales(session)
 
+
+
+# READ - Obtener los pedidos recientes
 @router.get("/api/dashboard/pedidos-recientes", response_model=List[Dict[str, Any]])
 def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
     try:
+        # Obtener la lista de pedidos
         pedidos = session.exec(
             select(Pedido)
             .where(Pedido.estado != EstadoPedido.CANCELADO)
@@ -302,6 +317,7 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
             .limit(5)
         ).all()
 
+        # Lista con el resultado de la consulta
         resultado = []
         for pedido in pedidos:
             cliente = session.get(Cliente, pedido.clienteID)
@@ -313,13 +329,18 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
                 "total": pedido.total
             })
 
+        # Devolver la lista de pedidos recientes
         return resultado
     except Exception as e:
         raise HTTPException(500, f"Error al obtener pedidos recientes: {str(e)}")
 
+
+
+# READ - Obtener la lista de productos más vendidos
 @router.get("/api/dashboard/productos-mas-vendidos", response_model=List[Dict[str, Any]])
 def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
     try:
+        # Resultados de ventas por producto
         resultados = session.exec(
             select(
                 Producto.nombre,
@@ -335,6 +356,7 @@ def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
             .limit(5)
         ).all()
 
+        # Lista con los productos más vendidos, su cantidad e ingresos
         resultado = []
         for res in resultados:
             resultado.append({
@@ -343,6 +365,9 @@ def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
                 "ingresos": res.ingresosTotales
             })
 
+        # Devolver la lista de productos más vendidos
         return resultado
+    
+    # Excepción en caso de no encontrar los productos más vendidos
     except Exception as e:
         raise HTTPException(500, f"Error al obtener productos más vendidos: {str(e)}")

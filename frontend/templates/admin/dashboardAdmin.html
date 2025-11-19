@@ -199,7 +199,7 @@
   <!-- Script para pasar datos de Python a JavaScript -->
   <script>
     // Datos para la gráfica - con manejo de error si no existen
-    const datosGrafica = {{ datosGrafica | tojson | default({}) }};
+    const datosGrafica = JSON.parse(`{{ datosGrafica | default({}, true) | tojson }}`);
     
     // Si no hay datos, crear estructura vacía
     if (!datosGrafica.meses || !datosGrafica.ventas) {
