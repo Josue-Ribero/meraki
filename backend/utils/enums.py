@@ -7,10 +7,9 @@ class EstadoCarrito(Enum):
 
 # Estado de los pedidos
 class EstadoPedido(Enum):
+    POR_PAGAR = "POR PAGAR"
     PENDIENTE = "PENDIENTE"
     PAGADO = "PAGADO"
-    ENVIADO = "ENVIADO"
-    ENTREGADO = "ENTREGADO"
     CANCELADO = "CANCELADO"
 
 # Estado de los pagos
@@ -35,5 +34,5 @@ class TipoTransaccion(Enum):
 # Estado del diseño personalizado
 class EstadoDiseno(Enum):
     ENVIADO = "ENVIADO"
-    EN_PRODUCCION = "EN_PRODUCCION"
+    EN_PRODUCCION = "EN PRODUCCION"
     TERMINADO = "TERMINADO"

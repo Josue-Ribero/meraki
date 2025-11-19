@@ -69,6 +69,7 @@ def crearPago(
         confirmado=confirmado
     )
     
+    session.add(pedido)
     session.add(pago)
     session.add(cliente)
     session.commit()
@@ -147,7 +148,7 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
         pedido.estado = EstadoPedido.PAGADO
         print(f"Estado del pedido actualizado a: {pedido.estado}")
         
-        # Otorgar 5% del total en puntos al cliente (SOLO si NO pagó con puntos)
+        # Otorgar 5% del total en puntos al cliente (Solo si no pagó con puntos)
         if not pedido.pagadoConPuntos:
             puntosGanados = int(pedido.total * 0.05)
             if puntosGanados > 0:
@@ -171,6 +172,7 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
     # Probar si se puede guardar el pago en la DB
     try:
         session.add(pagoDB)
+        session.add(pedido)
         session.commit()
         session.refresh(pagoDB)
         print("Pago confirmado y guardado correctamente")
