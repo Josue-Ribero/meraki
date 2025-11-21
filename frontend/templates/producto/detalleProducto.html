@@ -17,97 +17,74 @@
 
 <body>
   <div class="layout">
-    <aside class="sidebar">
-      <button class="btn-back">
+    <!-- sidebar -->
+    <aside class="barra-lateral">
+      <a class="boton-volver" role="button" href="#" onclick="history.back(); return false;" aria-label="Volver">
         <span class="material-symbols-outlined">arrow_back</span>
-        <span class="btn-text">Volver</span>
-      </button>
+        <span class="btn-texto">Volver</span>
+      </a>
     </aside>
 
-    <main class="main-content">
-      <div class="product-grid">
-        <div class="gallery">
-          <div class="main-img">
-            <img id="mainImage"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCz4ObuIeLHsn1OWspO4qfrBWR1odhkov66z_5UIwMfypeHbEJaHNBm_HYAXUzbcTtUkaWU2d7ymdzGskoD_L5E1N2OHwCBWZwIfbbJrMCJoNzWk6wFvw_WexHkWoEXJgnRlen4bxregh1HNdoQ-paEzM5nfUMfSBdqxkhTfzzhcAgE3cNpl3XT0FZq0QS7J7xWnEuor-Ycs0oRp6xkz8OBY_Bq5_v5OplZwGPwnlnbtd5QdjIqCn7HaH9NgzKsbEfRYvgdonRzUON"
-              alt="Collar con colgante" />
-          </div>
-          <div class="thumbs">
-            <div class="thumb active"
-              data-src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCz4ObuIeLHsn1OWspO4qfrBWR1odhkov66z_5UIwMfypeHbEJaHNBm_HYAXUzbcTtUkaWU2d7ymdzGskoD_L5E1N2OHwCBWZwIfbbJrMCJoNzWk6wFvw_WexHkWoEXJgnRlen4bxregh1HNdoQ-paEzM5nfUMfSBdqxkhTfzzhcAgE3cNpl3XT0FZq0QS7J7xWnEuor-Ycs0oRp6xkz8OBY_Bq5_v5OplZwGPwnlnbtd5QdjIqCn7HaH9NgzKsbEfRYvgdonRzUON">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCz4ObuIeLHsn1OWspO4qfrBWR1odhkov66z_5UIwMfypeHbEJaHNBm_HYAXUzbcTtUkaWU2d7ymdzGskoD_L5E1N2OHwCBWZwIfbbJrMCJoNzWk6wFvw_WexHkWoEXJgnRlen4bxregh1HNdoQ-paEzM5nfUMfSBdqxkhTfzzhcAgE3cNpl3XT0FZq0QS7J7xWnEuor-Ycs0oRp6xkz8OBY_Bq5_v5OplZwGPwnlnbtd5QdjIqCn7HaH9NgzKsbEfRYvgdonRzUON"
-                alt="Miniatura 1" />
-            </div>
-            <div class="thumb"
-              data-src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoPtnEkrzNXvEDGE2kAvvhF4kVRZx8erJdYjZ1VINsbj_VfIA_ZrAqE8EdQXErmtzi1goydzxYNfeHDyrrZkh-ArSdl5e4_EkARdJXZhdm4TpRXiTd_wcX_v3GncYxiCcUbTOzH3gxh7HVkhV4atjbAHjRiRfqKzvpcsoEZw4mwRMP7rI5rTTkr7LOnxaaq7X7LfAg_fiwfvVMd1XvkhuBqqSU5UiWcMeb3aXnpFarOPxVakxB9u8GHMX7n_Yfgz0qDgaFjSakaa1W">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoPtnEkrzNXvEDGE2kAvvhF4kVRZx8erJdYjZ1VINsbj_VfIA_ZrAqE8EdQXErmtzi1goydzxYNfeHDyrrZkh-ArSdl5e4_EkARdJXZhdm4TpRXiTd_wcX_v3GncYxiCcUbTOzH3gxh7HVkhV4atjbAHjRiRfqKzvpcsoEZw4mwRMP7rI5rTTkr7LOnxaaq7X7LfAg_fiwfvVMd1XvkhuBqqSU5UiWcMeb3aXnpFarOPxVakxB9u8GHMX7n_Yfgz0qDgaFjSakaa1W"
-                alt="Miniatura 2" />
-            </div>
-            <div class="thumb"
-              data-src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQE8TKTUHcjLf6OGq76Vqaf0jpaqIyujNN4efupYY5FOSkRKipxJQsk7BwqC6GQoSK9jjAt1YurK4NYynuemrKRk9xkfgNYixbjCoBIIoDijFQhnqxTWDqNKms1ZlC3dtTbkCVZMd15N5EDKM5g4IY7FccFFq7iWdJ6maAHZSvGdTXZMvMwg1UKt8yX5CamxhJsE7NosaDJatBifhIY2LIoDmQ-70HeS1p8g8dsFuZBl7FniKSST58YwlU-4pwjPbCX4fZmFdHLGXG">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQE8TKTUHcjLf6OGq76Vqaf0jpaqIyujNN4efupYY5FOSkRKipxJQsk7BwqC6GQoSK9jjAt1YurK4NYynuemrKRk9xkfgNYixbjCoBIIoDijFQhnqxTWDqNKms1ZlC3dtTbkCVZMd15N5EDKM5g4IY7FccFFq7iWdJ6maAHZSvGdTXZMvMwg1UKt8yX5CamxhJsE7NosaDJatBifhIY2LIoDmQ-70HeS1p8g8dsFuZBl7FniKSST58YwlU-4pwjPbCX4fZmFdHLGXG"
-                alt="Miniatura 3" />
-            </div>
+    <!-- contenido principal -->
+    <main class="contenido-principal">
+      <div class="grid-producto">
+        <!-- imagen principal (logo como placeholder) -->
+        <div class="galeria">
+          <div class="caja-imagen-principal">
+            <img id="imagen-principal" src="../../static/img/UI/logo.png" alt="Imagen del producto" />
           </div>
         </div>
 
-        <div class="info">
-          <h1 class="titulo">Collar con colgante</h1>
-          <p class="descripcion">Collar con colgante de diseño minimalista, perfecto para el uso diario. Fabricado con
-            materiales de alta calidad para garantizar durabilidad y estilo.</p>
+        <!-- informacion del producto (título, descripción, detalles y acciones de compra) -->
+        <div class="informacion">
+          <h1 class="titulo" id="titulo">Cargando...</h1>
+          <p class="descripcion" id="descripcion"></p>
 
           <div class="detalles">
             <h3 class="subtitulo">Detalles del producto</h3>
             <div class="fila">
-              <span class="label">Material</span>
-              <span class="value">Acero inoxidable</span>
+              <span class="label">SKU</span>
+              <span class="value" id="sku"></span>
             </div>
             <div class="fila">
-              <span class="label">Longitud</span>
-              <span class="value">45 cm</span>
+              <span class="label">Stock</span>
+              <span class="value" id="stock"></span>
             </div>
             <div class="fila">
-              <span class="label">Cierre</span>
-              <span class="value">Mosquetón</span>
+              <span class="label">Personalizable</span>
+              <span class="value" id="es-personalizable"></span>
             </div>
           </div>
 
+          <!-- personalizacion -->
           <div class="personalizacion">
             <h3 class="subtitulo">Personalización</h3>
             <div class="selectores">
               <div class="campo">
                 <label for="color">Color</label>
-                <select id="color" class="select-custom">
+                <select id="color" class="selector-personalizado">
                   <option>Selecciona el color</option>
-                  <option>Dorado</option>
-                  <option>Plateado</option>
-                  <option>Oro Rosa</option>
                 </select>
               </div>
               <div class="campo">
-                <label for="size">Tamaño</label>
-                <select id="size" class="select-custom">
+                <label for="tamano">Tamaño</label>
+                <select id="tamano" class="selector-personalizado">
                   <option>Selecciona el tamaño</option>
-                  <option>Pequeño</option>
-                  <option>Mediano</option>
-                  <option>Grande</option>
                 </select>
               </div>
             </div>
           </div>
 
+          <!-- compra (precio, cantidad y añadir al carrito) -->
           <div class="compra">
-            <p class="precio">$20,000 COP</p>
+            <p class="precio" id="precio">$0 COP</p>
             <div class="acciones">
               <div class="contador">
-                <button class="btn-menos" id="btnDec">-</button>
-                <span id="qty">1</span>
-                <button class="btn-mas" id="btnInc">+</button>
+                <button class="btn-menos" id="btn-disminuir">-</button>
+                <span id="cantidad">1</span>
+                <button class="btn-mas" id="btn-aumentar">+</button>
               </div>
-              <button class="btn-carrito" id="addToCart">Añadir al carrito</button>
+              <button class="btn-carrito" id="agregar-carrito">Añadir al carrito</button>
             </div>
           </div>
         </div>
