@@ -1,12 +1,10 @@
-// Script: detalle de producto (nombres en español)
-// - Obtiene el ID desde la URL, solicita la API y actualiza el DOM
-
+// - Obtener el ID desde la URL, solicitar la API y actualizar el DOM
 const cantidadEl = document.getElementById('cantidad');
 const btnDisminuir = document.getElementById('btn-disminuir');
 const btnAumentar = document.getElementById('btn-aumentar');
 let cantidadValor = 1;
 
-// CONTROLES DE CANTIDAD
+// Controles de cantidad de producto
 btnDisminuir.addEventListener('click', () => {
   if (cantidadValor > 1) { cantidadValor--; cantidadEl.textContent = cantidadValor; }
 });
@@ -14,13 +12,13 @@ btnAumentar.addEventListener('click', () => {
   cantidadValor++; cantidadEl.textContent = cantidadValor;
 });
 
-// ACCIÓN: añadir al carrito (comportamiento temporal)
+// Añadir al carrito
 document.getElementById('agregar-carrito').addEventListener('click', () => {
   location.reload();
 });
 
 
-// CARGAR PRODUCTO - obtiene ID, solicita API y actualiza elementos
+// Cargar el producto
 async function cargarProducto() {
   const urlParams = new URLSearchParams(window.location.search);
   let productoID = urlParams.get('id');
