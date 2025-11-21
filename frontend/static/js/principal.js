@@ -555,6 +555,26 @@ function agregarEventListenersCarrito() {
   });
 }
 
+// Escuchar cambios en localStorage (otras pestañas) o evento personalizado (misma pestaña)
+function syncWishlistUI() {
+  const list = getWishlist();
+  document.querySelectorAll('.btn-wishlist').forEach(btn => {
+    const id = btn.getAttribute('data-producto-id');
+    const active = list.map(String).includes(String(id));
+    btn.classList.toggle('active', active);
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
+  });
+}
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'wishlist') syncWishlistUI();
+});
+
+window.addEventListener('wishlistChanged', () => {
+  syncWishlistUI();
+});
+
 // Agregar al carrito
 function agregarAlCarrito(productoId) {
   console.log('Agregando producto al carrito:', productoId);
