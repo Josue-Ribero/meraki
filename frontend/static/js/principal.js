@@ -1,4 +1,4 @@
-// principal.js - CON FILTROS COMPLETOS Y PAGINACIÓN
+// Listas de productos, categorias y filtros
 let todosLosProductos = [];
 let categoriasDisponibles = [];
 let filtrosActivos = {
@@ -13,7 +13,7 @@ let filtrosActivos = {
 let paginaActual = 1;
 const productosPorPagina = 8;
 
-// FUNCIÓN PARA FORMATEAR PRECIOS CON PUNTOS
+// Funcion para formatear precios con puntos
 function formatearPrecio(precio) {
   if (!precio && precio !== 0) return '0';
 
@@ -24,7 +24,7 @@ function formatearPrecio(precio) {
   return precioString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// CARGAR PRODUCTOS Y CATEGORÍAS
+// Cargar productos y categorias
 async function cargarDatosIniciales() {
   try {
     // Cargar productos
@@ -55,7 +55,7 @@ async function cargarDatosIniciales() {
   }
 }
 
-// INICIALIZAR FILTROS
+// Inicializar filtros de busqueda u orden
 function inicializarFiltros() {
   // Cargar categorías en el filtro
   const contenedorCategorias = document.getElementById('categorias-filtro');
@@ -196,7 +196,7 @@ function aplicarFiltros() {
   mostrarProductosPaginados(productosFiltrados);
 }
 
-// MOSTRAR PRODUCTOS CON PAGINACIÓN
+// Mostrar productos con paginacion (de 8 en 8)
 function mostrarProductosPaginados(productosFiltrados) {
   const totalProductos = productosFiltrados.length;
   const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
@@ -217,7 +217,7 @@ function mostrarProductosPaginados(productosFiltrados) {
   mostrarPaginacion(totalPaginas, totalProductos);
 }
 
-// MOSTRAR PRODUCTOS EN LA PÁGINA ACTUAL
+// Mostrar productos en la pagina actual
 function mostrarProductos(productos, totalProductos) {
   const container = document.getElementById('productos-container');
   const contador = document.getElementById('contador-productos');
@@ -285,7 +285,7 @@ function mostrarProductos(productos, totalProductos) {
   agregarEventListenersCarrito();
 }
 
-// MOSTRAR CONTROLES DE PAGINACIÓN
+// Mostrar controles de paginacion
 function mostrarPaginacion(totalPaginas, totalProductos) {
   const container = document.getElementById('paginacion-container');
 
@@ -331,7 +331,7 @@ function mostrarPaginacion(totalPaginas, totalProductos) {
   container.innerHTML = paginacionHTML;
 }
 
-// GENERAR NÚMEROS DE PÁGINA CON ELIPSIS
+// Generar numeros de pagina
 function generarNumerosPagina(paginaActual, totalPaginas) {
   const paginas = [];
   const paginasALaVista = 5; // Número máximo de páginas a mostrar
@@ -372,7 +372,7 @@ function generarNumerosPagina(paginaActual, totalPaginas) {
   return paginas;
 }
 
-// CAMBIAR PÁGINA
+// Cambiar pagina
 function cambiarPagina(nuevaPagina) {
   paginaActual = nuevaPagina;
   aplicarFiltros();
@@ -384,7 +384,7 @@ function cambiarPagina(nuevaPagina) {
   });
 }
 
-// LIMPIAR FILTROS
+// Limpiar filtros
 function limpiarFiltros() {
   // Resetear checkboxes de categorías
   document.querySelectorAll('.categoria-checkbox').forEach(checkbox => {
@@ -419,7 +419,7 @@ function limpiarFiltros() {
   aplicarFiltros();
 }
 
-// MOSTRAR ERROR
+// Mostrar error
 function mostrarError(mensaje) {
   const container = document.getElementById('productos-container');
   container.innerHTML = `
@@ -432,7 +432,7 @@ function mostrarError(mensaje) {
   `;
 }
 
-// AGREGAR EVENT LISTENERS AL CARRITO
+// Agregar event listeners al carrito
 function agregarEventListenersCarrito() {
   const botonesCarrito = document.querySelectorAll('.btn-agregar-carrito');
 
@@ -445,25 +445,108 @@ function agregarEventListenersCarrito() {
   });
 }
 
-// AGREGAR AL CARRITO
+// Agregar al carrito
 function agregarAlCarrito(productoId) {
   console.log('Agregando producto al carrito:', productoId);
 
-  // Aquí implementarás la lógica real para agregar al carrito
-  // Por ahora, solo feedback visual
   const boton = document.querySelector(`[data-producto-id="${productoId}"]`);
+  if (!boton) return;
   const iconoOriginal = boton.innerHTML;
-  boton.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
-  boton.classList.add('bg-green-500');
+  // Feedback visual inicial
+  boton.disabled = true;
+  boton.innerHTML = '<span class="material-symbols-outlined text-xl">hourglass_top</span>';
+  boton.classList.add('opacity-70');
 
-  setTimeout(() => {
-    boton.innerHTML = iconoOriginal;
-    boton.classList.remove('bg-green-500');
-  }, 1000);
+  (async () => {
+    try {
+      const form = new FormData();
+      form.append('productoID', productoId);
+      form.append('cantidad', '1');
+
+      const resp = await fetch('/carrito/agregar-producto', {
+        method: 'POST',
+        body: form,
+        credentials: 'same-origin'
+      });
+
+      if (resp.status === 201) {
+        boton.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
+        boton.classList.add('bg-green-500');
+        window.location.href = '/carrito';
+        return;
+      }
+
+      if (resp.status === 401 || resp.status === 403) {
+        window.location.href = '/ingresar';
+        return;
+      }
+
+      const errorBody = await resp.json().catch(() => ({}));
+
+      // Si el producto ya existe, intentar incrementar cantidad en 1
+      if (resp.status === 400 || resp.status === 409) {
+        try {
+          const listResp = await fetch('/carrito/mi-carrito', { credentials: 'same-origin' });
+          if (listResp.ok) {
+            const lista = await listResp.json();
+            const detalle = lista.find(d => String(d.productoID) === String(productoId));
+            if (detalle) {
+              const nueva = (detalle.cantidad || 1) + 1;
+              const patchResp = await fetch(`/carrito/actualizar-cantidad/${productoId}`, {
+                method: 'PATCH',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ cantidad: nueva })
+              });
+              if (patchResp.status === 401 || patchResp.status === 403) {
+                window.location.href = '/ingresar';
+                return;
+              }
+              if (patchResp.ok) {
+                boton.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
+                boton.classList.add('bg-green-500');
+                window.location.href = '/carrito';
+                return;
+              }
+              const pErr = await patchResp.json().catch(() => ({}));
+              alert(pErr.detail || 'No se pudo actualizar la cantidad en el carrito');
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Fallback incrementar cantidad falló:', err);
+        }
+      }
+
+      alert(errorBody.detail || 'No se pudo agregar el producto al carrito');
+    } catch (err) {
+      console.error('Error al agregar al carrito', err);
+      alert('Error de red al agregar al carrito');
+    } finally {
+      try {
+        boton.disabled = false;
+        setTimeout(() => {
+          boton.innerHTML = iconoOriginal;
+          boton.classList.remove('bg-green-500');
+          boton.classList.remove('opacity-70');
+        }, 800);
+      } catch (e) { /* noop */ }
+    }
+  })();
 }
 
-// INICIALIZAR TODO CUANDO SE CARGA LA PÁGINA
+// Inicializar el principal cuando carga
 document.addEventListener('DOMContentLoaded', function () {
   cargarDatosIniciales();
   console.log('Página principal cargada y lista.');
+});
+
+// Capturar clicks en botones de agregar al carrito
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest && e.target.closest('.btn-agregar-carrito');
+  if (!btn) return;
+  e.preventDefault();
+  const productoId = btn.getAttribute('data-producto-id');
+  console.log('Click delegado - agregar al carrito:', productoId);
+  agregarAlCarrito(productoId);
 });
