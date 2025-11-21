@@ -62,8 +62,19 @@
         ...options
       });
 
+      // Si la respuesta no es OK, intentar parsear el cuerpo JSON y propagar el mensaje
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        let errMsg = `HTTP ${response.status}`;
+        try {
+          const body = await response.json();
+          if (body && body.detail) errMsg = body.detail;
+          else if (body && body.message) errMsg = body.message;
+          else if (body && typeof body === 'string') errMsg = body;
+        } catch (e) {
+          // no JSON body
+          errMsg = `${response.status} ${response.statusText}`;
+        }
+        throw new Error(errMsg);
       }
 
       if (response.status === 204) {
@@ -405,7 +416,8 @@
       await cargarProductos();
     } catch (error) {
       console.error('Error guardando producto:', error);
-      alert('Error al guardar el producto: ' + error.message);
+      // Mostrar el mensaje exacto proveniente del servidor cuando sea posible
+      alert('Error al guardar el producto: ' + (error.message || String(error)));
     }
   }
 
