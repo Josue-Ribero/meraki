@@ -13,8 +13,40 @@ btnAumentar.addEventListener('click', () => {
 });
 
 // Añadir al carrito
-document.getElementById('agregar-carrito').addEventListener('click', () => {
-  location.reload();
+let currentProductoID = null;
+document.getElementById('agregar-carrito').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const cantidad = cantidadValor || 1;
+  const form = new FormData();
+  form.append('productoID', currentProductoID);
+  form.append('cantidad', cantidad);
+
+  try {
+    const resp = await fetch('/carrito/agregar-producto', {
+      method: 'POST',
+      body: form,
+      credentials: 'same-origin'
+    });
+
+    if (resp.status === 201) {
+      // Redirigir al carrito o mostrar mensaje
+      window.location.href = '/carrito';
+      return;
+    }
+
+    if (resp.status === 401 || resp.status === 403) {
+      // Si no está autenticado, redirigir al login
+      window.location.href = '/ingresar';
+      return;
+    }
+
+    // Error en caso de no poder agregar un producto al carrito
+    const errorBody = await resp.json().catch(() => ({}));
+    alert(errorBody.detail || 'No se pudo agregar el producto al carrito');
+  } catch (err) {
+    console.error('Error al agregar al carrito', err);
+    alert('Error de red al agregar al carrito');
+  }
 });
 
 
@@ -96,6 +128,9 @@ async function cargarProducto() {
       const sizeSelect = document.getElementById('tamano');
       sizeSelect.innerHTML = '<option>Selecciona el tamaño</option>' + sizes.map(s => `<option>${s}</option>`).join('');
     }
+
+    // Guardar el ID actual para enviar al carrito
+    currentProductoID = producto.id || productoID;
 
   } catch (error) {
     console.error('Error cargando producto:', error);
