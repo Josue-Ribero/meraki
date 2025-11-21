@@ -34,9 +34,8 @@ async def crearProducto(
     imagenURL = None
     if imagen and imagen.filename:
         try:
-            archivo_info = await cargarArchivo(imagen)
-            # CAMBIO IMPORTANTE: Usar /uploads en lugar de /static
-            imagenURL = f"/uploads/{archivo_info['nombre_archivo']}"
+            # La función cargarArchivo ahora devuelve la URL directa de Supabase
+            imagenURL = await cargarArchivo(imagen)
         except Exception as e:
             raise HTTPException(500, f"Error al subir la imagen: {str(e)}")
     
@@ -128,8 +127,9 @@ async def actualizarProducto(
     # Manejar la imagen
     if imagen and imagen.filename:
         try:
-            archivo_info = await cargarArchivo(imagen)
-            productoDB.imagenURL = f"/uploads/{archivo_info['nombre_archivo']}"
+            # La función cargarArchivo ahora devuelve la URL directa de Supabase
+            imagenURL = await cargarArchivo(imagen)
+            productoDB.imagenURL = imagenURL
         except Exception as e:
             raise HTTPException(500, f"Error al subir la imagen: {str(e)}")
     
