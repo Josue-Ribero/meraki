@@ -111,6 +111,11 @@ body {
     border-radius: 50%;
 }
 
+/* Default profile image moved from inline HTML to CSS */
+.profile-link .profile-image {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g");
+}
+
 .main-content {
     flex: 1;
     padding: 32px;
@@ -146,6 +151,44 @@ body {
     gap: 24px;
 }
 
+.cart-loading {
+    background: white;
+    padding: 32px;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    color: var(--color-secondary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Paginación del carrito */
+.cart-pagination {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    align-items: center;
+}
+
+.cart-pagination .page-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--color-secondary);
+}
+
+.cart-pagination .page-btn.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.cart-pagination .page-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 .cart-item {
     display: flex;
     align-items: center;
@@ -160,6 +203,22 @@ body {
     height: 96px;
     object-fit: cover;
     border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.item-title-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.item-link {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.item-link img {
+    display: block;
+    border: 0;
 }
 
 .item-details {

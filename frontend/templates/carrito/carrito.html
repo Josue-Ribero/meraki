@@ -33,9 +33,7 @@
                     <span class="material-symbols-outlined">shopping_cart</span>
                 </a>
                 <a class="icon-link profile-link" href="/mi-cuenta" title="Cuenta">
-                    <div class="profile-image"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g ");'>
-                    </div>
+                    <div class="profile-image"></div>
                 </a>
             </div>
         </aside>
@@ -43,68 +41,38 @@
         <main class="main-content">
             <div class="main-wrapper">
                 <h1 class="page-title">Carrito de Compras</h1>
+
+                <!-- Template de un item del carrito: la estructura HTML queda en el HTML, no en el JS -->
+                <template id="cart-item-template">
+                    <div class="cart-item">
+                        <a class="item-link" href="#">
+                            <img class="item-image" src="" alt="" />
+                        </a>
+                        <div class="item-details">
+                            <h2 class="item-title"><a class="item-title-link" href="#"></a></h2>
+                            <p class="item-price">Precio unitario: <span class="item-price-value"></span></p>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn minus" data-id="">-</button>
+                                <span class="quantity-display" data-id="">1</span>
+                                <button class="quantity-btn plus" data-id="">+</button>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <p class="item-total"><span class="item-total-value"></span></p>
+                            <button class="remove-btn" data-id="">
+                                <span class="material-symbols-outlined remove-icon">delete</span>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </template>
                 <div class="content-grid">
-                    <div class="cart-items">
-                        <div class="cart-item">
-                            <img alt="Collar de Perlas del Mar" class="item-image"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM20vbb5tsVpr1zeYw1gS5Nb4DGuJnn2fKTVGtqZ9rCUMwkT_j9IKgYhaX-UHLi9u6ALjZVUCA4gNR47cLRei7X_8o0MoQo4K1LUySWnes6_tu4nWGD8I8YbOL4pglcAiozuMgO5SxW7xaDDfGK4R4HeWypvsKI8Y5KjhzGmoTHQIPGc-fVQosYI-YgPhbaENNAKmNy8mlZrtzy8spg1M7RA_k2aCcmGXL84LuF4ggeThAh0u5E14Vkvz3wAjIkKC0_YRVofjHqhnY " />
-                            <div class="item-details">
-                                <h2 class="item-title">Collar de Perlas del Mar</h2>
-                                <p class="item-price">Precio unitario: $1,250.00</p>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn minus">-</button>
-                                    <span class="quantity-display">1</span>
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                            </div>
-                            <div class="item-actions">
-                                <p class="item-total">$1,250.00</p>
-                                <button class="remove-btn">
-                                    <span class="material-symbols-outlined remove-icon">delete</span>
-                                    Eliminar
-                                </button>
-                            </div>
+                    <div>
+                        <div class="cart-items">
+                            <div class="cart-loading">Cargando tu carrito...</div>
                         </div>
-                        <div class="cart-item">
-                            <img alt="Aretes de Filigrana de Plata" class="item-image"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuApFCn0cGnypwWODmsi_4eoTeEAMOPjb8Yz8nyDmKQWdk3Kiq-cPdGy_oBVy2bMMnJzSXhbiQettlRQSgJ7wO-UoDJEPKZqVmVYDvCw44rbsn_9uSvYGEFW2qsRbn4TshX9GNnH0JBDRx1wmRX-uh1tHEArFkq5VaA3zf1qXI61mzFMMEIUHwAH6HRLPBc9YRbM-MU_MyhozaDxGr_oUc99Yhr8jZM4jsp0A7bei1fUammlIfUfHbELJ41KvILR6wnfuLvXETRLs1P1 " />
-                            <div class="item-details">
-                                <h2 class="item-title">Aretes de Filigrana de Plata</h2>
-                                <p class="item-price">Precio unitario: $850.00</p>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn minus">-</button>
-                                    <span class="quantity-display">1</span>
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                            </div>
-                            <div class="item-actions">
-                                <p class="item-total">$850.00</p>
-                                <button class="remove-btn">
-                                    <span class="material-symbols-outlined remove-icon">delete</span>
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                        <div class="cart-item">
-                            <img alt="Pulsera Sol de Oro" class="item-image"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAme2eB6cgTCrO3kSH20yYbyfHmZ-WSZZt8KfswOrNwAdU1X-bCVYJa_ArU8iyirqmzsksdarsHBR9AjXYcAWFi64TtKeJ_yxX8RQdR9e9AWSGC0AmYC0q3ZIgOi7oCln_dJnXZ59wNpXO344UcnlYSVyBFyd5lHQ53YhLaw9j7AtZGRoFkXf_PrcnYdiwV_KymZVEfjYyzlzAp-bQUnFyQvi_e5qYcAT8taHZenm3nza0OzegYcOW-o256JAM9ORjNVQD70i4jvrfk " />
-                            <div class="item-details">
-                                <h2 class="item-title">Pulsera Sol de Oro</h2>
-                                <p class="item-price">Precio unitario: $900.00</p>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn minus">-</button>
-                                    <span class="quantity-display">2</span>
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                            </div>
-                            <div class="item-actions">
-                                <p class="item-total">$1,800.00</p>
-                                <button class="remove-btn">
-                                    <span class="material-symbols-outlined remove-icon">delete</span>
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
+                        <!-- Paginación del carrito -->
+                        <div id="cart-pagination" class="cart-pagination" aria-label="Paginación del carrito"></div>
                     </div>
                     <div class="summary-section">
                         <div class="summary-box">
@@ -112,7 +80,7 @@
                             <div class="summary-details">
                                 <div class="summary-row">
                                     <span>Subtotal</span>
-                                    <span>$3,900.00</span>
+                                    <span>$0.00</span>
                                 </div>
                                 <div class="summary-row">
                                     <span>Envío</span>
@@ -121,7 +89,7 @@
                                 <div class="divider"></div>
                                 <div class="summary-row total">
                                     <span>Total</span>
-                                    <span>$3,900.00</span>
+                                    <span>$0.00</span>
                                 </div>
                             </div>
                             <button class="checkout-btn">Proceder al Pago</button>

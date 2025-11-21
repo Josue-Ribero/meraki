@@ -1,20 +1,24 @@
-let carrito = [
-    { id: 1, nombre: "Collar de Perlas del Mar", precio: 1250.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuBM20vbb5tsVpr1zeYw1gS5Nb4DGuJnn2fKTVGtqZ9rCUMwkT_j9IKgYhaX-UHLi9u6ALjZVUCA4gNR47cLRei7X_8o0MoQo4K1LUySWnes6_tu4nWGD8I8YbOL4pglcAiozuMgO5SxW7xaDDfGK4R4HeWypvsKI8Y5KjhzGmoTHQIPGc-fVQosYI-YgPhbaENNAKmNy8mlZrtzy8spg1M7RA_k2aCcmGXL84LuF4ggeThAh0u5E14Vkvz3wAjIkKC0_YRVofjHqhnY " },
-    { id: 2, nombre: "Aretes de Filigrana de Plata", precio: 850.00, cantidad: 1, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuApFCn0cGnypwWODmsi_4eoTeEAMOPjb8Yz8nyDmKQWdk3Kiq-cPdGy_oBVy2bMMnJzSXhbiQettlRQSgJ7wO-UoDJEPKZqVmVYDvCw44rbsn_9uSvYGEFW2qsRbn4TshX9GNnH0JBDRx1wmRX-uh1tHEArFkq5VaA3zf1qXI61mzFMMEIUHwAH6HRLPBc9YRbM-MU_MyhozaDxGr_oUc99Yhr8jZM4jsp0A7bei1fUammlIfUfHbELJ41KvILR6wnfuLvXETRLs1P1 " },
-    { id: 3, nombre: "Pulsera Sol de Oro", precio: 900.00, cantidad: 2, imagen: "https://lh3.googleusercontent.com/aida-public/AB6AXuAme2eB6cgTCrO3kSH20yYbyfHmZ-WSZZt8KfswOrNwAdU1X-bCVYJa_ArU8iyirqmzsksdarsHBR9AjXYcAWFi64TtKeJ_yxX8RQdR9e9AWSGC0AmYC0q3ZIgOi7oCln_dJnXZ59wNpXO344UcnlYSVyBFyd5lHQ53YhLaw9j7AtZGRoFkXf_PrcnYdiwV_KymZVEfjYyzlzAp-bQUnFyQvi_e5qYcAT8taHZenm3nza0OzegYcOW-o256JAM9ORjNVQD70i4jvrfk " }
-];
+// Lista vacia de carrito donde se insertaran los productos
+let carrito = [];
+// Paginación cliente-side
+let carritoPaginaActual = 1;
+const carritoItemsPorPagina = 4;
+// Envío por defecto (evita ReferenceError si no está definido en la plantilla)
+const envio = (typeof window !== 'undefined' && window.envio != null) ? window.envio : 0;
 
+// Funcion para formatear la moneda a COP
 function formatearMoneda(valor) {
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 2 }).format(valor);
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(valor);
 }
 
+// Funcion para calcular el total de los productos
 function calcularTotal() {
     let subtotal = 0;
     for (let item of carrito) {
         subtotal += item.precio * item.cantidad;
     }
-    const envio = 0;
-    const total = subtotal + envio;
+    const envioVal = (typeof envio === 'number') ? envio : 0;
+    const total = subtotal + envioVal;
 
     document.querySelector('.summary-row.total span:last-child').textContent = formatearMoneda(total);
     document.querySelector('.summary-row:first-child span:last-child').textContent = formatearMoneda(subtotal);
@@ -25,65 +29,156 @@ function renderizarCarrito() {
     const contenedorItems = document.querySelector('.cart-items');
     contenedorItems.innerHTML = '';
 
-    for (let item of carrito) {
-        const itemElement = document.createElement('div');
-        itemElement.className = 'cart-item';
-        itemElement.innerHTML = `
-            <img alt="${item.nombre}" class="item-image" src="${item.imagen}" />
-            <div class="item-details">
-                <h2 class="item-title">${item.nombre}</h2>
-                <p class="item-price">Precio unitario: ${formatearMoneda(item.precio)}</p>
-                <div class="quantity-controls">
-                    <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                    <span class="quantity-display" data-id="${item.id}">${item.cantidad}</span>
-                    <button class="quantity-btn plus" data-id="${item.id}">+</button>
-                </div>
-            </div>
-            <div class="item-actions">
-                <p class="item-total" data-id="${item.id}">${formatearMoneda(item.precio * item.cantidad)}</p>
-                <button class="remove-btn" data-id="${item.id}">
-                    <span class="material-symbols-outlined remove-icon">delete</span>
-                    Eliminar
-                </button>
-            </div>
-        `;
-        contenedorItems.appendChild(itemElement);
+    const template = document.getElementById('cart-item-template');
+    if (!template) {
+        console.error('No se encontró #cart-item-template en el HTML');
+        return;
+    }
+
+    // calcular paginado
+    const totalItems = carrito.length;
+    const totalPaginas = Math.max(1, Math.ceil(totalItems / carritoItemsPorPagina));
+    if (carritoPaginaActual > totalPaginas) carritoPaginaActual = totalPaginas;
+    const inicio = (carritoPaginaActual - 1) * carritoItemsPorPagina;
+    const fin = inicio + carritoItemsPorPagina;
+    const paginaItems = carrito.slice(inicio, fin);
+
+    for (let item of paginaItems) {
+        const clone = template.content.cloneNode(true);
+
+        const link = clone.querySelector('.item-link');
+        const img = clone.querySelector('.item-image');
+        const titleLink = clone.querySelector('.item-title-link');
+        const priceValue = clone.querySelector('.item-price-value');
+        const qtyMinus = clone.querySelector('.quantity-btn.minus');
+        const qtyPlus = clone.querySelector('.quantity-btn.plus');
+        const qtyDisplay = clone.querySelector('.quantity-display');
+        const totalValue = clone.querySelector('.item-total-value');
+        const removeBtn = clone.querySelector('.remove-btn');
+
+        // Rellenar valores
+        const productoHref = `/producto/${item.id}`;
+        if (link) link.setAttribute('href', productoHref);
+        if (titleLink) {
+            titleLink.setAttribute('href', productoHref);
+            titleLink.textContent = item.nombre;
+        }
+        if (img) { img.src = item.imagen; img.alt = item.nombre; }
+        if (priceValue) priceValue.textContent = formatearMoneda(item.precio);
+        if (qtyMinus) qtyMinus.dataset.id = String(item.id);
+        if (qtyPlus) qtyPlus.dataset.id = String(item.id);
+        if (qtyDisplay) { qtyDisplay.dataset.id = String(item.id); qtyDisplay.textContent = String(item.cantidad); }
+        if (totalValue) totalValue.textContent = formatearMoneda(item.precio * item.cantidad);
+        if (removeBtn) removeBtn.dataset.id = String(item.id);
+
+        contenedorItems.appendChild(clone);
+    }
+
+    // si no hay items globalmente, mostrar mensaje
+    if (!carrito || carrito.length === 0) {
+        contenedorItems.innerHTML = '<div class="cart-loading">Tu carrito está vacío.</div>';
+    }
+
+    // renderizar controles de paginación
+    const pagCont = document.getElementById('cart-pagination');
+    if (pagCont) {
+        pagCont.innerHTML = '';
+        if (totalItems > carritoItemsPorPagina) {
+            const prev = document.createElement('button');
+            prev.className = 'page-btn';
+            prev.textContent = 'Anterior';
+            prev.disabled = carritoPaginaActual === 1;
+            prev.addEventListener('click', () => { carritoPaginaActual = Math.max(1, carritoPaginaActual - 1); renderizarCarrito(); });
+            pagCont.appendChild(prev);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const b = document.createElement('button');
+                b.className = 'page-btn' + (i === carritoPaginaActual ? ' active' : '');
+                b.textContent = String(i);
+                b.disabled = i === carritoPaginaActual;
+                b.addEventListener('click', () => { carritoPaginaActual = i; renderizarCarrito(); });
+                pagCont.appendChild(b);
+            }
+
+            const next = document.createElement('button');
+            next.className = 'page-btn';
+            next.textContent = 'Siguiente';
+            next.disabled = carritoPaginaActual === totalPaginas;
+            next.addEventListener('click', () => { carritoPaginaActual = Math.min(totalPaginas, carritoPaginaActual + 1); renderizarCarrito(); });
+            pagCont.appendChild(next);
+        }
     }
 
     asignarEventos();
 }
 
 function asignarEventos() {
+    // cantidad - llamar al backend para actualizar
     document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const id = parseInt(e.target.dataset.id);
             const item = carrito.find(i => i.id === id);
             if (item && item.cantidad > 1) {
-                item.cantidad--;
-                actualizarItemEnDOM(id);
-                calcularTotal();
+                const nueva = item.cantidad - 1;
+                try {
+                    const resp = await fetch(`/carrito/actualizar-cantidad/${id}`, {
+                        method: 'PATCH',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ cantidad: nueva })
+                    });
+                    if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                    const d = await resp.json();
+                    item.cantidad = d.cantidad;
+                    item.subtotal = d.subtotal || (item.precio * item.cantidad);
+                    actualizarItemEnDOM(id);
+                    calcularTotal();
+                } catch (err) { console.error(err); alert('No se pudo actualizar la cantidad'); }
             }
         });
     });
 
     document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const id = parseInt(e.target.dataset.id);
             const item = carrito.find(i => i.id === id);
             if (item) {
-                item.cantidad++;
-                actualizarItemEnDOM(id);
-                calcularTotal();
+                const nueva = item.cantidad + 1;
+                try {
+                    const resp = await fetch(`/carrito/actualizar-cantidad/${id}`, {
+                        method: 'PATCH',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({ cantidad: nueva })
+                    });
+                    if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                    const d = await resp.json();
+                    item.cantidad = d.cantidad;
+                    item.subtotal = d.subtotal || (item.precio * item.cantidad);
+                    actualizarItemEnDOM(id);
+                    calcularTotal();
+                } catch (err) { console.error(err); alert('No se pudo actualizar la cantidad'); }
             }
         });
     });
 
+    // eliminar - llamar al backend
     document.querySelectorAll('.remove-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const id = parseInt(e.target.closest('.remove-btn').dataset.id);
-            carrito = carrito.filter(item => item.id !== id);
-            renderizarCarrito();
-            calcularTotal();
+            try {
+                const resp = await fetch(`/carrito/${id}`, { method: 'DELETE', credentials: 'same-origin' });
+                if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                carrito = carrito.filter(item => item.id !== id);
+                // ajustar pagina actual si quedó fuera de rango
+                const totalPaginas = Math.max(1, Math.ceil(carrito.length / carritoItemsPorPagina));
+                if (carritoPaginaActual > totalPaginas) carritoPaginaActual = totalPaginas;
+                renderizarCarrito();
+                calcularTotal();
+            } catch (err) { console.error(err); alert('No se pudo eliminar el producto'); }
         });
     });
 }
@@ -96,7 +191,71 @@ function actualizarItemEnDOM(id) {
     }
 }
 
+async function cargarCarrito() {
+    try {
+        const resp = await fetch('/carrito/mi-carrito', { credentials: 'same-origin' });
+        if (resp.status === 401 || resp.status === 403) {
+            window.location.href = '/ingresar';
+            return;
+        }
+        // Si no hay carrito (404) tratamos como carrito vacío
+        if (resp.status === 404) {
+            carrito = [];
+            document.querySelector('.cart-items').innerHTML = '<div class="cart-loading">Tu carrito está vacío.</div>';
+            calcularTotal();
+            return;
+        }
+
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+        const datos = await resp.json();
+        // datos es un array de DetalleCarrito. Intentar mapear al formato usado por la UI
+        carrito = datos.map(d => {
+            const prod = d.producto || {};
+            return {
+                id: d.productoID,
+                detalleID: d.id,
+                nombre: prod.nombre || d.nombre || prod.titulo || 'Producto',
+                precio: d.precioUnidad || prod.precio || 0,
+                cantidad: d.cantidad || 1,
+                imagen: prod.imagenURL || (prod.imagen && prod.imagen.url) || '/static/img/UI/logo.png',
+                subtotal: d.subtotal || ((d.precioUnidad || prod.precio || 0) * (d.cantidad || 1))
+            };
+        });
+
+            // Si la respuesta del carrito no incluye la info completa del producto,
+            // intentar obtenerla desde la API de productos para mostrar nombre/imagen reales.
+            const needsFetch = carrito.filter(i => !i.nombre || i.nombre === 'Producto' || i.imagen === '/static/img/UI/logo.png');
+            if (needsFetch.length) {
+                await Promise.all(needsFetch.map(async (it) => {
+                    try {
+                        const respProd = await fetch(`/productos/${it.id}`);
+                        if (!respProd.ok) return;
+                        const p = await respProd.json();
+                        if (!p) return;
+                        // Actualizar campos si vienen disponibles
+                        it.nombre = p.nombre || it.nombre;
+                        it.imagen = p.imagenURL || it.imagen;
+                        it.precio = (it.precio && it.precio > 0) ? it.precio : (p.precio || it.precio);
+                        it.subtotal = (it.precio * it.cantidad) || it.subtotal;
+                    } catch (err) {
+                        console.warn('No se pudo obtener producto', it.id, err);
+                    }
+                }));
+            }
+
+            if (!carrito || carrito.length === 0) {
+                document.querySelector('.cart-items').innerHTML = '<div class="cart-loading">Tu carrito está vacío.</div>';
+            } else {
+                renderizarCarrito();
+            }
+            calcularTotal();
+    } catch (err) {
+        console.error('Error cargando carrito', err);
+        document.querySelector('.cart-items').innerHTML = '<p>No se pudo cargar el carrito.</p>';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    renderizarCarrito();
-    calcularTotal();
+    cargarCarrito();
 });
