@@ -360,6 +360,18 @@ body {
     color: #10b981;
 }
 
+/* Cuando el envío se cobra: mostrar en negrilla y color negro */
+.shipping.paid {
+    font-weight: 700;
+    color: #000000;
+}
+
+/* Cuando el envío es gratis: mantener texto verde y peso medio */
+.shipping.free {
+    font-weight: 500;
+    color: #10b981;
+}
+
 .divider {
     height: 1px;
     background-color: #e5e7eb;

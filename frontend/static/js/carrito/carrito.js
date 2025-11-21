@@ -3,8 +3,8 @@ let carrito = [];
 // Paginación cliente-side
 let carritoPaginaActual = 1;
 const carritoItemsPorPagina = 4;
-// Envío por defecto (evita ReferenceError si no está definido en la plantilla)
-const envio = (typeof window !== 'undefined' && window.envio != null) ? window.envio : 0;
+// Envío por defecto: si no se define en la plantilla será COP 8,900
+const envio = (typeof window !== 'undefined' && window.envio != null) ? window.envio : 8900;
 
 // Funcion para formatear la moneda a COP
 function formatearMoneda(valor) {
@@ -17,11 +17,20 @@ function calcularTotal() {
     for (let item of carrito) {
         subtotal += item.precio * item.cantidad;
     }
-    const envioVal = (typeof envio === 'number') ? envio : 0;
+    // Aplicar envío: si el subtotal es menor a 30,000 COP se cobra envío (8900 por defecto)
+    const envioVal = (subtotal > 0 && subtotal < 30000) ? envio : 0;
     const total = subtotal + envioVal;
 
+    // Actualizar vistas: subtotal, envío y total
     document.querySelector('.summary-row.total span:last-child').textContent = formatearMoneda(total);
     document.querySelector('.summary-row:first-child span:last-child').textContent = formatearMoneda(subtotal);
+    const envioEl = document.querySelector('.shipping');
+    if (envioEl) {
+        envioEl.textContent = envioVal === 0 ? 'Gratis' : formatearMoneda(envioVal);
+        // Añadir clase para controlar estilos: 'free' cuando es gratis, 'paid' cuando tiene costo
+        envioEl.classList.toggle('free', envioVal === 0);
+        envioEl.classList.toggle('paid', envioVal !== 0);
+    }
     return total;
 }
 
@@ -69,6 +78,7 @@ function renderizarCarrito() {
         if (qtyPlus) qtyPlus.dataset.id = String(item.id);
         if (qtyDisplay) { qtyDisplay.dataset.id = String(item.id); qtyDisplay.textContent = String(item.cantidad); }
         if (totalValue) totalValue.textContent = formatearMoneda(item.precio * item.cantidad);
+        if (totalValue) totalValue.dataset.id = String(item.id);
         if (removeBtn) removeBtn.dataset.id = String(item.id);
 
         contenedorItems.appendChild(clone);
@@ -116,7 +126,7 @@ function asignarEventos() {
     // cantidad - llamar al backend para actualizar
     document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            const id = parseInt(e.target.dataset.id);
+            const id = parseInt(e.currentTarget.dataset.id);
             const item = carrito.find(i => i.id === id);
             if (item && item.cantidad > 1) {
                 const nueva = item.cantidad - 1;
@@ -141,7 +151,7 @@ function asignarEventos() {
 
     document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            const id = parseInt(e.target.dataset.id);
+            const id = parseInt(e.currentTarget.dataset.id);
             const item = carrito.find(i => i.id === id);
             if (item) {
                 const nueva = item.cantidad + 1;
@@ -167,7 +177,7 @@ function asignarEventos() {
     // eliminar - llamar al backend
     document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            const id = parseInt(e.target.closest('.remove-btn').dataset.id);
+            const id = parseInt(e.currentTarget.dataset.id);
             try {
                 const resp = await fetch(`/carrito/${id}`, { method: 'DELETE', credentials: 'same-origin' });
                 if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
@@ -186,8 +196,10 @@ function asignarEventos() {
 function actualizarItemEnDOM(id) {
     const item = carrito.find(i => i.id === id);
     if (item) {
-        document.querySelector(`.quantity-display[data-id="${id}"]`).textContent = item.cantidad;
-        document.querySelector(`.item-total[data-id="${id}"]`).textContent = formatearMoneda(item.precio * item.cantidad);
+        const qtyEl = document.querySelector(`.quantity-display[data-id="${id}"]`);
+        if (qtyEl) qtyEl.textContent = item.cantidad;
+        const totalEl = document.querySelector(`.item-total-value[data-id="${id}"]`);
+        if (totalEl) totalEl.textContent = formatearMoneda(item.precio * item.cantidad);
     }
 }
 
