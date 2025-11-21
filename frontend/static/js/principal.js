@@ -55,6 +55,33 @@ async function cargarDatosIniciales() {
   }
 }
 
+// ---------- Wishlist helpers (localStorage) ----------
+function getWishlist() {
+  try {
+    const raw = localStorage.getItem('wishlist');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function isInWishlist(id) {
+  const list = getWishlist();
+  return list.map(String).includes(String(id));
+}
+function addToWishlist(id) {
+  const list = getWishlist();
+  if (!list.map(String).includes(String(id))) {
+    list.push(String(id));
+    localStorage.setItem('wishlist', JSON.stringify(list));
+  }
+}
+function removeFromWishlist(id) {
+  let list = getWishlist();
+  list = list.filter(i => String(i) !== String(id));
+  localStorage.setItem('wishlist', JSON.stringify(list));
+}
+function toggleWishlist(id) {
+  if (isInWishlist(id)) removeFromWishlist(id); else addToWishlist(id);
+}
+
 // Inicializar filtros de busqueda u orden
 function inicializarFiltros() {
   // Cargar categorías en el filtro
@@ -262,8 +289,10 @@ function mostrarProductos(productos, totalProductos) {
           <a href="/producto/${producto.id}">
             <h3 class="text-base font-semibold text-color-texto-oscuro">${producto.nombre}</h3>
             <p class="text-sm text-gray-500">${nombreCategoria}</p>
-            <div class="flex items-center justify-between mt-4">
-              <p class="text-xl font-bold text-color-secundario">$${formatearPrecio(producto.precio)}</p>
+          </a>
+          <div class="flex items-center justify-between mt-4">
+            <p class="text-xl font-bold text-color-secundario">$${formatearPrecio(producto.precio)}</p>
+            <div class="flex items-center gap-2">
               <button 
                 class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-agregar-carrito"
                 data-producto-id="${producto.id}"
@@ -273,9 +302,12 @@ function mostrarProductos(productos, totalProductos) {
                   ${producto.stock === 0 ? 'remove_shopping_cart' : 'add_shopping_cart'}
                 </span>
               </button>
+              <button class="btn-wishlist ${isInWishlist(producto.id) ? 'active' : ''}" data-producto-id="${producto.id}" title="Agregar a favoritos">
+                <span class="material-symbols-outlined">${isInWishlist(producto.id) ? 'favorite' : 'favorite_border'}</span>
+              </button>
             </div>
-            ${producto.stock === 0 ? '<p class="text-red-500 text-sm mt-2">Sin stock</p>' : ''}
-          </a>
+          </div>
+          ${producto.stock === 0 ? '<p class="text-red-500 text-sm mt-2">Sin stock</p>' : ''}
         </div>
       </div>
     `;
@@ -441,6 +473,84 @@ function agregarEventListenersCarrito() {
       e.preventDefault();
       const productoId = this.getAttribute('data-producto-id');
       agregarAlCarrito(productoId);
+    });
+  });
+
+  // Wishlist buttons (toggle in localStorage and update UI)
+  const botonesWishlist = document.querySelectorAll('.btn-wishlist');
+  botonesWishlist.forEach(boton => {
+    boton.addEventListener('click', async function (e) {
+      e.preventDefault();
+      const productoId = this.getAttribute('data-producto-id');
+      const icon = this.querySelector('.material-symbols-outlined');
+
+      const currentlyActive = this.classList.contains('active');
+      try {
+        if (!currentlyActive) {
+          // Intentar agregar en backend
+          const form = new FormData();
+          form.append('productoID', productoId);
+          const resp = await fetch('/wishlist/agregar-producto', {
+            method: 'POST',
+            body: form,
+            credentials: 'same-origin'
+          });
+
+          if (resp.status === 201) {
+            addToWishlist(productoId); // keep local copy in sync
+            this.classList.add('active');
+            if (icon) icon.textContent = 'favorite';
+            return;
+          }
+
+          if (resp.status === 401 || resp.status === 403) {
+            window.location.href = '/ingresar';
+            return;
+          }
+
+          // Fallback: server returned other error -> use localStorage
+          const err = await resp.json().catch(() => ({}));
+          toggleWishlist(productoId);
+          const active = isInWishlist(productoId);
+          this.classList.toggle('active', active);
+          if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
+          alert(err.detail || 'No se pudo agregar a favoritos en el servidor; guardado localmente.');
+        } else {
+          // Intentar eliminar en backend
+          const resp = await fetch(`/wishlist/${productoId}`, {
+            method: 'DELETE',
+            credentials: 'same-origin'
+          });
+
+          if (resp.status === 204) {
+            removeFromWishlist(productoId);
+            this.classList.remove('active');
+            if (icon) icon.textContent = 'favorite_border';
+            return;
+          }
+
+          if (resp.status === 401 || resp.status === 403) {
+            window.location.href = '/ingresar';
+            return;
+          }
+
+          // Fallback: server returned other error -> use localStorage
+          const err = await resp.json().catch(() => ({}));
+          toggleWishlist(productoId);
+          const active = isInWishlist(productoId);
+          this.classList.toggle('active', active);
+          if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
+          alert(err.detail || 'No se pudo eliminar de favoritos en el servidor; actualizado localmente.');
+        }
+      } catch (networkErr) {
+        console.error('Wishlist network error', networkErr);
+        // Fallback to local behavior
+        toggleWishlist(productoId);
+        const active = isInWishlist(productoId);
+        this.classList.toggle('active', active);
+        if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
+        alert('Error de red. Se guardó la acción en modo local.');
+      }
     });
   });
 }
