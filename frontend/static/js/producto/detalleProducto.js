@@ -1,4 +1,4 @@
-// - Obtener el ID desde la URL, solicitar la API y actualizar el DOM
+// Obtener el ID desde la URL, solicitar la API y actualizar el DOM
 const cantidadEl = document.getElementById('cantidad');
 const btnDisminuir = document.getElementById('btn-disminuir');
 const btnAumentar = document.getElementById('btn-aumentar');
@@ -13,38 +13,38 @@ btnAumentar.addEventListener('click', () => {
 });
 
 // Añadir al carrito
-let currentProductoID = null;
+let productoActualID = null;
 document.getElementById('agregar-carrito').addEventListener('click', async (e) => {
   e.preventDefault();
   const cantidad = cantidadValor || 1;
-  const form = new FormData();
-  form.append('productoID', currentProductoID);
-  form.append('cantidad', cantidad);
+  const formulario = new FormData();
+  formulario.append('productoID', productoActualID);
+  formulario.append('cantidad', cantidad);
 
   try {
-    const resp = await fetch('/carrito/agregar-producto', {
+    const respuesta = await fetch('/carrito/agregar-producto', {
       method: 'POST',
-      body: form,
+      body: formulario,
       credentials: 'same-origin'
     });
 
-    if (resp.status === 201) {
+    if (respuesta.status === 201 || respuesta.ok) {
       // Redirigir al carrito o mostrar mensaje
       window.location.href = '/carrito';
       return;
     }
 
-    if (resp.status === 401 || resp.status === 403) {
+    if (respuesta.status === 401 || respuesta.status === 403) {
       // Si no está autenticado, redirigir al login
       window.location.href = '/ingresar';
       return;
     }
 
     // Error en caso de no poder agregar un producto al carrito
-    const errorBody = await resp.json().catch(() => ({}));
-    alert(errorBody.detail || 'No se pudo agregar el producto al carrito');
-  } catch (err) {
-    console.error('Error al agregar al carrito', err);
+    const errorCuerpo = await respuesta.json().catch(() => ({}));
+    alert(errorCuerpo.detail || 'No se pudo agregar el producto al carrito');
+  } catch (error) {
+    console.error('Error al agregar al carrito', error);
     alert('Error de red al agregar al carrito');
   }
 });
@@ -52,12 +52,12 @@ document.getElementById('agregar-carrito').addEventListener('click', async (e) =
 
 // Cargar el producto
 async function cargarProducto() {
-  const urlParams = new URLSearchParams(window.location.search);
-  let productoID = urlParams.get('id');
+  const parametrosUrl = new URLSearchParams(window.location.search);
+  let productoID = parametrosUrl.get('id');
   if (!productoID) {
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const last = pathParts[pathParts.length - 1];
-    if (last && /^\d+$/.test(last)) productoID = last;
+    const partesRuta = window.location.pathname.split('/').filter(Boolean);
+    const ultimo = partesRuta[partesRuta.length - 1];
+    if (ultimo && /^\d+$/.test(ultimo)) productoID = ultimo;
   }
 
   if (!productoID) {
@@ -66,9 +66,9 @@ async function cargarProducto() {
   }
 
   try {
-    const resp = await fetch(`/productos/${productoID}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const producto = await resp.json();
+    const respuesta = await fetch(`/productos/${productoID}`);
+    if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+    const producto = await respuesta.json();
 
     // Rellenar campos básicos
     document.getElementById('titulo').textContent = producto.nombre || '';
@@ -84,53 +84,75 @@ async function cargarProducto() {
     }
 
     // imagen (placeholder y precarga)
-    const main = document.getElementById('imagen-principal');
-    const thumbs = document.querySelector('.miniaturas');
+    const principal = document.getElementById('imagen-principal');
+    const miniaturas = document.querySelector('.miniaturas');
     const logoSrc = '../../static/img/UI/logo.png';
 
     if (producto.imagenURL) {
       // Mostrar placeholder (logo) hasta que la imagen real termine de cargar
-      main.classList.remove('imagen-real');
-      main.src = logoSrc;
-      main.alt = producto.nombre || 'Producto';
+      principal.classList.remove('imagen-real');
+      principal.src = logoSrc;
+      principal.alt = producto.nombre || 'Producto';
 
-      const imgLoader = new Image();
-      imgLoader.onload = () => {
+      const cargadorImg = new Image();
+      cargadorImg.onload = () => {
         // Al cargar correctamente, cambiar la src y marcar como imagen real
-        main.src = producto.imagenURL;
-        main.classList.add('imagen-real');
+        principal.src = producto.imagenURL;
+        principal.classList.add('imagen-real');
       };
-      imgLoader.onerror = () => {
+      cargadorImg.onerror = () => {
         // Si falla, mantener placeholder y registrar el error
         console.warn('No se pudo cargar la imagen del producto:', producto.imagenURL);
-        main.alt = producto.nombre || 'Producto';
-        main.classList.remove('imagen-real');
+        principal.alt = producto.nombre || 'Producto';
+        principal.classList.remove('imagen-real');
       };
-      imgLoader.src = producto.imagenURL;
+      cargadorImg.src = producto.imagenURL;
 
-      if (thumbs) thumbs.innerHTML = '';
+      if (miniaturas) miniaturas.innerHTML = '';
     } else {
-      if (thumbs) thumbs.innerHTML = '';
-      // No hay imagen: usar el logo y asegurar que no esté marcada como imagen real
-      main.src = logoSrc;
-      main.alt = 'Sin imagen';
-      main.classList.remove('imagen-real');
+      if (miniaturas) miniaturas.innerHTML = '';
+      // Si no hay imagen, usar el logo y asegurar que no esté marcada como imagen real
+      principal.src = logoSrc;
+      principal.alt = 'Sin imagen';
+      principal.classList.remove('imagen-real');
     }
 
-    // opciones (color y tamaño si vienen en CSV)
+    // Opciones (color y tamaño si vienen en CSV)
     if (producto.opcionesColor) {
-      const colors = producto.opcionesColor.split(',').map(s => s.trim()).filter(Boolean);
-      const colorSelect = document.getElementById('color');
-      colorSelect.innerHTML = '<option>Selecciona el color</option>' + colors.map(c => `<option>${c}</option>`).join('');
+      const colores = producto.opcionesColor.split(',').map(s => s.trim()).filter(Boolean);
+      const selectorColor = document.getElementById('color');
+
+      // Limpiar y añadir opción por defecto
+      selectorColor.innerHTML = '';
+      const opcionDefecto = document.createElement('option');
+      opcionDefecto.textContent = 'Selecciona el color';
+      selectorColor.appendChild(opcionDefecto);
+
+      colores.forEach(color => {
+        const opcion = document.createElement('option');
+        opcion.textContent = color;
+        selectorColor.appendChild(opcion);
+      });
     }
     if (producto.opcionesTamano) {
-      const sizes = producto.opcionesTamano.split(',').map(s => s.trim()).filter(Boolean);
-      const sizeSelect = document.getElementById('tamano');
-      sizeSelect.innerHTML = '<option>Selecciona el tamaño</option>' + sizes.map(s => `<option>${s}</option>`).join('');
+      const tamanos = producto.opcionesTamano.split(',').map(s => s.trim()).filter(Boolean);
+      const selectorTamano = document.getElementById('tamano');
+
+      // Limpiar y añadir opción por defecto
+      selectorTamano.innerHTML = '';
+      const opcionDefecto = document.createElement('option');
+      opcionDefecto.textContent = 'Selecciona el tamaño';
+      selectorTamano.appendChild(opcionDefecto);
+
+      tamanos.forEach(tamano => {
+        const opcion = document.createElement('option');
+        opcion.textContent = tamano;
+        selectorTamano.appendChild(opcion);
+      });
     }
 
     // Guardar el ID actual para enviar al carrito
-    currentProductoID = producto.id || productoID;
+    productoActualID = producto.id || productoID;
 
   } catch (error) {
     console.error('Error cargando producto:', error);

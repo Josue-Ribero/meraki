@@ -134,6 +134,73 @@
       </div>
     </main>
   </div>
+  <template id="template-producto-card">
+    <div
+      class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
+      <div class="aspect-square w-full overflow-hidden">
+        <img alt=""
+          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 imagen-producto"
+          src="" onerror="this.src='/static/img/placeholder.jpg'" />
+      </div>
+      <div class="p-4 flex flex-col flex-grow">
+        <a href="" class="enlace-producto">
+          <h3 class="text-base font-semibold text-color-texto-oscuro nombre-producto"></h3>
+          <p class="text-sm text-gray-500 categoria-producto"></p>
+        </a>
+        <div class="flex items-center justify-between mt-4">
+          <p class="text-xl font-bold text-color-secundario precio-producto"></p>
+          <div class="flex items-center gap-2">
+            <button
+              class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-agregar-carrito"
+              data-producto-id="">
+              <span class="material-symbols-outlined text-xl icon-carrito">add_shopping_cart</span>
+            </button>
+            <button class="btn-wishlist" data-producto-id="" title="Agregar a favoritos">
+              <span class="material-symbols-outlined icon-wishlist">favorite_border</span>
+            </button>
+          </div>
+        </div>
+        <p class="text-red-500 text-sm mt-2 sin-stock hidden">Sin stock</p>
+      </div>
+    </div>
+  </template>
+
+  <template id="template-categoria-filtro">
+    <label class="flex items-center space-x-2 cursor-pointer">
+      <input type="checkbox" value=""
+        class="categoria-checkbox rounded text-color-principal focus:ring-color-principal">
+      <span class="text-color-texto-oscuro hover:text-color-principal nombre-categoria"></span>
+    </label>
+  </template>
+
+  <template id="template-no-productos">
+    <div class="text-center py-8 col-span-full">
+      <p class="text-color-texto-oscuro">No se encontraron productos con los filtros aplicados</p>
+      <button
+        class="mt-4 px-4 py-2 bg-color-principal text-white rounded hover:bg-color-principal-oscuro transition-colors btn-limpiar-filtros">
+        Limpiar filtros
+      </button>
+    </div>
+  </template>
+
+  <template id="template-error-productos">
+    <div class="text-center py-8 col-span-full">
+      <p class="text-color-texto-oscuro mensaje-error"></p>
+      <button
+        class="mt-4 px-4 py-2 bg-color-principal text-white rounded hover:bg-color-principal-oscuro transition-colors btn-reintentar">
+        Reintentar
+      </button>
+    </div>
+  </template>
+
+  <template id="template-paginacion-btn">
+    <button class="paginacion-btn" onclick="">
+    </button>
+  </template>
+
+  <template id="template-paginacion-ellipsis">
+    <span class="paginacion-ellipsis">...</span>
+  </template>
 </body>
 
 </html>

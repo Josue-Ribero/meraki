@@ -1,291 +1,311 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const galeria = document.getElementById('galeria');
+  const paginacionContainer = document.getElementById('paginacion-container');
 
-  function renderEmpty() {
-    galeria.innerHTML = `
-      <div class="text-center col-span-full">
-        <p>No tienes productos en tu wishlist.</p>
-        <a href="/" class="btn-primario" style="display:inline-block;margin-top:12px;">Seguir comprando</a>
-      </div>
-    `;
+  // Variables globales de productos y paginacion
+  let productosGlobal = [];
+  let paginaActual = 1;
+  const itemsPorPagina = 4;
+
+  // Funcion para renderizar estado vacio
+  function renderizarVacio() {
+    galeria.innerHTML = '';
+    paginacionContainer.innerHTML = '';
+    const template = document.getElementById('template-wishlist-vacio');
+    if (template) {
+      galeria.appendChild(template.content.cloneNode(true));
+    }
+  }
+
+  // Funcion para renderizar estado de carga
+  function renderizarCargando() {
+    galeria.innerHTML = '';
+    paginacionContainer.innerHTML = '';
+    const template = document.getElementById('template-wishlist-loading');
+    if (template) {
+      galeria.appendChild(template.content.cloneNode(true));
+    }
   }
 
   try {
-    // show loading state
-    galeria.innerHTML = `<div class="text-center col-span-full" id="wishlist-loading"><p class="texto-cargando" style="font-weight:600;">Cargando tu wishlist...</p></div>`;
-    const resp = await fetch('/wishlist/mi-wishlist', { credentials: 'same-origin' });
-    if (resp.status === 401 || resp.status === 403) {
+    // Mostrar estado de carga inicial
+    renderizarCargando();
+    const respuesta = await fetch('/wishlist/mi-wishlist', { credentials: 'same-origin' });
+
+    // Si no esta autenticado, redirigir
+    if (respuesta.status === 401 || respuesta.status === 403) {
       window.location.href = '/ingresar';
       return;
     }
 
-    if (resp.status === 404) {
-      renderEmpty();
+    // Si no se encuentra la wishlist
+    if (respuesta.status === 404) {
+      renderizarVacio();
       return;
     }
 
-    if (!resp.ok) {
-      // Try fallback to localStorage
+    // Fallback a localStorage si falla el servidor
+    if (!respuesta.ok) {
       console.warn('No se pudo cargar wishlist desde servidor, usando localStorage');
       const local = localStorage.getItem('wishlist');
-      if (!local) { renderEmpty(); return; }
+      if (!local) { renderizarVacio(); return; }
       const ids = JSON.parse(local);
-      if (!Array.isArray(ids) || ids.length === 0) { renderEmpty(); return; }
-      await renderFromIds(ids);
+      if (!Array.isArray(ids) || ids.length === 0) { renderizarVacio(); return; }
+      await cargarProductosDesdeIds(ids);
       return;
     }
 
-    const items = await resp.json();
+    // Procesar items del servidor
+    const items = await respuesta.json();
     if (!items || items.length === 0) {
-      renderEmpty();
+      renderizarVacio();
       return;
     }
 
     const ids = items.map(i => i.productoID);
-    await renderFromIds(ids);
-  } catch (err) {
-    console.error('Error cargando wishlist:', err);
-    renderEmpty();
+    await cargarProductosDesdeIds(ids);
+  } catch (error) {
+    console.error('Error cargando wishlist:', error);
+    renderizarVacio();
   }
 
-  async function renderFromIds(ids) {
-    // Fetch category list so we can show category names like on principal
-    const categoriasResp = await fetch('/categorias/');
-    let categoriasMap = {};
-    if (categoriasResp.ok) {
-      const categorias = await categoriasResp.json();
-      categorias.forEach(c => { categoriasMap[c.id] = c.nombre; });
+  // Cargar detalles de productos desde sus IDs
+  async function cargarProductosDesdeIds(ids) {
+    // Obtener categorias para mostrar nombres
+    const respuestaCategorias = await fetch('/categorias/');
+    let mapaCategorias = {};
+    if (respuestaCategorias.ok) {
+      const categorias = await respuestaCategorias.json();
+      categorias.forEach(c => { mapaCategorias[c.id] = c.nombre; });
     }
 
-    // Fetch product details in parallel
-    const fetches = ids.map(id => fetch(`/productos/${id}`));
-    const responses = await Promise.all(fetches);
-    const products = [];
-    for (let i = 0; i < responses.length; i++) {
-      const r = responses[i];
+    // Fetch paralelo de productos
+    const peticiones = ids.map(id => fetch(`/productos/${id}`));
+    const respuestas = await Promise.all(peticiones);
+    productosGlobal = [];
+    for (let i = 0; i < respuestas.length; i++) {
+      const r = respuestas[i];
       if (r.ok) {
         const p = await r.json();
-        products.push(p);
+        // Añadir nombre de categoría al objeto producto para facilitar renderizado
+        p.nombreCategoria = mapaCategorias[p.categoriaID] || '';
+        productosGlobal.push(p);
       }
     }
 
-    if (products.length === 0) { renderEmpty(); return; }
+    if (productosGlobal.length === 0) { renderizarVacio(); return; }
 
-    // Helper to format price like principal
+    renderizarPagina(1);
+  }
+
+  // Renderizar una pagina especifica
+  function renderizarPagina(pagina) {
+    paginaActual = pagina;
+    const totalItems = productosGlobal.length;
+    const totalPaginas = Math.ceil(totalItems / itemsPorPagina);
+
+    // Validar limites de pagina
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+    if (paginaActual < 1) paginaActual = 1;
+
+    // Calcular slice de productos
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    const itemsPagina = productosGlobal.slice(inicio, fin);
+
+    renderizarItems(itemsPagina);
+    renderizarControlesPaginacion(totalPaginas);
+  }
+
+  // Renderizar las tarjetas de productos
+  function renderizarItems(productos) {
+    galeria.innerHTML = '';
+    const template = document.getElementById('template-wishlist-item');
+
+    // Helper para formatear precio
     function formatearPrecio(precio) {
       if (precio === null || precio === undefined) return '0';
       const precioString = Math.floor(Number(precio)).toString();
       return precioString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    galeria.innerHTML = products.map(p => (`
-      <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-        <div class="aspect-square w-full overflow-hidden">
-          <img alt="${p.nombre}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" src="${p.imagenURL || '/static/img/placeholder.jpg'}" onerror="this.src='/static/img/placeholder.jpg'" />
-        </div>
-        <div class="p-4 flex flex-col flex-grow">
-          <a href="/producto/${p.id}">
-            <h3 class="text-base font-semibold text-color-texto-oscuro">${p.nombre}</h3>
-            <p class="text-sm text-gray-500">${categoriasMap[p.categoriaID] || ''}</p>
-          </a>
-          <div class="flex items-center justify-between mt-4">
-            <p class="text-xl font-bold text-color-secundario">$${formatearPrecio(p.precio)}</p>
-            <div class="flex items-center gap-2">
-              <button class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-mover-carrito" data-id="${p.id}">
-                <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-              </button>
-              <button class="btn-eliminar" data-id="${p.id}" title="Eliminar">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `)).join('');
+    productos.forEach(p => {
+      const clon = template.content.cloneNode(true);
 
-    // Attach handlers
+      const imagen = clon.querySelector('.imagen-producto');
+      imagen.src = p.imagenURL || '/static/img/placeholder.jpg';
+      imagen.alt = p.nombre;
+
+      const enlace = clon.querySelector('.enlace-producto');
+      enlace.href = `/producto/${p.id}`;
+
+      clon.querySelector('.nombre-producto').textContent = p.nombre;
+      clon.querySelector('.categoria-producto').textContent = p.nombreCategoria;
+      clon.querySelector('.precio-producto').textContent = `$${formatearPrecio(p.precio)}`;
+
+      const btnMover = clon.querySelector('.btn-mover-carrito');
+      btnMover.setAttribute('data-id', p.id);
+
+      const btnEliminar = clon.querySelector('.btn-eliminar');
+      btnEliminar.setAttribute('data-id', p.id);
+
+      galeria.appendChild(clon);
+    });
+
+    asignarEventos();
+  }
+
+  // Renderizar controles de paginacion
+  function renderizarControlesPaginacion(totalPaginas) {
+    paginacionContainer.innerHTML = '';
+    if (totalPaginas <= 1) return;
+
+    const templateBtn = document.getElementById('template-paginacion-btn');
+    const templateEllipsis = document.getElementById('template-paginacion-ellipsis');
+
+    // Botón Anterior
+    const btnAnterior = templateBtn.content.cloneNode(true).querySelector('button');
+    btnAnterior.textContent = 'Anterior';
+    if (paginaActual === 1) {
+      btnAnterior.disabled = true;
+      btnAnterior.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      btnAnterior.addEventListener('click', () => renderizarPagina(paginaActual - 1));
+    }
+    paginacionContainer.appendChild(btnAnterior);
+
+    // Números de página
+    const paginas = generarNumerosPagina(paginaActual, totalPaginas);
+    paginas.forEach(numero => {
+      if (numero === '...') {
+        paginacionContainer.appendChild(templateEllipsis.content.cloneNode(true));
+      } else {
+        const btn = templateBtn.content.cloneNode(true).querySelector('button');
+        btn.textContent = numero;
+        if (numero === paginaActual) {
+          btn.classList.add('bg-color-principal', 'text-white', 'border-color-principal');
+          btn.classList.remove('hover:bg-gray-100', 'text-color-texto-oscuro');
+        } else {
+          btn.addEventListener('click', () => renderizarPagina(numero));
+        }
+        paginacionContainer.appendChild(btn);
+      }
+    });
+
+    // Botón Siguiente
+    const btnSiguiente = templateBtn.content.cloneNode(true).querySelector('button');
+    btnSiguiente.textContent = 'Siguiente';
+    if (paginaActual === totalPaginas) {
+      btnSiguiente.disabled = true;
+      btnSiguiente.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      btnSiguiente.addEventListener('click', () => renderizarPagina(paginaActual + 1));
+    }
+    paginacionContainer.appendChild(btnSiguiente);
+  }
+
+  // Generar array de numeros de pagina con ellipsis
+  function generarNumerosPagina(actual, total) {
+    const paginas = [];
+    const delta = 2; // Páginas a mostrar a izquierda y derecha de la actual
+
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= actual - delta && i <= actual + delta)) {
+        paginas.push(i);
+      } else if (paginas[paginas.length - 1] !== '...') {
+        paginas.push('...');
+      }
+    }
+    return paginas;
+  }
+
+  // Asignar eventos a botones de accion
+  function asignarEventos() {
+    // Evento eliminar
     document.querySelectorAll('.btn-eliminar').forEach(boton => {
       boton.addEventListener('click', async (e) => {
         const id = boton.getAttribute('data-id');
         try {
-          const resp = await fetch(`/wishlist/${id}`, { method: 'DELETE', credentials: 'same-origin' });
-          if (resp.status === 204) {
-            const tarjeta = boton.closest('.group');
-            if (tarjeta) {
-              tarjeta.style.transition = 'opacity 0.3s';
-              tarjeta.style.opacity = '0';
-              setTimeout(() => tarjeta.remove(), 300);
-            }
-            // Also remove from localStorage fallback
-            const local = getLocalWishlist();
-            if (local) {
-              const filtered = local.filter(i => String(i) !== String(id));
-              localStorage.setItem('wishlist', JSON.stringify(filtered));
-            }
+          const respuesta = await fetch(`/wishlist/${id}`, { method: 'DELETE', credentials: 'same-origin' });
+          if (respuesta.status === 204) {
+            eliminarProductoGlobal(id);
             return;
           }
-          if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
-          const err = await resp.json().catch(() => ({}));
-          alert(err.detail || 'No se pudo eliminar de la wishlist');
-        } catch (err) {
-          console.error('Error eliminando wishlist:', err);
-          // Fallback local
-          const tarjeta = boton.closest('.group');
-          if (tarjeta) {
-            tarjeta.style.transition = 'opacity 0.3s';
-            tarjeta.style.opacity = '0';
-            setTimeout(() => tarjeta.remove(), 300);
-          }
-          const local = getLocalWishlist() || [];
-          const filtered = local.filter(i => String(i) !== String(id));
-          localStorage.setItem('wishlist', JSON.stringify(filtered));
+          if (respuesta.status === 401 || respuesta.status === 403) { window.location.href = '/ingresar'; return; }
+          const error = await respuesta.json().catch(() => ({}));
+          alert(error.detail || 'No se pudo eliminar de la wishlist');
+        } catch (error) {
+          console.error('Error eliminando wishlist:', error);
+          eliminarProductoGlobal(id);
         }
       });
     });
 
+    // Evento mover al carrito
     document.querySelectorAll('.btn-mover-carrito').forEach(boton => {
       boton.addEventListener('click', async (e) => {
         const id = boton.getAttribute('data-id');
-        const textoOriginal = boton.textContent;
+        const icon = boton.querySelector('.material-symbols-outlined');
+        const textoIconoOriginal = icon ? icon.textContent : 'add_shopping_cart';
+
         boton.disabled = true;
-        boton.innerHTML = '<span class="material-symbols-outlined text-xl">hourglass_top</span>';
+        if (icon) icon.textContent = 'hourglass_top';
 
         try {
-          const resp = await fetch(`/wishlist/mover-al-carrito/${id}`, { method: 'POST', credentials: 'same-origin' });
+          const respuesta = await fetch(`/wishlist/mover-al-carrito/${id}`, { method: 'POST', credentials: 'same-origin' });
 
-          if (resp.ok) {
-            // Remove card from DOM
-            const tarjeta = boton.closest('.group');
-            if (tarjeta) {
-              tarjeta.style.transition = 'opacity 0.3s';
-              tarjeta.style.opacity = '0';
-              setTimeout(() => tarjeta.remove(), 300);
-            }
-            // Also update localStorage fallback
-            const local = getLocalWishlist() || [];
-            const filtered = local.filter(i => String(i) !== String(id));
-            localStorage.setItem('wishlist', JSON.stringify(filtered));
-            // Notify other tabs/pages
-            window.dispatchEvent(new CustomEvent('wishlistChanged', { detail: { productId: id, action: 'removed' } }));
+          if (respuesta.ok) {
+            eliminarProductoGlobal(id);
             return;
           }
 
-          if (resp.status === 401 || resp.status === 403) { window.location.href = '/ingresar'; return; }
+          if (respuesta.status === 401 || respuesta.status === 403) { window.location.href = '/ingresar'; return; }
 
-          // If product already exists in cart (409/400), increment quantity by 1
-          if (resp.status === 400 || resp.status === 409) {
-            try {
-              const listResp = await fetch('/carrito/mi-carrito', { credentials: 'same-origin' });
-              if (listResp.ok) {
-                const lista = await listResp.json();
-                const detalle = lista.find(d => String(d.productoID) === String(id));
-                if (detalle) {
-                  const nuevaCantidad = (detalle.cantidad || 1) + 1;
-                  const patchResp = await fetch(`/carrito/actualizar-cantidad/${id}`, {
-                    method: 'PATCH',
-                    credentials: 'same-origin',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ cantidad: nuevaCantidad })
-                  });
-
-                  if (patchResp.status === 401 || patchResp.status === 403) {
-                    window.location.href = '/ingresar';
-                    return;
-                  }
-
-                  if (patchResp.ok) {
-                    // Success incrementing! Now remove from wishlist (backend + local)
-
-                    // 1. Remove from backend wishlist
-                    await fetch(`/wishlist/${id}`, { method: 'DELETE', credentials: 'same-origin' });
-
-                    // 2. Remove from DOM
-                    const tarjeta = boton.closest('.group');
-                    if (tarjeta) {
-                      tarjeta.style.transition = 'opacity 0.3s';
-                      tarjeta.style.opacity = '0';
-                      setTimeout(() => tarjeta.remove(), 300);
-                    }
-
-                    // 3. Update localStorage
-                    const local = getLocalWishlist() || [];
-                    const filtered = local.filter(i => String(i) !== String(id));
-                    localStorage.setItem('wishlist', JSON.stringify(filtered));
-                    window.dispatchEvent(new CustomEvent('wishlistChanged', { detail: { productId: id, action: 'removed' } }));
-
-                    return;
-                  }
-                }
-              }
-            } catch (err) {
-              console.warn('Error al incrementar cantidad del carrito:', err);
-            }
-          }
-
-          const err = await resp.json().catch(() => ({}));
-          alert(err.detail || 'No se pudo mover al carrito');
-        } catch (err) {
-          console.error('Error moviendo al carrito:', err);
-          // Try fallback: add to carrito endpoint directly
-          try {
-            const form = new FormData();
-            form.append('productoID', id);
-            form.append('cantidad', '1');
-            const r2 = await fetch('/carrito/agregar-producto', { method: 'POST', body: form, credentials: 'same-origin' });
-
-            if (r2.ok || r2.status === 400 || r2.status === 409) {
-              // If added or already exists, try to increment if needed
-              if (r2.status === 400 || r2.status === 409) {
-                // Attempt increment
-                const listResp = await fetch('/carrito/mi-carrito', { credentials: 'same-origin' });
-                if (listResp.ok) {
-                  const lista = await listResp.json();
-                  const detalle = lista.find(d => String(d.productoID) === String(id));
-                  if (detalle) {
-                    await fetch(`/carrito/actualizar-cantidad/${id}`, {
-                      method: 'PATCH',
-                      credentials: 'same-origin',
-                      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                      body: new URLSearchParams({ cantidad: (detalle.cantidad || 1) + 1 })
-                    });
-                  }
-                }
-              }
-
-              // Remove from wishlist UI/Local
-              const tarjeta = boton.closest('.group');
-              if (tarjeta) {
-                tarjeta.style.transition = 'opacity 0.3s';
-                tarjeta.style.opacity = '0';
-                setTimeout(() => tarjeta.remove(), 300);
-              }
-              const local = getLocalWishlist() || [];
-              const filtered = local.filter(i => String(i) !== String(id));
-              localStorage.setItem('wishlist', JSON.stringify(filtered));
-              window.dispatchEvent(new CustomEvent('wishlistChanged', { detail: { productId: id, action: 'removed' } }));
-
-              // Try delete from backend wishlist too
-              await fetch(`/wishlist/${id}`, { method: 'DELETE', credentials: 'same-origin' });
-              return;
-            }
-
-            const ebody = await r2.json().catch(() => ({}));
-            alert(ebody.detail || 'No se pudo agregar al carrito (fallback)');
-          } catch (err2) {
-            console.error('Fallback agregar al carrito falló:', err2);
-            alert('Error de red. Intenta nuevamente.');
-          }
+          const error = await respuesta.json().catch(() => ({}));
+          alert(error.detail || 'No se pudo mover al carrito');
+        } catch (error) {
+          console.error('Error moviendo al carrito:', error);
+          alert('Error de red. Intenta nuevamente.');
         } finally {
           try {
-            boton.disabled = false;
-            boton.innerHTML = textoOriginal;
+            if (document.body.contains(boton)) {
+              boton.disabled = false;
+              if (icon) icon.textContent = textoIconoOriginal;
+            }
           } catch (e) { }
         }
       });
     });
   }
 
-  function getLocalWishlist() {
+  // Eliminar producto del estado global y actualizar UI
+  function eliminarProductoGlobal(id) {
+    // Eliminar del array global
+    productosGlobal = productosGlobal.filter(p => String(p.id) !== String(id));
+
+    // Actualizar localStorage
+    const local = obtenerWishlistLocal();
+    if (local) {
+      const filtrado = local.filter(i => String(i) !== String(id));
+      localStorage.setItem('wishlist', JSON.stringify(filtrado));
+    }
+
+    // Notificar a otros componentes
+    window.dispatchEvent(new CustomEvent('wishlistChanged', { detail: { productId: id, action: 'removed' } }));
+
+    // Re-renderizar página actual
+    if (productosGlobal.length === 0) {
+      renderizarVacio();
+    } else {
+      // Si la página actual queda vacía (ej: borramos el único item de la pág 2), ir a la anterior
+      const totalPaginas = Math.ceil(productosGlobal.length / itemsPorPagina);
+      if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+      renderizarPagina(paginaActual);
+    }
+  }
+
+  // Helper para obtener wishlist de localStorage
+  function obtenerWishlistLocal() {
     try { return JSON.parse(localStorage.getItem('wishlist') || '[]'); } catch (e) { return []; }
   }
 });

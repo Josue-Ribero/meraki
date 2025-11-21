@@ -16,28 +16,24 @@ const productosPorPagina = 8;
 // Funcion para formatear precios con puntos
 function formatearPrecio(precio) {
   if (!precio && precio !== 0) return '0';
-
-  // Convertir a string y eliminar decimales si los hay
   const precioString = Math.floor(Number(precio)).toString();
-
-  // Agregar puntos cada 3 dígitos de derecha a izquierda
   return precioString.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 // Cargar productos y categorias
 async function cargarDatosIniciales() {
   try {
-    // Cargar productos
-    const responseProductos = await fetch('/productos/');
-    if (!responseProductos.ok) throw new Error('Error al cargar productos');
-    todosLosProductos = await responseProductos.json();
 
-    // Cargar categorías
-    const responseCategorias = await fetch('/categorias/');
-    if (responseCategorias.ok) {
-      categoriasDisponibles = await responseCategorias.json();
+    // Respuestas de productos y categorias
+    const respuestaProductos = await fetch('/productos/');
+    if (!respuestaProductos.ok) throw new Error('Error al cargar productos');
+    todosLosProductos = await respuestaProductos.json();
+
+    const respuestaCategorias = await fetch('/categorias/');
+    if (respuestaCategorias.ok) {
+      categoriasDisponibles = await respuestaCategorias.json();
     } else {
-      // Si falla, usar categorías por defecto
+      // Categorias por defecto si falla la carga de las reales
       categoriasDisponibles = [
         { id: 1, nombre: "Collares" },
         { id: 2, nombre: "Pulseras" },
@@ -51,130 +47,146 @@ async function cargarDatosIniciales() {
     aplicarFiltros();
   } catch (error) {
     console.error('Error:', error);
-    mostrarError('Error al cargar los datos');
+    mostrarError('Error al cargar los datos. Por favor, intenta recargar la página.');
   }
 }
 
-// ---------- Wishlist helpers (localStorage) ----------
-function getWishlist() {
+// Obtener y gestionar wishlist
+function obtenerWishlist() {
   try {
     const raw = localStorage.getItem('wishlist');
     return raw ? JSON.parse(raw) : [];
   } catch (e) { return []; }
 }
-function isInWishlist(id) {
-  const list = getWishlist();
-  return list.map(String).includes(String(id));
+
+// Verificar si un producto esta en la wishlist
+function estaEnWishlist(id) {
+  const lista = obtenerWishlist();
+  return lista.map(String).includes(String(id));
 }
-function addToWishlist(id) {
-  const list = getWishlist();
-  if (!list.map(String).includes(String(id))) {
-    list.push(String(id));
-    localStorage.setItem('wishlist', JSON.stringify(list));
+
+// Agregar un producto a la wishlist
+function agregarAWishlist(id) {
+  const lista = obtenerWishlist();
+  if (!lista.map(String).includes(String(id))) {
+    lista.push(String(id));
+    localStorage.setItem('wishlist', JSON.stringify(lista));
   }
 }
-function removeFromWishlist(id) {
-  let list = getWishlist();
-  list = list.filter(i => String(i) !== String(id));
-  localStorage.setItem('wishlist', JSON.stringify(list));
+
+// Eliminar un producto de la wishlist
+function eliminarDeWishlist(id) {
+  let lista = obtenerWishlist();
+  lista = lista.filter(i => String(i) !== String(id));
+  localStorage.setItem('wishlist', JSON.stringify(lista));
 }
-function toggleWishlist(id) {
-  if (isInWishlist(id)) removeFromWishlist(id); else addToWishlist(id);
+
+// Alternar entre agregar y eliminar de la wishlist
+function alternarWishlist(id) {
+  if (estaEnWishlist(id)) eliminarDeWishlist(id); else agregarAWishlist(id);
 }
 
 // Inicializar filtros de busqueda u orden
 function inicializarFiltros() {
-  // Cargar categorías en el filtro
+  // Renderizar categorías dinámicamente usando template
   const contenedorCategorias = document.getElementById('categorias-filtro');
-  contenedorCategorias.innerHTML = categoriasDisponibles.map(categoria => `
-        <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" value="${categoria.id}" class="categoria-checkbox rounded text-color-principal focus:ring-color-principal">
-            <span class="text-color-texto-oscuro hover:text-color-principal">${categoria.nombre}</span>
-        </label>
-    `).join('');
+  contenedorCategorias.innerHTML = '';
+  const templateCategoria = document.getElementById('template-categoria-filtro');
 
-  // Configurar eventos de categorías
-  document.querySelectorAll('.categoria-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', function () {
+  // Categorías disponibles
+  categoriasDisponibles.forEach(categoria => {
+    const clon = templateCategoria.content.cloneNode(true);
+    const input = clon.querySelector('input');
+    input.value = categoria.id;
+
+    const span = clon.querySelector('.nombre-categoria');
+    span.textContent = categoria.nombre;
+
+    // Evento de cambio para los filtros
+    input.addEventListener('change', function () {
       if (this.checked) {
         filtrosActivos.categorias.push(this.value);
       } else {
         filtrosActivos.categorias = filtrosActivos.categorias.filter(id => id !== this.value);
       }
-      paginaActual = 1; // Resetear a primera página al cambiar filtros
+      paginaActual = 1; // Pagina por defecto
       aplicarFiltros();
     });
+
+    contenedorCategorias.appendChild(clon);
   });
 
-  // Configurar rango de precio
+  // Configurar rango de precios
   const precioRange = document.getElementById('precio-range');
   const precioMinSpan = document.getElementById('precio-min');
   const precioMaxSpan = document.getElementById('precio-max');
   const precioMinInput = document.getElementById('precio-min-input');
   const precioMaxInput = document.getElementById('precio-max-input');
 
-  // Calcular precio máximo real de los productos
-  const precios = todosLosProductos.map(p => p.precio);
-  const precioMaxReal = Math.max(...precios);
-  precioRange.max = precioMaxReal;
-  precioRange.value = precioMaxReal;
-  filtrosActivos.precioMax = precioMaxReal;
+  // Si hay productos disponibles, se configura el rango de precios
+  if (todosLosProductos.length > 0) {
+    const precios = todosLosProductos.map(p => p.precio);
+    const precioMaxReal = Math.max(...precios);
+    precioRange.max = precioMaxReal;
+    precioRange.value = precioMaxReal;
+    filtrosActivos.precioMax = precioMaxReal;
+  }
 
-  // Actualizar displays de precio
+  // Actualizar display del precio
   function actualizarDisplayPrecio() {
     precioMaxSpan.textContent = `$${formatearPrecio(precioRange.value)}`;
     precioMaxInput.value = precioRange.value;
     filtrosActivos.precioMax = parseInt(precioRange.value);
-    paginaActual = 1; // Resetear a primera página al cambiar filtros
+    paginaActual = 1;
     aplicarFiltros();
   }
 
+  // Evento de cambio para el rango de precios
   precioRange.addEventListener('input', actualizarDisplayPrecio);
 
+  // Evento de cambio para el input minimo
   precioMinInput.addEventListener('change', function () {
     const valor = parseInt(this.value) || 0;
     if (valor >= 0 && valor <= precioRange.value) {
-      paginaActual = 1; // Resetear a primera página al cambiar filtros
+      paginaActual = 1;
       aplicarFiltros();
     }
   });
 
+  // Evento de cambio para el input maximo
   precioMaxInput.addEventListener('change', function () {
-    const valor = parseInt(this.value) || precioMaxReal;
+    const valor = parseInt(this.value) || parseInt(precioRange.max);
     if (valor >= (parseInt(precioMinInput.value) || 0)) {
-      precioRange.value = Math.min(valor, precioMaxReal);
+      precioRange.value = Math.min(valor, parseInt(precioRange.max));
       actualizarDisplayPrecio();
     }
   });
 
-  // Configurar filtro de popularidad
+  // Listeners para filtros de popularidad y orden
   document.getElementById('filtro-popularidad').addEventListener('change', function () {
     filtrosActivos.popularidad = this.value;
-    paginaActual = 1; // Resetear a primera página al cambiar filtros
+    paginaActual = 1;
     aplicarFiltros();
   });
 
-  // Configurar ordenamiento
   document.getElementById('ordenar-por').addEventListener('change', function () {
     filtrosActivos.orden = this.value;
-    paginaActual = 1; // Resetear a primera página al cambiar filtros
+    paginaActual = 1;
     aplicarFiltros();
   });
 
-  // Configurar búsqueda
   document.getElementById('search-input').addEventListener('input', function () {
     filtrosActivos.busqueda = this.value.toLowerCase();
-    paginaActual = 1; // Resetear a primera página al cambiar filtros
+    paginaActual = 1;
     aplicarFiltros();
   });
 
-  // Configurar limpiar filtros
   document.getElementById('limpiar-filtros').addEventListener('click', function () {
     limpiarFiltros();
   });
 }
 
-// APLICAR FILTROS
+// Aplicar filtros
 function aplicarFiltros() {
   let productosFiltrados = [...todosLosProductos];
 
@@ -201,17 +213,13 @@ function aplicarFiltros() {
     producto.precio >= precioMin && producto.precio <= precioMax
   );
 
-  // Filtro por popularidad (esto es un ejemplo, necesitarías datos reales de popularidad)
+  // Ordenamiento
   if (filtrosActivos.popularidad === 'novedades') {
-    // Ordenar por ID descendente (asumiendo que IDs más altos son más nuevos)
     productosFiltrados.sort((a, b) => b.id - a.id);
   } else if (filtrosActivos.popularidad === 'populares') {
-    // Aquí necesitarías un campo de "veces vendido" o "rating"
-    // Por ahora, ordenamos por nombre como ejemplo
     productosFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
   }
 
-  // Ordenamiento adicional
   if (filtrosActivos.orden === 'precio-asc') {
     productosFiltrados.sort((a, b) => a.precio - b.precio);
   } else if (filtrosActivos.orden === 'precio-desc') {
@@ -223,19 +231,18 @@ function aplicarFiltros() {
   mostrarProductosPaginados(productosFiltrados);
 }
 
-// Mostrar productos con paginacion (de 8 en 8)
+// Mostrar productos paginados
 function mostrarProductosPaginados(productosFiltrados) {
   const totalProductos = productosFiltrados.length;
   const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
 
-  // Ajustar página actual si es necesario
   if (paginaActual > totalPaginas && totalPaginas > 0) {
     paginaActual = totalPaginas;
   } else if (totalPaginas === 0) {
     paginaActual = 1;
   }
 
-  // Calcular productos para la página actual
+  // Inicio y fin de la pagina actual
   const inicio = (paginaActual - 1) * productosPorPagina;
   const fin = inicio + productosPorPagina;
   const productosPagina = productosFiltrados.slice(inicio, fin);
@@ -244,153 +251,156 @@ function mostrarProductosPaginados(productosFiltrados) {
   mostrarPaginacion(totalPaginas, totalProductos);
 }
 
-// Mostrar productos en la pagina actual
+// Mostrar productos
 function mostrarProductos(productos, totalProductos) {
-  const container = document.getElementById('productos-container');
+  const contenedor = document.getElementById('productos-container');
   const contador = document.getElementById('contador-productos');
+  const template = document.getElementById('template-producto-card');
+  const templateNoProductos = document.getElementById('template-no-productos');
 
-  // Actualizar contador
+  // Inicio y fin de la pagina actual
   const inicio = (paginaActual - 1) * productosPorPagina + 1;
   const fin = Math.min(paginaActual * productosPorPagina, totalProductos);
 
+  // Contador de productos
   if (totalProductos === 0) {
     contador.textContent = 'No se encontraron productos';
   } else {
     contador.textContent = `Mostrando ${inicio}-${fin} de ${totalProductos} productos`;
   }
 
+  // Insercion de productos en el contenedor
+  contenedor.innerHTML = '';
+
+  // Si no hay productos, mostrar template por defecto
   if (!productos || productos.length === 0) {
-    container.innerHTML = `
-      <div class="text-center py-8 col-span-full">
-        <p class="text-color-texto-oscuro">No se encontraron productos con los filtros aplicados</p>
-        <button onclick="limpiarFiltros()" class="mt-4 px-4 py-2 bg-color-principal text-white rounded hover:bg-color-principal-oscuro transition-colors">
-          Limpiar filtros
-        </button>
-      </div>
-    `;
+    const clon = templateNoProductos.content.cloneNode(true);
+    const btnLimpiar = clon.querySelector('.btn-limpiar-filtros');
+    if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFiltros);
+    contenedor.appendChild(clon);
     return;
   }
 
-  container.innerHTML = productos.map(producto => {
+  // Por cada producto, crear un template
+  productos.forEach(producto => {
     const categoria = categoriasDisponibles.find(c => c.id === producto.categoriaID);
     const nombreCategoria = categoria ? categoria.nombre : 'Joyas únicas';
 
-    return `
-      <div class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
-        <div class="aspect-square w-full overflow-hidden">
-          <img 
-            alt="${producto.nombre}" 
-            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" 
-            src="${producto.imagenURL || '/static/img/placeholder.jpg'}" 
-            onerror="this.src='/static/img/placeholder.jpg'"
-          />
-        </div>
-        <div class="p-4 flex flex-col flex-grow">
-          <a href="/producto/${producto.id}">
-            <h3 class="text-base font-semibold text-color-texto-oscuro">${producto.nombre}</h3>
-            <p class="text-sm text-gray-500">${nombreCategoria}</p>
-          </a>
-          <div class="flex items-center justify-between mt-4">
-            <p class="text-xl font-bold text-color-secundario">$${formatearPrecio(producto.precio)}</p>
-            <div class="flex items-center gap-2">
-              <button 
-                class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-agregar-carrito"
-                data-producto-id="${producto.id}"
-                ${producto.stock === 0 ? 'disabled' : ''}
-              >
-                <span class="material-symbols-outlined text-xl">
-                  ${producto.stock === 0 ? 'remove_shopping_cart' : 'add_shopping_cart'}
-                </span>
-              </button>
-              <button class="btn-wishlist ${isInWishlist(producto.id) ? 'active' : ''}" data-producto-id="${producto.id}" title="Agregar a favoritos">
-                <span class="material-symbols-outlined">${isInWishlist(producto.id) ? 'favorite' : 'favorite_border'}</span>
-              </button>
-            </div>
-          </div>
-          ${producto.stock === 0 ? '<p class="text-red-500 text-sm mt-2">Sin stock</p>' : ''}
-        </div>
-      </div>
-    `;
-  }).join('');
+    const clon = template.content.cloneNode(true);
 
-  // Agregar event listeners a los botones de carrito
-  agregarEventListenersCarrito();
+    const imagen = clon.querySelector('.imagen-producto');
+    imagen.src = producto.imagenURL || '/static/img/placeholder.jpg';
+    imagen.alt = producto.nombre;
+
+    const enlace = clon.querySelector('.enlace-producto');
+    enlace.href = `/producto/${producto.id}`;
+
+    clon.querySelector('.nombre-producto').textContent = producto.nombre;
+    clon.querySelector('.categoria-producto').textContent = nombreCategoria;
+    clon.querySelector('.precio-producto').textContent = `$${formatearPrecio(producto.precio)}`;
+
+    const btnCarrito = clon.querySelector('.btn-agregar-carrito');
+    btnCarrito.setAttribute('data-producto-id', producto.id);
+
+    const iconCarrito = clon.querySelector('.icon-carrito');
+
+    if (producto.stock === 0) {
+      btnCarrito.disabled = true;
+      iconCarrito.textContent = 'remove_shopping_cart';
+      clon.querySelector('.sin-stock').classList.remove('hidden');
+    } else {
+      iconCarrito.textContent = 'add_shopping_cart';
+    }
+
+    const btnWishlist = clon.querySelector('.btn-wishlist');
+    btnWishlist.setAttribute('data-producto-id', producto.id);
+    const enWishlist = estaEnWishlist(producto.id);
+    if (enWishlist) btnWishlist.classList.add('active');
+
+    const iconWishlist = clon.querySelector('.icon-wishlist');
+    iconWishlist.textContent = enWishlist ? 'favorite' : 'favorite_border';
+
+    contenedor.appendChild(clon);
+  });
+
 }
 
-// Mostrar controles de paginacion
 function mostrarPaginacion(totalPaginas, totalProductos) {
-  const container = document.getElementById('paginacion-container');
+  const contenedor = document.getElementById('paginacion-container');
+  contenedor.innerHTML = '';
 
   if (totalPaginas <= 1) {
-    container.innerHTML = '';
     return;
   }
 
-  let paginacionHTML = '';
+  // Templates de paginacion
+  const templateBtn = document.getElementById('template-paginacion-btn');
+  const templateEllipsis = document.getElementById('template-paginacion-ellipsis');
 
-  // Botón Anterior
-  paginacionHTML += `
-    <button class="paginacion-btn" ${paginaActual === 1 ? 'disabled' : ''} 
-            onclick="cambiarPagina(${paginaActual - 1})">
-      Anterior
-    </button>
-  `;
+  // Boton Anterior
+  const btnAnterior = templateBtn.content.cloneNode(true).querySelector('button');
+  btnAnterior.textContent = 'Anterior';
+  if (paginaActual === 1) {
+    btnAnterior.disabled = true;
+  } else {
+    btnAnterior.addEventListener('click', () => cambiarPagina(paginaActual - 1));
+  }
+  contenedor.appendChild(btnAnterior);
 
-  // Números de página
+  // Cantidad de paginas a mostrar
   const paginasAMostrar = generarNumerosPagina(paginaActual, totalPaginas);
 
+  // Por cada pagina, crear un boton
   paginasAMostrar.forEach(numero => {
     if (numero === '...') {
-      paginacionHTML += `<span class="paginacion-ellipsis">...</span>`;
+      const ellipsis = templateEllipsis.content.cloneNode(true);
+      contenedor.appendChild(ellipsis);
     } else {
-      paginacionHTML += `
-        <button class="paginacion-btn ${numero === paginaActual ? 'paginacion-btn-active' : ''}" 
-                onclick="cambiarPagina(${numero})">
-          ${numero}
-        </button>
-      `;
+      const btn = templateBtn.content.cloneNode(true).querySelector('button');
+      btn.textContent = numero;
+      if (numero === paginaActual) {
+        btn.classList.add('paginacion-btn-active');
+      }
+      btn.addEventListener('click', () => cambiarPagina(numero));
+      contenedor.appendChild(btn);
     }
   });
 
-  // Botón Siguiente
-  paginacionHTML += `
-    <button class="paginacion-btn" ${paginaActual === totalPaginas ? 'disabled' : ''} 
-            onclick="cambiarPagina(${paginaActual + 1})">
-      Siguiente
-    </button>
-  `;
-
-  container.innerHTML = paginacionHTML;
+  // Boton Siguiente
+  const btnSiguiente = templateBtn.content.cloneNode(true).querySelector('button');
+  btnSiguiente.textContent = 'Siguiente';
+  if (paginaActual === totalPaginas) {
+    btnSiguiente.disabled = true;
+  } else {
+    btnSiguiente.addEventListener('click', () => cambiarPagina(paginaActual + 1));
+  }
+  contenedor.appendChild(btnSiguiente);
 }
 
-// Generar numeros de pagina
+// Generar numeros de paginas
 function generarNumerosPagina(paginaActual, totalPaginas) {
-  const paginas = [];
-  const paginasALaVista = 5; // Número máximo de páginas a mostrar
+  const paginas = []; // Lista de paginas
+  const paginasALaVista = 5; // Cantidad de paginas a mostrar
 
+  // Si la cantidad de paginas es menor o igual a la cantidad de paginas a mostrar, mostrar todas las paginas
   if (totalPaginas <= paginasALaVista) {
-    // Mostrar todas las páginas
     for (let i = 1; i <= totalPaginas; i++) {
       paginas.push(i);
     }
   } else {
-    // Lógica para mostrar páginas con elipsis
     if (paginaActual <= 3) {
-      // Primeras páginas
       for (let i = 1; i <= 4; i++) {
         paginas.push(i);
       }
       paginas.push('...');
       paginas.push(totalPaginas);
     } else if (paginaActual >= totalPaginas - 2) {
-      // Últimas páginas
       paginas.push(1);
       paginas.push('...');
       for (let i = totalPaginas - 3; i <= totalPaginas; i++) {
         paginas.push(i);
       }
     } else {
-      // Páginas intermedias
       paginas.push(1);
       paginas.push('...');
       for (let i = paginaActual - 1; i <= paginaActual + 1; i++) {
@@ -404,27 +414,23 @@ function generarNumerosPagina(paginaActual, totalPaginas) {
   return paginas;
 }
 
-// Cambiar pagina
+// Funcion de cambiar pagina
 function cambiarPagina(nuevaPagina) {
   paginaActual = nuevaPagina;
   aplicarFiltros();
-
-  // Scroll suave hacia arriba
   window.scrollTo({
     top: document.getElementById('productos-container').offsetTop - 100,
     behavior: 'smooth'
   });
 }
 
-// Limpiar filtros
+// Funcion de limpiar filtros
 function limpiarFiltros() {
-  // Resetear checkboxes de categorías
   document.querySelectorAll('.categoria-checkbox').forEach(checkbox => {
     checkbox.checked = false;
   });
 
-  // Resetear precio
-  const precioMaxReal = Math.max(...todosLosProductos.map(p => p.precio));
+  const precioMaxReal = todosLosProductos.length > 0 ? Math.max(...todosLosProductos.map(p => p.precio)) : 75000;
   const precioRange = document.getElementById('precio-range');
   precioRange.value = precioMaxReal;
 
@@ -432,12 +438,10 @@ function limpiarFiltros() {
   document.getElementById('precio-max-input').value = '';
   document.getElementById('precio-max').textContent = `$${formatearPrecio(precioMaxReal)}`;
 
-  // Resetear otros filtros
   document.getElementById('filtro-popularidad').value = 'todos';
   document.getElementById('ordenar-por').value = 'relevancia';
   document.getElementById('search-input').value = '';
 
-  // Resetear estado de filtros y paginación
   filtrosActivos = {
     categorias: [],
     precioMax: precioMaxReal,
@@ -447,144 +451,38 @@ function limpiarFiltros() {
   };
 
   paginaActual = 1;
-
   aplicarFiltros();
 }
 
-// Mostrar error
+// Funcion de mostrar error
 function mostrarError(mensaje) {
-  const container = document.getElementById('productos-container');
-  container.innerHTML = `
-    <div class="text-center py-8 col-span-full">
-      <p class="text-color-texto-oscuro">${mensaje}</p>
-      <button onclick="cargarDatosIniciales()" class="mt-4 px-4 py-2 bg-color-principal text-white rounded hover:bg-color-principal-oscuro transition-colors">
-        Reintentar
-      </button>
-    </div>
-  `;
+  const contenedor = document.getElementById('productos-container');
+  const templateError = document.getElementById('template-error-productos');
+  contenedor.innerHTML = '';
+
+  // Clonar template
+  const clon = templateError.content.cloneNode(true);
+  clon.querySelector('.mensaje-error').textContent = mensaje;
+  clon.querySelector('.btn-reintentar').addEventListener('click', cargarDatosIniciales);
+
+  contenedor.appendChild(clon);
 }
 
-// Agregar event listeners al carrito
-function agregarEventListenersCarrito() {
-  const botonesCarrito = document.querySelectorAll('.btn-agregar-carrito');
-
-  botonesCarrito.forEach(boton => {
-    boton.addEventListener('click', function (e) {
-      e.preventDefault();
-      const productoId = this.getAttribute('data-producto-id');
-      agregarAlCarrito(productoId);
-    });
-  });
-
-  // Wishlist buttons (toggle in localStorage and update UI)
-  const botonesWishlist = document.querySelectorAll('.btn-wishlist');
-  botonesWishlist.forEach(boton => {
-    boton.addEventListener('click', async function (e) {
-      e.preventDefault();
-      const productoId = this.getAttribute('data-producto-id');
-      const icon = this.querySelector('.material-symbols-outlined');
-
-      const currentlyActive = this.classList.contains('active');
-      try {
-        if (!currentlyActive) {
-          // Intentar agregar en backend
-          const form = new FormData();
-          form.append('productoID', productoId);
-          const resp = await fetch('/wishlist/agregar-producto', {
-            method: 'POST',
-            body: form,
-            credentials: 'same-origin'
-          });
-
-          if (resp.status === 201) {
-            addToWishlist(productoId); // keep local copy in sync
-            this.classList.add('active');
-            if (icon) icon.textContent = 'favorite';
-            return;
-          }
-
-          if (resp.status === 401 || resp.status === 403) {
-            window.location.href = '/ingresar';
-            return;
-          }
-
-          // Fallback: server returned other error -> use localStorage
-          const err = await resp.json().catch(() => ({}));
-          toggleWishlist(productoId);
-          const active = isInWishlist(productoId);
-          this.classList.toggle('active', active);
-          if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
-          alert(err.detail || 'No se pudo agregar a favoritos en el servidor; guardado localmente.');
-        } else {
-          // Intentar eliminar en backend
-          const resp = await fetch(`/wishlist/${productoId}`, {
-            method: 'DELETE',
-            credentials: 'same-origin'
-          });
-
-          if (resp.status === 204) {
-            removeFromWishlist(productoId);
-            this.classList.remove('active');
-            if (icon) icon.textContent = 'favorite_border';
-            return;
-          }
-
-          if (resp.status === 401 || resp.status === 403) {
-            window.location.href = '/ingresar';
-            return;
-          }
-
-          // Fallback: server returned other error -> use localStorage
-          const err = await resp.json().catch(() => ({}));
-          toggleWishlist(productoId);
-          const active = isInWishlist(productoId);
-          this.classList.toggle('active', active);
-          if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
-          alert(err.detail || 'No se pudo eliminar de favoritos en el servidor; actualizado localmente.');
-        }
-      } catch (networkErr) {
-        console.error('Wishlist network error', networkErr);
-        // Fallback to local behavior
-        toggleWishlist(productoId);
-        const active = isInWishlist(productoId);
-        this.classList.toggle('active', active);
-        if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
-        alert('Error de red. Se guardó la acción en modo local.');
-      }
-    });
-  });
-}
-
-// Escuchar cambios en localStorage (otras pestañas) o evento personalizado (misma pestaña)
-function syncWishlistUI() {
-  const list = getWishlist();
-  document.querySelectorAll('.btn-wishlist').forEach(btn => {
-    const id = btn.getAttribute('data-producto-id');
-    const active = list.map(String).includes(String(id));
-    btn.classList.toggle('active', active);
-    const icon = btn.querySelector('.material-symbols-outlined');
-    if (icon) icon.textContent = active ? 'favorite' : 'favorite_border';
-  });
-}
-
-window.addEventListener('storage', (e) => {
-  if (e.key === 'wishlist') syncWishlistUI();
-});
-
-window.addEventListener('wishlistChanged', () => {
-  syncWishlistUI();
-});
-
-// Agregar al carrito
+// Funcion de agregar al carrito
 function agregarAlCarrito(productoId) {
   console.log('Agregando producto al carrito:', productoId);
 
+  // Boton de agregar al carrito
   const boton = document.querySelector(`[data-producto-id="${productoId}"]`);
   if (!boton) return;
-  const iconoOriginal = boton.innerHTML;
-  // Feedback visual inicial
+
+  // Icono del boton
+  const icono = boton.querySelector('.material-symbols-outlined');
+  const textoIconoOriginal = icono ? icono.textContent : 'add_shopping_cart';
+
+  // Deshabilitar boton
   boton.disabled = true;
-  boton.innerHTML = '<span class="material-symbols-outlined text-xl">hourglass_top</span>';
+  if (icono) icono.textContent = 'hourglass_top';
   boton.classList.add('opacity-70');
 
   (async () => {
@@ -593,90 +491,116 @@ function agregarAlCarrito(productoId) {
       form.append('productoID', productoId);
       form.append('cantidad', '1');
 
-      const resp = await fetch('/carrito/agregar-producto', {
+      const respuesta = await fetch('/carrito/agregar-producto', {
         method: 'POST',
         body: form,
         credentials: 'same-origin'
       });
 
-      if (resp.status === 201) {
-        boton.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
+      // Si la respuesta es exitosa, agregar el producto al carrito
+      if (respuesta.status === 201 || respuesta.ok) {
+        if (icono) icono.textContent = 'check';
         boton.classList.add('bg-green-500');
         window.location.href = '/carrito';
         return;
       }
 
-      if (resp.status === 401 || resp.status === 403) {
+      // Si la respuesta es 401 o 403, redirigir a la pagina de ingresar
+      if (respuesta.status === 401 || respuesta.status === 403) {
         window.location.href = '/ingresar';
         return;
       }
 
-      const errorBody = await resp.json().catch(() => ({}));
-
-      // Si el producto ya existe, intentar incrementar cantidad en 1
-      if (resp.status === 400 || resp.status === 409) {
-        try {
-          const listResp = await fetch('/carrito/mi-carrito', { credentials: 'same-origin' });
-          if (listResp.ok) {
-            const lista = await listResp.json();
-            const detalle = lista.find(d => String(d.productoID) === String(productoId));
-            if (detalle) {
-              const nueva = (detalle.cantidad || 1) + 1;
-              const patchResp = await fetch(`/carrito/actualizar-cantidad/${productoId}`, {
-                method: 'PATCH',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ cantidad: nueva })
-              });
-              if (patchResp.status === 401 || patchResp.status === 403) {
-                window.location.href = '/ingresar';
-                return;
-              }
-              if (patchResp.ok) {
-                boton.innerHTML = '<span class="material-symbols-outlined text-xl">check</span>';
-                boton.classList.add('bg-green-500');
-                window.location.href = '/carrito';
-                return;
-              }
-              const pErr = await patchResp.json().catch(() => ({}));
-              alert(pErr.detail || 'No se pudo actualizar la cantidad en el carrito');
-              return;
-            }
-          }
-        } catch (err) {
-          console.warn('Fallback incrementar cantidad falló:', err);
-        }
-      }
-
+      // Si la respuesta es 400, mostrar el error
+      const errorBody = await respuesta.json().catch(() => ({}));
       alert(errorBody.detail || 'No se pudo agregar el producto al carrito');
-    } catch (err) {
-      console.error('Error al agregar al carrito', err);
+    } catch (error) {
+      console.error('Error al agregar al carrito', error);
       alert('Error de red al agregar al carrito');
     } finally {
       try {
         boton.disabled = false;
         setTimeout(() => {
-          boton.innerHTML = iconoOriginal;
+          if (icono) icono.textContent = textoIconoOriginal;
           boton.classList.remove('bg-green-500');
           boton.classList.remove('opacity-70');
         }, 800);
-      } catch (e) { /* noop */ }
+      } catch (e) { /* noop */ } // No hacer nada
     }
   })();
 }
 
-// Inicializar el principal cuando carga
-document.addEventListener('DOMContentLoaded', function () {
-  cargarDatosIniciales();
-  console.log('Página principal cargada y lista.');
+// Event delegation para botones de wishlist
+document.addEventListener('click', async function (e) {
+  const btnWishlist = e.target.closest('.btn-wishlist');
+  if (btnWishlist) {
+    e.preventDefault();
+    const productoId = btnWishlist.getAttribute('data-producto-id');
+    const icon = btnWishlist.querySelector('.material-symbols-outlined');
+    const actualmenteActivo = btnWishlist.classList.contains('active');
+
+    try {
+      // Si el producto no esta en la wishlist, agregarlo
+      if (!actualmenteActivo) {
+        const form = new FormData();
+        form.append('productoID', productoId);
+        const respuesta = await fetch('/wishlist/agregar-producto', { method: 'POST', body: form, credentials: 'same-origin' });
+
+        // Si la respuesta es exitosa, agregar el producto a la wishlist
+        if (respuesta.status === 201) {
+          agregarAWishlist(productoId);
+          btnWishlist.classList.add('active');
+          if (icon) icon.textContent = 'favorite';
+          return;
+        }
+
+        // Si la respuesta es 401 o 403, redirigir a la pagina de ingresar
+        if (respuesta.status === 401 || respuesta.status === 403) { window.location.href = '/ingresar'; return; }
+        alternarWishlist(productoId);
+        btnWishlist.classList.add('active');
+        if (icon) icon.textContent = 'favorite';
+      } else {
+        // Si el producto esta en la wishlist, eliminarlo
+        const respuesta = await fetch(`/wishlist/${productoId}`, { method: 'DELETE', credentials: 'same-origin' });
+        if (respuesta.status === 204) {
+          eliminarDeWishlist(productoId);
+          btnWishlist.classList.remove('active');
+          if (icon) icon.textContent = 'favorite_border';
+          return;
+        }
+
+        // Si la respuesta es 401 o 403, redirigir a la pagina de ingresar
+        if (respuesta.status === 401 || respuesta.status === 403) { window.location.href = '/ingresar'; return; }
+
+        // Alternar la wishlist
+        alternarWishlist(productoId);
+        btnWishlist.classList.remove('active');
+        if (icon) icon.textContent = 'favorite_border';
+      }
+    } catch (err) {
+      // Error al alternar la wishlist
+      console.error(err);
+      alternarWishlist(productoId);
+      // Alternar la wishlist
+      const enWishlist = estaEnWishlist(productoId);
+      btnWishlist.classList.toggle('active', enWishlist);
+      if (icon) icon.textContent = enWishlist ? 'favorite' : 'favorite_border';
+    }
+  }
 });
 
-// Capturar clicks en botones de agregar al carrito
+// Event delegation para botones de carrito
 document.addEventListener('click', function (e) {
+  // Boton de agregar al carrito
   const btn = e.target.closest && e.target.closest('.btn-agregar-carrito');
   if (!btn) return;
   e.preventDefault();
   const productoId = btn.getAttribute('data-producto-id');
-  console.log('Click delegado - agregar al carrito:', productoId);
   agregarAlCarrito(productoId);
+});
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function () {
+  cargarDatosIniciales();
+  console.log('Página principal inicializada.');
 });

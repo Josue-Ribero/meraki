@@ -73,11 +73,69 @@
             <p class="text-color-texto-oscuro texto-cargando" style="font-weight:600;">Cargando tu wishlist...</p>
           </div>
         </div>
+
+        <!-- Contenedor de Paginación -->
+        <div id="paginacion-container" class="mt-8 flex justify-center items-center space-x-4"></div>
       </main>
     </div>
   </div>
 
   <script src="../../static/js/wishlist/wishlist.js"></script>
+  <template id="template-wishlist-item">
+    <div
+      class="group relative flex flex-col overflow-hidden rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 bg-white border border-color-borde-input/50">
+      <div class="aspect-square w-full overflow-hidden">
+        <img alt=""
+          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 imagen-producto"
+          src="" onerror="this.src='/static/img/placeholder.jpg'" />
+      </div>
+      <div class="p-4 flex flex-col flex-grow">
+        <a href="" class="enlace-producto">
+          <h3 class="text-base font-semibold text-color-texto-oscuro nombre-producto"></h3>
+          <p class="text-sm text-gray-500 categoria-producto"></p>
+        </a>
+        <div class="flex items-center justify-between mt-4">
+          <p class="text-xl font-bold text-color-secundario precio-producto"></p>
+          <div class="flex items-center gap-2">
+            <button
+              class="p-2.5 rounded-full bg-color-principal text-color-blanco hover:bg-color-principal-oscuro transition-colors btn-mover-carrito"
+              data-id="">
+              <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+            </button>
+            <button class="btn-eliminar" data-id="" title="Eliminar">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="template-wishlist-vacio">
+    <div class="text-center col-span-full">
+      <p class="text-color-texto-oscuro">No tienes productos en tu wishlist.</p>
+      <a href="/"
+        class="btn-primario mt-4 inline-block bg-color-principal text-white px-6 py-2 rounded-full hover:bg-color-principal-oscuro transition-colors">Seguir
+        comprando</a>
+    </div>
+  </template>
+
+  <template id="template-wishlist-loading">
+    <div class="text-center col-span-full" id="wishlist-loading">
+      <p class="text-color-texto-oscuro texto-cargando font-semibold">Cargando tu wishlist...</p>
+    </div>
+  </template>
+
+  <template id="template-paginacion-btn">
+    <button
+      class="paginacion-btn px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors text-color-texto-oscuro"
+      onclick="">
+    </button>
+  </template>
+
+  <template id="template-paginacion-ellipsis">
+    <span class="paginacion-ellipsis px-2 text-gray-500">...</span>
+  </template>
 </body>
 
 </html>
