@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -9,98 +9,123 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
         rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="../static/css/about.css" />
-    <link rel="stylesheet" href="../static/css/sidebar.css" />
-
-    <script src="../static/js/about.js"></script>
+    <link rel="stylesheet" href="../static/css/principal.css" />
 </head>
 
-<body class="font-display bg-background-light text-foreground-light dark:text-foreground-dark">
-    <div class="flex min-h-screen">
-        <aside class="sidebar">
-            <div class="sidebar-top">
-                <a class="logo-link" href="/">
-                    <img alt="Meraki logo" class="logo-img" src="../static/img/UI/logo.png" />
+<body class="bg-fondo-principal">
+    <div class="relative flex size-full min-h-screen flex-row group/design-root overflow-x-hidden"
+        style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <aside
+            class="flex flex-col items-center justify-between bg-white w-24 py-8 border-r border-gray-200 shadow-lg z-10">
+            <div class="flex flex-col items-center gap-10">
+                <a class="flex items-center" href="/">
+                    <img alt="Meraki logo" class="h-12 w-12" src="../static/img/UI/logo.png" />
                 </a>
-                <nav class="sidebar-nav">
-                    <a class="nav-icon nav-icon-active" href="/about" title="Sobre nosotros">
+                <nav class="flex flex-col items-center gap-6">
+
+                    <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/about"
+                        title="Sobre nosotros">
                         <span class="material-symbols-outlined">info</span>
                     </a>
-                    <a class="nav-icon" href="/contacto" title="Contacto">
+                    <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/contacto"
+                        title="Contacto">
                         <span class="material-symbols-outlined">mail</span>
                     </a>
                 </nav>
             </div>
-            <div class="sidebar-bottom">
-                <a class="cart-icon" href="/carrito" title="Carrito">
+            <div class="flex flex-col items-center gap-6">
+                <a class="relative flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal text-color-texto-oscuro hover:text-color-principal transition-colors"
+                    href="/carrito" title="Carrito">
                     <span class="material-symbols-outlined">shopping_cart</span>
                 </a>
-                <a class="user-profile-link" href="/mi-cuenta" title="Cuenta">
-                    <div class="user-avatar"></div>
+
+                <a class="flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal"
+                    href="/mi-cuenta" title="Cuenta">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g");'>
+                    </div>
                 </a>
             </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto">
-            <div class="max-w-4xl mx-auto">
-                <header class="mb-12">
-                    <h1 class="text-5xl font-bold text-foreground-light dark:text-foreground-dark">Sobre Nosotros</h1>
-                </header>
-                <div class="space-y-12">
-                    <section>
-                        <h2 class="text-3xl font-bold text-primary mb-4">Nuestra Historia</h2>
-                        <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
-                            Meraki comenzó como un sueño compartido entre dos amigas, Elena y Sofia, unidas por su
-                            pasión por la bisutería artesanal y el deseo de crear piezas únicas que reflejaran la
-                            belleza y la individualidad de cada persona. Lo que comenzó como un pequeño taller en casa,
-                            rápidamente se transformó en una marca reconocida por su calidad, diseño innovador y
-                            compromiso con la sostenibilidad.
-                        </p>
-                    </section>
-                    <section>
-                        <h2 class="text-3xl font-bold text-primary mb-4">Nuestra Misión</h2>
-                        <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
-                            En Meraki, nuestra misión es empoderar a las personas a expresar su estilo personal a través
-                            de bisutería artesanal de alta calidad. Nos esforzamos por crear piezas que no solo sean
-                            hermosas, sino también significativas, utilizando materiales sostenibles y prácticas éticas
-                            en cada paso del proceso.
-                        </p>
-                    </section>
-                    <section>
-                        <h2 class="text-3xl font-bold text-primary mb-4">Nuestros Valores</h2>
-                        <ul
-                            class="space-y-4 text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80 list-disc list-inside">
-                            <li><span class="font-semibold">Creatividad:</span> Buscamos constantemente nuevas formas de
-                                innovar y sorprender con nuestros diseños.</li>
-                            <li><span class="font-semibold">Calidad:</span> Nos comprometemos a utilizar los mejores
-                                materiales y técnicas artesanales para garantizar la durabilidad y belleza de nuestras
-                                piezas.</li>
-                            <li><span class="font-semibold">Sostenibilidad:</span> Priorizamos el uso de materiales
-                                reciclados y prácticas responsables con el medio ambiente.</li>
-                            <li><span class="font-semibold">Comunidad:</span> Valoramos a nuestros clientes y artesanos,
-                                fomentando relaciones basadas en la confianza y el respeto.</li>
-                        </ul>
-                    </section>
-                    <section>
-                        <h2 class="text-3xl font-bold text-primary mb-4">Filosofía</h2>
-                        <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
-                            Creemos que la bisutería es más que un simple accesorio; es una forma de arte que permite a
-                            las personas contar su historia y expresar su identidad. Cada pieza de Meraki es creada con
-                            amor y dedicación, reflejando la pasión de nuestros artesanos y la singularidad de quien la
-                            lleva.
-                        </p>
-                    </section>
-                    <section>
-                        <h2 class="text-3xl font-bold text-primary mb-6">Nuestro Espacio</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <img alt="Proceso de creación de bisutería" class="rounded-lg object-cover w-full h-64"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWz1Jt6zZJ9pAYMEk9tVLPIp4TvqQkTHKTqrjrg0-aOYoPD2-pBLU-SGUEamrywSDohQKHfeUt8xw661umck1rkxy2ukXsmEd6KzwVHsyYu3Gw7XEWKM9meR5LS0hn8o0NWOkkPp7jWheJIHZqUWJ1rLQc8X8W6eZKEo406kuiSF62sJjnZt1asSKfZNVo2jEXeC9MNxq1pZJV2Sym0PUeWBhcR-UTWl03eOpL6re7N_a5XPe_Lncl6aORsWF0lDYhNmdVyppugLqi" />
-                            <img alt="Equipo de Meraki trabajando" class="rounded-lg object-cover w-full h-64"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_fwB3znryB-ENcxcCz8AVgabvySy2qGxkR1jz-vEjpMjfwiJCUVbiWNyZSnnnYfyR4IX2nEdzEfa7DwBrsvxb8SUR_RHce_3fgrTiGI78LCfc8c75ynZlY6AOpnlX2Jr3Hd-i7r8mnJUpZ5_1XU_i4m4x2dUNVrBMEOND6GCeI4UfDgQy0CndiZppP4-OKNb4UFP3K3tq_ZuHMIHnwhj6533pP2NBIQhD86rXbYRaoZj-ma4m9aV_t1X31hCo2Cq9jQ7xF0Jlu9Aq" />
-                        </div>
-                    </section>
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 px-12 py-8 overflow-y-auto">
+                <div class="max-w-4xl mx-auto">
+                    <header class="mb-12">
+                        <h1 class="text-5xl font-bold text-foreground-light dark:text-foreground-dark">Sobre Nosotros
+                        </h1>
+                    </header>
+                    <div class="space-y-12">
+                        <section>
+                            <h2 class="text-3xl font-bold text-primary mb-4">Nuestra Historia</h2>
+                            <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
+                                Meraki comenzó como un sueño compartido entre dos amigas, y Nicole, unidas por su
+                                pasión por la bisutería artesanal y el deseo de crear piezas únicas que reflejaran la
+                                belleza y la individualidad de cada persona. Lo que comenzó como una simple idea,
+                                rápidamente
+                                se transformó en un emprendimiento con calidad, diseño innovador y compromiso con la
+                                sostenibilidad.
+                            </p>
+                        </section>
+                        <section>
+                            <h2 class="text-3xl font-bold text-primary mb-4">Nuestra Misión</h2>
+                            <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
+                                En Meraki, nuestra misión es brindar a las personas la oportunidad de expresar su estilo
+                                personal a través de bisutería artesanal de alta calidad. Nos esforzamos por crear
+                                piezas
+                                que no solo sean hermosas, sino también significativas, utilizando materiales
+                                sostenibles y
+                                prácticas éticas en cada paso del proceso.
+                            </p>
+                        </section>
+                        <section>
+                            <h2 class="text-3xl font-bold text-primary mb-4">Nuestros Valores</h2>
+                            <ul
+                                class="space-y-4 text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80 list-disc list-inside">
+                                <li><span class="font-semibold">Creatividad:</span> Buscamos constantemente nuevas
+                                    formas de
+                                    innovar y sorprender con nuestros diseños.</li>
+                                <li><span class="font-semibold">Calidad:</span> Nos comprometemos a utilizar los mejores
+                                    materiales y técnicas artesanales para garantizar la durabilidad y belleza de
+                                    nuestras
+                                    piezas.</li>
+                                <li><span class="font-semibold">Significado:</span> Priorizamos el significado de cada
+                                    pieza,
+                                    creando diseños que reflejen la belleza y la individualidad de cada persona.</li>
+                                <li><span class="font-semibold">Comunidad:</span> Valoramos a nuestros clientes y
+                                    artesanos,
+                                    fomentando relaciones basadas en la confianza y el respeto.</li>
+                            </ul>
+                        </section>
+                        <section>
+                            <h2 class="text-3xl font-bold text-primary mb-4">Filosofía</h2>
+                            <p class="text-lg leading-relaxed text-foreground-light dark:text-foreground-dark/80">
+                                Creemos que la bisutería es más que un simple accesorio; es una forma de arte que
+                                permite a
+                                las personas contar su historia y expresar su identidad. Cada pieza de Meraki es creada
+                                con
+                                amor y dedicación, reflejando la pasión de nuestros artesanos y la singularidad de quien
+                                la
+                                lleva.
+                            </p>
+                        </section>
+                        <section>
+                            <h2 class="text-3xl font-bold text-primary mb-6">Nuestro Espacio</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <img alt="Proceso de creación de bisutería" class="rounded-lg object-cover w-full h-64"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWz1Jt6zZJ9pAYMEk9tVLPIp4TvqQkTHKTqrjrg0-aOYoPD2-pBLU-SGUEamrywSDohQKHfeUt8xw661umck1rkxy2ukXsmEd6KzwVHsyYu3Gw7XEWKM9meR5LS0hn8o0NWOkkPp7jWheJIHZqUWJ1rLQc8X8W6eZKEo406kuiSF62sJjnZt1asSKfZNVo2jEXeC9MNxq1pZJV2Sym0PUeWBhcR-UTWl03eOpL6re7N_a5XPe_Lncl6aORsWF0lDYhNmdVyppugLqi" />
+                                <img alt="Equipo de Meraki trabajando" class="rounded-lg object-cover w-full h-64"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_fwB3znryB-ENcxcCz8AVgabvySy2qGxkR1jz-vEjpMjfwiJCUVbiWNyZSnnnYfyR4IX2nEdzEfa7DwBrsvxb8SUR_RHce_3fgrTiGI78LCfc8c75ynZlY6AOpnlX2Jr3Hd-i7r8mnJUpZ5_1XU_i4m4x2dUNVrBMEOND6GCeI4UfDgQy0CndiZppP4-OKNb4UFP3K3tq_ZuHMIHnwhj6533pP2NBIQhD86rXbYRaoZj-ma4m9aV_t1X31hCo2Cq9jQ7xF0Jlu9Aq" />
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </div>
         </main>

@@ -10,81 +10,98 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
         rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+        rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="../static/css/contacto.css">
+    <link rel="stylesheet" href="../static/css/principal.css" />
 </head>
 
-<body>
-    <div class="layout">
-        <aside class="sidebar">
-            <div class="top">
-                <a href="/" class="logo">
-                    <img src="../static/img/UI/logo.png" alt="Logo Meraki">
+<body class="bg-fondo-principal">
+    <div class="relative flex size-full min-h-screen flex-row group/design-root overflow-x-hidden"
+        style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <aside
+            class="flex flex-col items-center justify-between bg-white w-24 py-8 border-r border-gray-200 shadow-lg z-10">
+            <div class="flex flex-col items-center gap-10">
+                <a class="flex items-center" href="/">
+                    <img alt="Meraki logo" class="h-12 w-12" src="../static/img/UI/logo.png" />
                 </a>
-                <nav>
-                    <a href="/about" class="nav-btn" title="Sobre nosotros">
+                <nav class="flex flex-col items-center gap-6">
+
+                    <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/about"
+                        title="Sobre nosotros">
                         <span class="material-symbols-outlined">info</span>
                     </a>
-                    <a href="/contacto" class="nav-btn" title="Contacto">
+                    <a class="p-3 rounded-xl text-color-texto-oscuro hover:bg-fondo-principal" href="/contacto"
+                        title="Contacto">
                         <span class="material-symbols-outlined">mail</span>
                     </a>
                 </nav>
             </div>
-
-            <div class="bottom">
-                <a href="/carrito" class="nav-btn" title="Carrito">
+            <div class="flex flex-col items-center gap-6">
+                <a class="relative flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal text-color-texto-oscuro hover:text-color-principal transition-colors"
+                    href="/carrito" title="Carrito">
                     <span class="material-symbols-outlined">shopping_cart</span>
                 </a>
-                <a href="/mi-cuenta" class="nav-btn" title="Cuenta">
-                    <div class="avatar"></div>
+
+                <a class="flex items-center justify-center size-12 rounded-full hover:bg-fondo-principal"
+                    href="/mi-cuenta" title="Cuenta">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g");'>
+                    </div>
                 </a>
             </div>
         </aside>
 
-        <main class="main">
-            <section class="card">
-                <h1>Contacto</h1>
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 px-12 py-8 overflow-y-auto flex items-center justify-center">
+                <section class="card w-full max-w-2xl bg-white p-8 rounded-xl shadow-md">
+                    <h1 class="text-3xl font-bold text-center mb-8">Contacto</h1>
 
-                <div class="info">
-                    <div class="item">
-                        <span class="material-symbols-outlined">phone</span>
-                        <div>
-                            <h3>Teléfono</h3>
-                            <p>+57 318 730 8740</p>
+                    <div class="info space-y-6">
+                        <div class="item flex items-center gap-4">
+                            <span class="material-symbols-outlined text-2xl text-color-principal">phone</span>
+                            <div>
+                                <h3 class="font-semibold">Teléfono</h3>
+                                <p>+57 318 730 8740</p>
+                            </div>
+                        </div>
+
+                        <div class="item flex items-center gap-4">
+                            <span class="material-symbols-outlined text-2xl text-color-principal">email</span>
+                            <div>
+                                <h3 class="font-semibold">Correo electrónico</h3>
+                                <p>soporte@meraki.com</p>
+                            </div>
+                        </div>
+
+                        <div class="item flex items-center gap-4">
+                            <span class="material-symbols-outlined text-2xl text-color-principal">location_on</span>
+                            <div>
+                                <h3 class="font-semibold">Dirección</h3>
+                                <p>Av. Siempreviva 742, Springfield</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="item">
-                        <span class="material-symbols-outlined">email</span>
-                        <div>
-                            <h3>Correo electrónico</h3>
-                            <p>soporte@meraki.com</p>
+                    <div class="social mt-8 text-center">
+                        <h2 class="text-xl font-semibold mb-4">Redes sociales</h2>
+                        <div class="links flex justify-center">
+                            <a href="https://www.instagram.com/meraki_handmade_accesorios/"
+                                class="link text-color-principal hover:text-color-principal-oscuro transition-colors"
+                                aria-label="Instagram">
+                                <svg fill="currentColor" viewBox="0 0 24 24" class="w-8 h-8">
+                                    <path
+                                        d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 01-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 017.8 2m-.2 2A3.6 3.6 0 004 7.6v8.8A3.6 3.6 0 007.6 20h8.8A3.6 3.6 0 0020 16.4V7.6A3.6 3.6 0 0016.4 4H7.6m9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5M12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
-
-                    <div class="item">
-                        <span class="material-symbols-outlined">location_on</span>
-                        <div>
-                            <h3>Dirección</h3>
-                            <p>Av. Siempreviva 742, Springfield</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="social">
-                    <h2>Redes sociales</h2>
-                    <div class="links">
-                        <a href="https://www.instagram.com/meraki_handmade_accesorios/" class="link"
-                            aria-label="Instagram">
-                            <svg fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 01-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 017.8 2m-.2 2A3.6 3.6 0 004 7.6v8.8A3.6 3.6 0 007.6 20h8.8A3.6 3.6 0 0020 16.4V7.6A3.6 3.6 0 0016.4 4H7.6m9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5M12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
     </div>
 </body>
