@@ -10,31 +10,35 @@
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="../../static/css/carrito/carrito.css">
+    <link rel="stylesheet" href="../../static/css/client/panelCliente.css" />
 </head>
 
 <body>
-    <div class="container">
+    <div class="layout">
         <aside class="sidebar">
             <div class="sidebar-content">
-                <a class="logo-link" href="/">
-                    <img alt="Meraki logo" class="logo-img" src="../../static/img/UI/logo.png" />
-                </a>
-                <nav class="nav">
-                    <a class="nav-item" href="/about" title="Sobre nosotros">
-                        <span class="material-symbols-outlined">info</span>
+                <div class="logo">
+                    <h1>Meraki</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="/mi-cuenta"><span class="material-symbols-outlined">person</span>
+                        <p>Mi perfil</p>
                     </a>
-                    <a class="nav-item" href="/contacto" title="Contacto">
-                        <span class="material-symbols-outlined">mail</span>
+                    <a href="/"><span class="material-symbols-outlined">storefront</span>
+                        <p>Tienda</p>
+                    </a>
+                    <a href="/wishlist"><span class="material-symbols-outlined">favorite</span>
+                        <p>Wishlist</p>
+                    </a>
+                    <a href="/mi-diseno"><span class="material-symbols-outlined">receipt_long</span>
+                        <p>Diseñar mi bisutería</p>
                     </a>
                 </nav>
-            </div>
-            <div class="sidebar-footer">
-                <a class="icon-link" href="/carrito" title="Carrito">
-                    <span class="material-symbols-outlined">shopping_cart</span>
-                </a>
-                <a class="icon-link profile-link" href="/mi-cuenta" title="Cuenta">
-                    <div class="profile-image"></div>
-                </a>
+                <div class="logout">
+                    <a href="/auth/logout"><span class="material-symbols-outlined">logout</span>
+                        <p>Cerrar Sesión</p>
+                    </a>
+                </div>
             </div>
         </aside>
 
