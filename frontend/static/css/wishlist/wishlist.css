@@ -1,3 +1,5 @@
+/* Wishlist page - only content styles, no sidebar overrides */
+
 :root {
   --c-brand: #aa8744;
   --c-dark: #363636;
@@ -6,18 +8,10 @@
   --c-secondary: #9c642d;
 }
 
-body {
-  font-family: 'Manrope', 'Noto Sans', sans-serif;
-  background-color: var(--c-light);
-  color: var(--c-dark);
-  margin: 0;
-  padding: 0;
-}
-
+/* Content area only */
 .contenedor-principal {
   display: flex;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 .encabezado {
@@ -129,81 +123,4 @@ body {
 
 .btn-eliminar:hover {
   background-color: #d1d5db;
-}
-
-.sidebar {
-  width: 100%;
-  max-width: 260px;
-  background: white;
-  border-right: 1px solid var(--border-color);
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  font-family: Inter, "Noto Sans", sans-serif;
-}
-
-.sidebar-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.logo h1 {
-  color: var(--primary-color);
-  font-size: 2rem;
-  text-align: center;
-  letter-spacing: 2px;
-}
-
-.nav-menu {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.nav-menu a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  text-decoration: none;
-  color: var(--text-primary);
-  border-radius: 6px;
-  transition: 0.3s;
-  font-size: 14px;
-}
-
-.nav-menu a:hover {
-  background: #f5f5f5;
-  color: var(--primary-color);
-}
-
-.nav-menu a.active {
-  background: var(--border-color);
-  font-weight: bold;
-}
-
-.logout {
-  margin-top: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.logout a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  text-decoration: none;
-  color: var(--text-primary);
-  border-radius: 6px;
-  transition: 0.3s;
-  font-size: 14px;
-}
-
-.logout a:hover {
-  background: #f5f5f5;
-  color: var(--primary-color);
 }
