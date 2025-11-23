@@ -1,11 +1,18 @@
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy import ForeignKey
 from typing import Optional
-from datetime import datetime as dt
 
+"""
+    Modelo para wishlist (lista de deseos).
+
+    Representa la lista de deseos de un cliente, donde puede guardar productos
+    que le interesan para comprar en el futuro. Actúa como contenedor de los ítems deseados.
+"""
 
 class WishlistBase(SQLModel):
-    fechaAgregado: dt = Field(default_factory=dt.now)
+    pass
+
+
 
 class Wishlist(WishlistBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -13,14 +20,22 @@ class Wishlist(WishlistBase, table=True):
     cliente: "Cliente" = Relationship(back_populates="wishlist")
     items: list["WishlistItem"] = Relationship(back_populates="wishlist", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
+
+
 class WishlistCreate(WishlistBase):
     pass
+
+
 
 class WishlistUpdate(WishlistBase):
     pass
 
+
+
 class WishlistDelete(WishlistBase):
     pass
+
+
 
 # Importaciones diferidas
 from .cliente import Cliente

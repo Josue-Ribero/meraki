@@ -5,6 +5,14 @@ from datetime import datetime as dt
 from ..utils.enums import EstadoDiseno
 from typing import Optional
 
+"""
+    Modelo para diseño personalizado.
+
+    Permite a los clientes solicitar joyas con diseños únicos subiendo una imagen de referencia.
+    Gestiona el estado de la solicitud (pendiente, aprobado, rechazado) y el precio estimado
+    asignado por el administrador.
+"""
+
 class DisenoPersonalizadoBase(SQLModel):
     imagenURL: Optional[str] = Field(default=None)
     fecha: dt = Field(default_factory=dt.now)
@@ -19,6 +27,8 @@ class DisenoPersonalizadoBase(SQLModel):
     def calcularPrecio(self) -> int:
         return self.precioEstimado
 
+
+
 class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
@@ -28,14 +38,22 @@ class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
     detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="disenoPersonalizado")
     detallesPedido: list["DetallePedido"] = Relationship(back_populates="disenoPersonalizado")
 
+
+
 class DisenoPersonalizadoCreate(DisenoPersonalizadoBase):
     pass
+
+
 
 class DisenoPersonalizadoUpdate(DisenoPersonalizadoBase):
     pass
 
+
+
 class DisenoPersonalizadoDelete(DisenoPersonalizadoBase):
     pass
+
+
 
 # Importaciones diferidas
 from .administrador import Administrador

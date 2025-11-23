@@ -1,33 +1,53 @@
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlalchemy import ForeignKey
-from datetime import datetime, timedelta
+from datetime import datetime as dt, timedelta
 from typing import Optional
 import secrets
 
+"""
+    Modelo para solicitud de recuperación de contraseña.
+
+    Gestiona el proceso de recuperación de acceso cuando un cliente olvida su contraseña.
+    Genera tokens temporales seguros con fecha de expiración para validar la identidad del usuario.
+"""
+
 class SolicitudRecuperacionBase(SQLModel):
-    token: str = Field(default_factory=lambda: secrets.token_urlsafe(3))
-    expiracion: datetime = Field(default_factory=lambda: datetime.now() + timedelta(minutes=5))
+    token: str = Field(unique=True, index=True)
+    expiracion: dt = Field()
     usado: bool = Field(default=False)
 
-    # Métodos solicitud
-    def generarToken(self):
-        self.token = secrets.token_urlsafe(3)
-        self.expiracion = datetime.now() + timedelta(minutes=5)
-        return self.token
+    # Metodos solicitud
+    @staticmethod
+    def generarToken():
+        return secrets.token_urlsafe(32)
+    
+    @staticmethod
+    def validarToken(token: str):
+        pass
 
-    def validarToken(self, token: str) -> bool:
-        return self.token == token and not self.usado and datetime.now() < self.expiracion
+
 
 class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
     cliente: "Cliente" = Relationship(back_populates="solicitudesRecuperacion")
 
+
+
 class SolicitudRecuperacionCreate(SolicitudRecuperacionBase):
     pass
 
-class SolicitudRecuperacionUpdate(SQLModel):
-    usado: bool
+
+
+class SolicitudRecuperacionUpdate(SolicitudRecuperacionBase):
+    pass
+
+
+
+class SolicitudRecuperacionDelete(SolicitudRecuperacionBase):
+    pass
+
+
 
 # Importaciones diferidas
 from .cliente import Cliente

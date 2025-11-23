@@ -2,6 +2,15 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
 from typing import Optional
 
+"""
+    Modelo para cliente.
+
+    Representa a los usuarios finales de la plataforma. Gestiona su información personal,
+    credenciales de acceso, puntos de fidelidad y estado de la cuenta.
+    
+    Es el eje central para las compras, carritos, wishlists y direcciones de envío.
+"""
+
 class ClienteBase(SQLModel):
     nombre: str = Field()
     email: str = Field(unique=True)
@@ -20,6 +29,8 @@ class ClienteBase(SQLModel):
         token = SolicitudRecuperacion.generarToken()
         solicitud = SolicitudRecuperacion.validarToken(token)
 
+
+
 class Cliente(ClienteBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
@@ -32,13 +43,19 @@ class Cliente(ClienteBase, table=True):
     wishlist: Optional["Wishlist"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan", "uselist": False})
     solicitudesRecuperacion: list["SolicitudRecuperacion"] = Relationship(back_populates="cliente", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
 
+
+
 class ClienteUpdate(SQLModel):
     nombre: Optional[str] = None
     telefono: Optional[str] = None
     contrasenaHash: Optional[str] = None
 
+
+
 class ClienteDelete(ClienteBase):
     pass
+
+
 
 # Tabla para eliminar los clientes
 class ClienteHistorico(SQLModel, table=True):
@@ -47,6 +64,8 @@ class ClienteHistorico(SQLModel, table=True):
     email: str
     telefono: Optional[str]
     fechaEliminacion: dt = Field(default_factory=dt.now)
+
+    
 
 # Importaciones diferidas
 from .direccionEnvio import DireccionEnvio

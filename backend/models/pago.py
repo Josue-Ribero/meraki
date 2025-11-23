@@ -3,6 +3,13 @@ from datetime import datetime as dt
 from typing import Optional
 from ..utils.enums import MetodoPago
 
+"""
+    Modelo para pago.
+
+    Registra la transacción financiera asociada a un pedido. Almacena el método de pago utilizado,
+    el monto total, la fecha de la transacción y si el pago ha sido confirmado.
+"""
+
 # Modelo base de pago
 class PagoBase(SQLModel):
     metodo: MetodoPago = Field(default=MetodoPago.NEQUI)
@@ -16,6 +23,8 @@ class PagoBase(SQLModel):
     def confirmarPago(self):
         self.confirmado = True
 
+
+
 # Modelo con ID autoincrementable
 class Pago(PagoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -24,12 +33,18 @@ class Pago(PagoBase, table=True):
     pedidoID: int = Field(foreign_key="pedido.id")
     pedido: Optional["Pedido"] = Relationship(back_populates="pago")
 
+
+
 # Modelos de creacion y actualizacion de pago
 class PagoCreate(PagoBase):
     pedidoID: int
 
+
+
 class PagoUpdate(PagoBase):
     pass
+
+
 
 # Importaciones diferidas
 from .administrador import Administrador

@@ -2,6 +2,14 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime as dt
 from typing import Optional
 
+"""
+    Modelo para administrador.
+
+    Es el encargado de gestionar los pedidos, clientes, productos, categorias y mirar como va el negocio.
+
+    Asi mismo, tiene su propio panel para revisar las estadisticas del emprendimiento.
+"""
+
 class AdministradorBase(SQLModel):
     nombre: str = Field()
     email: str = Field(unique=True)
@@ -30,6 +38,8 @@ class AdministradorBase(SQLModel):
     def actualizarEstadoPedido():
         print("Aun no")
 
+
+
 class Administrador(AdministradorBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     categorias: list["Categoria"] = Relationship(back_populates="administrador")
@@ -38,6 +48,8 @@ class Administrador(AdministradorBase, table=True):
     productos: list["Producto"] = Relationship(back_populates="administrador")
     pedidos: list["Pedido"] = Relationship(back_populates="administrador")
     pagos: list["Pago"] = Relationship(back_populates="administrador")
+
+
 
 class AdministradorUpdate(SQLModel):
     nombre: Optional[str] = None
