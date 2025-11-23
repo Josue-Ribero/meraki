@@ -108,6 +108,12 @@ def paginaCarrito(request: Request):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("carrito/carrito.html", {"request": request})
 
+@app.get("/proceso-pago")
+def paginaProcesoPago(request: Request):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("pago/procesoPago.html", {"request": request})
+
 @app.get("/personal")
 def paginaCliente(request: Request):
     if not request.session.get("clienteID"):
