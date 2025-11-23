@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/static/css/admin/dashboardAdmin.css">
   <link rel="stylesheet" href="/static/css/admin/sidebarAdmin.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <style>
     /* Estilos de respaldo en caso de que los archivos CSS no carguen */
     .admin-sidebar {
@@ -25,7 +25,7 @@
       width: 250px;
       min-height: 100vh;
     }
-    
+
     .card {
       background: white;
       border: 1px solid #d1bc97;
@@ -172,13 +172,13 @@
                   <td class="py-2 text-[#363636]">{{ pedido.fecha }}</td>
                   <td class="py-2">
                     {% if pedido.estado in ['PAGADO', 'ENVIADO'] %}
-                      <span class="estado azul">{{ pedido.estado }}</span>
+                    <span class="estado azul">{{ pedido.estado }}</span>
                     {% elif pedido.estado == 'ENTREGADO' %}
-                      <span class="estado verde">{{ pedido.estado }}</span>
+                    <span class="estado verde">{{ pedido.estado }}</span>
                     {% elif pedido.estado == 'PENDIENTE' %}
-                      <span class="estado amarillo">{{ pedido.estado }}</span>
+                    <span class="estado amarillo">{{ pedido.estado }}</span>
                     {% else %}
-                      <span class="estado rojo">{{ pedido.estado }}</span>
+                    <span class="estado rojo">{{ pedido.estado }}</span>
                     {% endif %}
                   </td>
                   <td class="py-2 text-[#363636] text-right">${{ pedido.total }}</td>
@@ -196,7 +196,7 @@
   <script>
     // Datos para la gráfica - con manejo de error si no existen
     const datosGrafica = JSON.parse(`{{ datosGrafica | default({}, true) | tojson }}`);
-    
+
     // Si no hay datos, crear estructura vacía
     if (!datosGrafica.meses || !datosGrafica.ventas) {
       window.datosGrafica = {
@@ -206,7 +206,7 @@
     } else {
       window.datosGrafica = datosGrafica;
     }
-    
+
     console.log('Datos de gráfica cargados:', window.datosGrafica);
   </script>
 

@@ -20,10 +20,16 @@ def agregarCarrito(
     session: SessionDep = None, 
     cliente=Depends(clienteActual)
 ):
+    """
+    Este endpoint recibe un productoID y una cantidad y agrega el producto al carrito del cliente.
+    """
+    
+    # Obtener el producto
     productoDB = session.get(Producto, productoID)
     if not productoDB or not productoDB.activo:
         raise HTTPException(404, "Producto no encontrado")
     
+    # Obtener el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     if not carritoDB:
         raise HTTPException(404, "No tienes un carrito asignado")
@@ -36,6 +42,7 @@ def agregarCarrito(
         )
     ).first()
 
+    # Si el producto ya está en el carrito
     if detalle_existente:
         # Si ya existe, sumar la cantidad
         detalle_existente.cantidad += cantidad
@@ -54,6 +61,8 @@ def agregarCarrito(
             subtotal=productoDB.precio * cantidad,
             esPersonalizado=False # Por defecto
         )
+
+        # Insertar y guardar los cambios en la DB
         session.add(nuevo_detalle)
         session.commit()
         session.refresh(nuevo_detalle)
@@ -67,6 +76,10 @@ def crearPedidoDesdeCarrito(
     session: SessionDep = None,
     cliente=Depends(clienteActual)
 ):
+    """
+    Este endpoint convierte el carrito del cliente en un pedido.
+    """
+    
     # Obtener el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     # Si no tiene uno, mostrar error
@@ -138,6 +151,10 @@ def crearPedidoDesdeCarrito(
 # READ - Obtener el carrito del cliente
 @router.get("/mi-carrito", response_model=list[DetalleCarrito])
 def miCarrito(session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Este endpoint obtiene el carrito del cliente.
+    """
+    
     # Obtener el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     # Si no tiene carrito, mostrar error
@@ -158,6 +175,10 @@ def actualizarCantidad(
     session: SessionDep = None, 
     cliente=Depends(clienteActual)
 ):
+    """
+    Este endpoint actualiza la cantidad de un producto en el carrito.
+    """
+    
     # Obtener el carrito del cliente
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     if not carritoDB:
@@ -194,6 +215,10 @@ def actualizarCantidad(
 # DELETE - Eliminar un producto del carrito
 @router.delete("/{productoID}", status_code=200)
 def eliminarDeCarrito(productoID: int, session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Este endpoint elimina un producto del carrito del cliente.
+    """
+    
     # Obtener el carrito del usuario
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     # Si no tiene un carrito
@@ -220,6 +245,10 @@ def eliminarDeCarrito(productoID: int, session: SessionDep, cliente=Depends(clie
 # DELETE - Vaciar todo el carrito
 @router.delete("/vaciar", status_code=200)
 def vaciarCarrito(session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Este endpoint vacía todo el carrito del cliente.
+    """
+    
     # Obtener el carrito del usuario
     carritoDB = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
     # Si no tiene un carrito, mostrar error

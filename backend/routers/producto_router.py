@@ -25,13 +25,21 @@ async def crearProducto(
     session: SessionDep = None,
     admin=Depends(adminActual)
 ):
+    """
+    Endpoint para crear un producto con imagen
+    """
+    
     # Verificar si ya existe un producto con ese SKU
     productoDB = session.exec(select(Producto).where(Producto.sku == sku)).first()
+
+    # Si ya existe el SKU, mostrar error
     if productoDB:
         raise HTTPException(400, "El SKU ya existe")
     
     # Manejar la imagen
     imagenURL = None
+    
+    # Si hay imagen, subirla
     if imagen and imagen.filename:
         try:
             # La función cargarArchivo ahora devuelve la URL directa de Supabase
@@ -66,6 +74,10 @@ async def crearProducto(
 # READ - Lista de productos
 @router.get("/", response_model=list[Producto])
 def listaProductos(session: SessionDep):
+    """
+    Endpoint para obtener la lista de todos los productos
+    """
+    
     # Obtener la lista de todos los productos de la DB que estén activos
     productos = session.exec(select(Producto).where(Producto.activo == True)).all()
 
@@ -76,6 +88,10 @@ def listaProductos(session: SessionDep):
 # READ - Lista de todos los productos (incluyendo inactivos) - solo admin
 @router.get("/todas", response_model=list[Producto])
 def listaTodosProductos(session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint para obtener la lista de todos los productos (incluyendo inactivos) - solo admin
+    """
+    
     # Obtener la lista de todos los productos de la DB
     productos = session.exec(select(Producto)).all()
 
@@ -86,8 +102,14 @@ def listaTodosProductos(session: SessionDep, _=Depends(adminActual)):
 # READ - Producto por ID
 @router.get("/{productoID}", response_model=Producto)
 def productoPorID(productoID: int, session: SessionDep):
+    """
+    Endpoint para obtener el producto por ID
+    """
+    
     # Verificar que el producto exista en la DB
     productoDB = session.exec(select(Producto).where(Producto.id == productoID, Producto.activo == True)).first()
+    
+    # Si no existe el producto, mostrar error
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
@@ -113,14 +135,22 @@ async def actualizarProducto(
     session: SessionDep = None,
     _=Depends(adminActual)
 ):
+    """
+    Endpoint para actualizar el producto con imagen
+    """
+    
     # Verificar que el producto exista en la DB
     productoDB = session.get(Producto, productoID)
+    
+    # Si no existe el producto, mostrar error
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
     # Verificar si el SKU ya existe (excluyendo el producto actual)
     if sku and sku != productoDB.sku:
         productoExistente = session.exec(select(Producto).where(Producto.sku == sku, Producto.id != productoID)).first()
+        
+        # Si ya existe el SKU, mostrar error
         if productoExistente:
             raise HTTPException(400, "El SKU ya existe")
     
@@ -167,8 +197,14 @@ async def actualizarProducto(
 # UPDATE - Reactivar un producto
 @router.patch("/{productoID}/habilitar", response_model=Producto)
 def habilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint para reactivar un producto
+    """
+    
     # Verificar que el producto exista en la DB
     productoDB = session.get(Producto, productoID)
+    
+    # Si no existe el producto, mostrar error
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     
@@ -187,8 +223,14 @@ def habilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActua
 # DELETE - Deshabilitar el producto
 @router.delete("/{productoID}/deshabilitar", status_code=204)
 def deshabilitarProducto(productoID: int, session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint para deshabilitar el producto
+    """
+    
     # Verificar que el producto exista en la DB
     productoDB = session.get(Producto, productoID)
+    
+    # Si no existe el producto, mostrar error
     if not productoDB:
         raise HTTPException(404, "Producto no encontrado")
     

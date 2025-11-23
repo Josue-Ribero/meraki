@@ -1,7 +1,4 @@
-// clientesAdmin.js - VERSIÓN MEJORADA Y CORREGIDA
-
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Script clientesAdmin.js cargado");
 
   // Elementos del DOM
   const tbody = document.getElementById("clientesBody");
@@ -10,22 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnBuscar = document.getElementById("btnBuscar");
 
   // Variables de estado
-  let clientes = [];
+  let todosLosClientes = []; // Para almacenar todos los clientes y filtrar en frontend
   let filtroActual = "activos";
   let busquedaActual = "";
   let paginaActual = 1;
-  const clientesPorPagina = 5;
+  const clientesPorPagina = 10;
 
   // Configuración de API
   const API_BASE = 'http://127.0.0.1:8000';
-  const CLIENTES_ENDPOINT = `${API_BASE}/clientes/`;
 
   // Contenedor para paginación
   let paginacionContainer;
 
-  console.log("🔗 Endpoint de API:", CLIENTES_ENDPOINT);
-
-  // Función para inicializar la paginación (igual que productosAdmin.js)
+  // Función para inicializar la paginación
   function inicializarPaginacion() {
     if (!document.getElementById('paginacion-container')) {
       const table = document.querySelector('table');
@@ -43,34 +37,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Verificar que todos los elementos del DOM existen
   if (!tbody) {
-    console.error("❌ Elementos del DOM no encontrados");
     showError("Error: No se pudieron cargar los elementos de la página");
     return;
   }
 
-  console.log("✅ Todos los elementos del DOM encontrados");
-
-  /* ---------- Cargar clientes ---------- */
+  // Cargar clientes
   async function cargarClientes() {
-    console.log("🔄 Cargando clientes...");
-    console.log("📊 Parámetros:", { filtroActual, paginaActual, busquedaActual });
-
     try {
       showLoading();
 
-      const params = new URLSearchParams({
-        estado: filtroActual,
-        pagina: paginaActual.toString(),
-        itemsPorPagina: clientesPorPagina.toString()
-      });
-
-      if (busquedaActual) {
-        params.append('busqueda', busquedaActual);
+      // URL para la API
+      let url;
+      if (filtroActual === "activos") {
+        url = `${API_BASE}/clientes/`;
+      } else if (filtroActual === "todos") {
+        url = `${API_BASE}/clientes/todos`;
+      } else if (filtroActual === "eliminados") {
+        url = `${API_BASE}/clientes/eliminados`;
       }
 
-      const url = `${CLIENTES_ENDPOINT}?${params}`;
-      console.log("📡 URL completa:", url);
-
+      // Petición a la API
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -80,23 +66,21 @@ document.addEventListener("DOMContentLoaded", () => {
         credentials: 'include'
       });
 
-      console.log("📡 Estado de respuesta:", response.status, response.statusText);
-
+      // Si la respuesta es diferente a 200, mostrar error
       if (!response.ok) {
         let errorMessage = `Error ${response.status}: ${response.statusText}`;
 
-        // Intentar obtener más detalles del error
         try {
           const errorData = await response.json();
           errorMessage = errorData.detail || errorMessage;
         } catch (e) {
-          // Si no se puede parsear como JSON, usar el texto plano
           const errorText = await response.text();
           if (errorText) {
             errorMessage += ` - ${errorText}`;
           }
         }
 
+        // Si la respuesta es 401 o 403, mostrar error
         if (response.status === 401) {
           errorMessage = "No autorizado - Verifica que estés logueado como administrador";
         } else if (response.status === 403) {
@@ -107,34 +91,43 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const data = await response.json();
-      console.log("📦 Datos recibidos:", data);
-      console.log("👥 Clientes en respuesta:", data.clientes ? data.clientes.length : 0);
 
-      // Procesar respuesta
-      clientes = Array.isArray(data.clientes) ? data.clientes : [];
+      // Obtener los clientes del response
+      todosLosClientes = Array.isArray(data.clientes) ? data.clientes : [];
 
-      if (data.paginacion) {
-        renderizarClientes(data.paginacion);
-      } else {
-        console.warn("⚠️ No hay datos de paginación en la respuesta");
-        renderizarClientes({
-          totalItems: clientes.length,
-          paginaActual: paginaActual,
-          itemsPorPagina: clientesPorPagina,
-          totalPaginas: Math.ceil(clientes.length / clientesPorPagina)
-        });
+      // Aplicar filtro de búsqueda si existe
+      let clientesFiltrados = todosLosClientes;
+      if (busquedaActual) {
+        const termino = busquedaActual.toLowerCase();
+        clientesFiltrados = todosLosClientes.filter(cliente =>
+          cliente.nombre.toLowerCase().includes(termino) ||
+          cliente.email.toLowerCase().includes(termino) ||
+          (cliente.telefono && cliente.telefono.toLowerCase().includes(termino))
+        );
       }
 
+      // Calcular paginación
+      const totalItems = clientesFiltrados.length;
+      const totalPaginas = Math.ceil(totalItems / clientesPorPagina);
+      const inicio = (paginaActual - 1) * clientesPorPagina;
+      const fin = inicio + clientesPorPagina;
+      const clientesPaginados = clientesFiltrados.slice(inicio, fin);
+
+      // Renderizar clientes y paginación
+      renderizarClientes(clientesPaginados, {
+        totalItems: totalItems,
+        paginaActual: paginaActual,
+        itemsPorPagina: clientesPorPagina,
+        totalPaginas: totalPaginas
+      });
+
     } catch (error) {
-      console.error("❌ Error cargando clientes:", error);
       showError(`Error: ${error.message}`);
     }
   }
 
-  /* ---------- Renderizar clientes ---------- */
-  function renderizarClientes(paginacion) {
-    console.log("🎨 Renderizando", clientes.length, "clientes");
-
+  // Funcion de renderizar clientes
+  function renderizarClientes(clientes, paginacion) {
     tbody.innerHTML = '';
 
     // Mostrar mensaje si no hay clientes
@@ -156,9 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
           </td>
         </tr>`;
 
-      const total = paginacion.totalItems || 0;
-      actualizarInfoPaginacion(0, total);
-      renderizarPaginacion(paginacion.totalPaginas || 1);
+      actualizarInfoPaginacion(0, paginacion.totalItems);
+      renderizarPaginacion(paginacion.totalPaginas);
       return;
     }
 
@@ -176,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Determinar estado y puntos
       let estado, puntos, estadoClass;
 
+      // Si el cliente esta eliminado
       if (filtroActual === "eliminados" || cliente.tipo === "historico") {
         estado = "Eliminado";
         estadoClass = "badge historico";
@@ -222,13 +215,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Actualizar información de paginación
-    const total = paginacion.totalItems || clientes.length;
-    const mostrando = Math.min(clientes.length, clientesPorPagina);
-    actualizarInfoPaginacion(mostrando, total);
-    renderizarPaginacion(paginacion.totalPaginas || 1);
+    const mostrando = clientes.length;
+    actualizarInfoPaginacion(mostrando, paginacion.totalItems);
+    renderizarPaginacion(paginacion.totalPaginas);
   }
 
-  /* ---------- Funciones de paginación (IGUAL QUE productosAdmin.js) ---------- */
+  // Funcion para actualizar la informacion de la paginacion
   function actualizarInfoPaginacion(mostrando, total) {
     const infoPaginacion = document.getElementById('infoPaginacion');
     if (infoPaginacion) {
@@ -236,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Funcion para renderizar la paginacion
   function renderizarPaginacion(totalPaginas) {
     if (!paginacionContainer) return;
 
@@ -280,9 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paginacionContainer.appendChild(btnSiguiente);
   }
 
-  /* ---------- UI Functions ---------- */
-
-  // Mostrar estado de carga
+  // Funcion para mostrar estado de carga
   function showLoading() {
     tbody.innerHTML = `
       <tr id="loadingRow">
@@ -295,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </tr>`;
   }
 
-  // Mostrar mensaje de error
+  // Funcion para mostrar mensaje de error
   function showError(message) {
     tbody.innerHTML = `
       <tr>
@@ -308,58 +299,13 @@ document.addEventListener("DOMContentLoaded", () => {
               <button onclick="location.reload()" class="px-4 py-2 bg-[#aa8744] text-white rounded-lg hover:bg-[#9c642d] transition-colors">
                 Reintentar
               </button>
-              <button onclick="probarEndpoint()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
-                Probar Conexión
-              </button>
             </div>
           </div>
         </td>
       </tr>`;
   }
 
-  // Función para probar el endpoint manualmente
-  window.probarEndpoint = async function () {
-    try {
-      console.log("🔍 Probando conexión con el endpoint...");
-      const testUrl = `${CLIENTES_ENDPOINT}?estado=activos&pagina=1&items_por_pagina=5`;
-      console.log("🔍 URL de prueba:", testUrl);
-
-      const response = await fetch(testUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-
-      console.log("🔍 Resultado prueba:", {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("🔍 Datos de prueba:", data);
-        alert(`✅ Conexión exitosa\nEstado: ${response.status}\nClientes encontrados: ${data.clientes ? data.clientes.length : 0}\nTotal: ${data.paginacion ? data.paginacion.total_items : 0}`);
-      } else {
-        let errorMsg = `Error ${response.status}: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.detail || errorMsg;
-        } catch (e) {
-          // Ignorar si no se puede parsear el error
-        }
-        alert(`❌ Error de conexión:\n${errorMsg}`);
-      }
-    } catch (error) {
-      console.error("🔍 Error en prueba:", error);
-      alert(`❌ Error de red:\n${error.message}`);
-    }
-  };
-
-  // Escapar HTML para prevenir XSS
+  // Funcion para escapar HTML para prevenir XSS
   function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -367,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return div.innerHTML;
   }
 
-  // Formatear fecha
+  // Funcion para formatear fecha
   function formatFecha(fechaString) {
     try {
       const fecha = new Date(fechaString);
@@ -381,9 +327,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ---------- Event Listeners ---------- */
+  // Event Listeners
 
-  // Buscar clientes
+  // Funcion para buscar clientes
   function buscarClientes() {
     busquedaActual = searchInput.value.trim();
     paginaActual = 1;
@@ -401,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Búsqueda en tiempo real con debounce
+    // Funcion para la busqueda en tiempo real con debounce
     let timeoutId;
     searchInput.addEventListener("input", (e) => {
       clearTimeout(timeoutId);
@@ -413,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cambio en el filtro de estado
+  // Funcion para el cambio en el filtro de estado
   if (filtroEstado) {
     filtroEstado.addEventListener("change", (e) => {
       filtroActual = e.target.value;
@@ -422,8 +368,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Inicializar la aplicación
-  console.log("🚀 Inicializando aplicación de clientes...");
+  // Funcion para inicializar la aplicacion
+  console.log("Inicializando aplicación de clientes...");
   inicializarPaginacion();
   cargarClientes();
 });

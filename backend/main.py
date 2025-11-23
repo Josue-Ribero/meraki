@@ -72,91 +72,91 @@ async def subirImagen(archivo: UploadFile = File(...)):
 
 # Híbridas
 @app.get("/registrar")
-def paginaRegistro(request: Request):
+async def paginaRegistro(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
 
 @app.get("/ingresar")
-def paginaIngreso(request: Request):
+async def paginaIngreso(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
 
 # Cliente
 @app.get("/")
-def inicio(request: Request):
+async def inicio(request: Request):
     return templates.TemplateResponse("principal.html", {"request": request})
 
 @app.get("/about")
-def paginaAbout(request: Request):
+async def paginaAbout(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.get("/contacto")
-def paginaContacto(request: Request):
+async def paginaContacto(request: Request):
     return templates.TemplateResponse("contacto.html", {"request": request})
 
 @app.get("/producto/{productoID}")
-def paginaProducto(request: Request, productoID: int):
+async def paginaProducto(request: Request, productoID: int):
     return templates.TemplateResponse("producto/detalleProducto.html", {"request": request})
 
 @app.get("/wishlist")
-def paginaWishlist(request: Request):
+async def paginaWishlist(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("wishlist/wishlist.html", {"request": request})
 
 @app.get("/carrito")
-def paginaCarrito(request: Request):
+async def paginaCarrito(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("carrito/carrito.html", {"request": request})
 
 @app.get("/proceso-pago")
-def paginaProcesoPago(request: Request):
+async def paginaProcesoPago(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("pago/procesoPago.html", {"request": request})
 
 @app.get("/personal")
-def paginaCliente(request: Request):
+async def paginaCliente(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("client/panelCliente.html", {"request": request})
 
 @app.get("/mi-cuenta")
-def miCuenta(request: Request):
+async def miCuenta(request: Request):
     if request.session.get("clienteID"):
         return RedirectResponse(url="/personal", status_code=303)
     return RedirectResponse(url="/ingresar", status_code=303)
 
 @app.get("/mi-diseno")
-def disenoPersonalizado(request: Request):
+async def disenoPersonalizado(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("producto/disenoPersonalizado.html", {"request": request})
 
 @app.get("/recuperar-contrasena")
-def recuperacionContrasena(request: Request):
+async def recuperacionContrasena(request: Request):
     return templates.TemplateResponse("contrasena/recuperacion.html", {"request": request})
 
 # Administrador - Rutas simples que solo verifican sesión
 @app.get("/clientes")
-def paginaClientes(request: Request):
+async def paginaClientes(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/clientesAdmin.html", {"request": request})
 
 @app.get("/categorias")
-def paginaCategorias(request: Request):
+async def paginaCategorias(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/categoriaAdmin.html", {"request": request})
 
 @app.get("/pedidos")
-def paginaPedidos(request: Request):
+async def paginaPedidos(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/pedidosAdmin.html", {"request": request})
 
 @app.get("/productos")
-def paginaProductos(request: Request):
+async def paginaProductos(request: Request):
     if not request.session.get("administradorID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("admin/productosAdmin.html", {"request": request})

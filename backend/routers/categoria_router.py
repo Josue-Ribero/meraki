@@ -15,6 +15,10 @@ def crearCategoria(
     session: SessionDep = None, 
     admin=Depends(adminActual)
 ):
+    """
+    Este endpoint crea una nueva categoría por parte del administrador.
+    """
+    
     # Verificar si ya hay una categoria con ese nombre
     categoriaDB = session.exec(select(Categoria).where(Categoria.nombre == nombre)).first()
     if categoriaDB:
@@ -42,6 +46,10 @@ def crearCategoria(
 # READ - Obtener la lista de categorias
 @router.get("/", response_model=list[CategoriaRead])
 def listaCategorias(session: SessionDep):
+    """
+    Este endpoint lista todas las categorías activas en el dashboard administrativo.
+    """
+    
     # Obtener lista de categorias
     categorias = session.exec(select(Categoria).where(Categoria.activo==True)).all()
 
@@ -56,9 +64,14 @@ def listaCategorias(session: SessionDep):
     
     return resultado
 
+
 # READ - Todas las categorias incluyendo las inactivas
 @router.get("/todas", response_model=list[CategoriaRead])
 def todasCategorias(session: SessionDep, _=Depends(adminActual)):
+    """
+    Este endpoint lista todas las categorías, incluyendo las inactivas, en el dashboard administrativo.
+    """
+    
     # Obtener todas las categorias en la DB
     categorias = session.exec(select(Categoria)).all()
     
@@ -76,6 +89,10 @@ def todasCategorias(session: SessionDep, _=Depends(adminActual)):
 # READ - Obtener una categoria por ID
 @router.get("/{categoriaID}", response_model=CategoriaRead)
 def categoriaPorID(categoriaID: int, session: SessionDep):
+    """
+    Este endpoint lista una categoría por su ID en el dashboard administrativo.
+    """
+    
     # Verificar si la categoria existe y está activa
     categoriaDB = session.exec(select(Categoria).where(Categoria.id == categoriaID, Categoria.activo == True)).first()
     
@@ -99,6 +116,10 @@ def actualizarCategoria(
     session: SessionDep = None, 
     _=Depends(adminActual)
 ):
+    """
+    Este endpoint actualiza una categoría por su ID en el dashboard administrativo.
+    """
+    
     # Verificar si la categoria existe
     categoriaDB = session.get(Categoria, categoriaID)
     if not categoriaDB:
@@ -133,6 +154,10 @@ def actualizarCategoria(
 # UPDATE - Reactivar una categoría
 @router.patch("/{categoriaID}/habilitar", response_model=CategoriaRead)
 def habilitarCategoria(categoriaID: int, session: SessionDep, _=Depends(adminActual)):
+    """
+    Este endpoint reactiva una categoría por su ID en el dashboard administrativo.
+    """
+    
     # Verificar si la categoria existe
     categoriaDB = session.get(Categoria, categoriaID)
     if not categoriaDB:
@@ -154,6 +179,10 @@ def habilitarCategoria(categoriaID: int, session: SessionDep, _=Depends(adminAct
 # DELETE - Eliminar una categoria por ID
 @router.delete("/{categoriaID}/deshabilitar", status_code=204)
 def eliminarCategoria(categoriaID: int, session: SessionDep, _=Depends(adminActual)):
+    """
+    Este endpoint deshabilita una categoría por su ID en el dashboard administrativo.
+    """
+    
     # Verificar si la categoria ya existe
     categoriaDB = session.exec(select(Categoria).where(Categoria.id == categoriaID, Categoria.activo == True)).first()
     

@@ -17,6 +17,11 @@ def login(
     contrasena: str = Form(...),
     session: SessionDep = None
 ):
+    """
+    Este endpoint recibe un email y una contrasena y verifica si coinciden con un administrador o cliente.
+    Una vez lo valida, redirige al usuario a su respectivo dashboard.
+    """
+    
     # Intentar como administrador
     adminDB = session.exec(select(Administrador).where(Administrador.email == email)).first()
     if adminDB and contrasenaContext.verify(contrasena, adminDB.contrasenaHash):
@@ -41,6 +46,10 @@ def login(
 # READ - Mostrar si ya hay una sesion activa
 @router.get("/login", response_class=HTMLResponse)
 def mostrarLogin(request: Request):
+    """
+    Este endpoint muestra la página de login si no hay sesión activa.
+    """
+
     # Si ya hay sesión activa, redirigir directamente
     if request.session.get("administradorID"):
         return RedirectResponse(url="/dashboard", status_code=303)
@@ -54,5 +63,8 @@ def mostrarLogin(request: Request):
 # READ - Logout
 @router.get("/logout")
 def logout(request: Request):
+    """
+    Este endpoint cierra la sesión del usuario.
+    """
     request.session.clear()
     return RedirectResponse(url="/auth/login", status_code=303)

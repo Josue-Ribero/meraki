@@ -14,23 +14,41 @@ def crearDiseno(
     session: SessionDep = None,
     cliente=Depends(clienteActual)
 ):
+    """
+    Endpoint para crear un nuevo diseno personalizado
+    """
+    
+    # Crear diseno
     diseno = DisenoPersonalizado(
         imagenURL=imagenURL,
         precioEstimado=precioEstimado,
         clienteID=cliente.id
     )
+
+    # Insertar y guardar cambios en la DB
     session.add(diseno)
     session.commit()
     session.refresh(diseno)
     return diseno
 
+    
+
 # READ - Obtener los disenos del cliente
 @router.get("/mis-disenos", response_model=list[DisenoPersonalizado])
 def misDisenos(session: SessionDep, cliente = Depends(clienteActual)):
+    """
+    Endpoint para obtener los disenos del cliente
+    """
+    
+    # Obtener disenos del cliente
     disenosDB = session.exec(select(DisenoPersonalizado).where(DisenoPersonalizado.clienteID == cliente.id)).all()
+
+    # Si no hay disenos, mostrar error
     if not disenosDB:
         raise HTTPException(404, "No tienes disenos personalizados")
     return disenosDB
+
+
 
 # UPDATE - Cambiar estado o precio
 @router.patch("/{disenoID}", response_model=DisenoPersonalizado)
@@ -41,10 +59,18 @@ def actualizarDiseno(
     precioEstimado: int = Form(None),
     session: SessionDep = None
 ):
+    """
+    Endpoint para actualizar un diseno personalizado
+    """
+    
+    # Obtener diseno por ID
     disenoDB = session.get(DisenoPersonalizado, disenoID)
+    
+    # Si no existe el diseno, mostrar error
     if not disenoDB:
         raise HTTPException(404, "Diseño no encontrado")
     
+    # Actualizar campos
     if imagenURL:
         disenoDB.imagenURL = imagenURL
     if estado:
@@ -52,6 +78,7 @@ def actualizarDiseno(
     if precioEstimado:
         disenoDB.precioEstimado = precioEstimado
     
+    # Insertar y guardar cambios en la DB
     session.add(disenoDB)
     session.commit()
     session.refresh(disenoDB)

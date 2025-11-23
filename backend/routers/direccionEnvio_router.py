@@ -17,6 +17,11 @@ def crearDireccion(
     session: SessionDep = None,
     cliente=Depends(clienteActual)
 ):
+    """
+    Endpoint para crear una nueva direccion
+    """
+    
+    # Crear direccion
     direccion = DireccionEnvio(
         nombre=nombre,
         calle=calle,
@@ -25,18 +30,32 @@ def crearDireccion(
         esPredeterminada=esPredeterminada,
         clienteID=cliente.id
     )
+
+    # Insertar y guardar cambios en la DB
     session.add(direccion)
     session.commit()
     session.refresh(direccion)
     return direccion
 
+
+
 # READ - Obtener las direcciones del cliente
 @router.get("/mis-direcciones", response_model=list[DireccionEnvio])
 def misDirecciones(session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Endpoint para obtener las direcciones del cliente
+    """
+    
+    # Obtener direcciones del cliente
     direccionesDB = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).all()
+    
+    # Si no hay direcciones, mostrar error
     if not direccionesDB:
         raise HTTPException(404, "No tienes direcciones registradas")
+    
     return direccionesDB
+
+    
 
 # UPDATE - Actualizar direccion para un usuario por ID
 @router.patch("/{direccionID}", response_model=DireccionEnvio)
@@ -49,10 +68,18 @@ def actualizarDireccion(
     esPredeterminada: bool = Form(None),
     session: SessionDep = None
 ):
+    """
+    Endpoint para actualizar direccion para un usuario por ID
+    """
+    
+    # Obtener direccion por ID
     direccionDB = session.get(DireccionEnvio, direccionID)
+    
+    # Si no existe la direccion, mostrar error
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
     
+    # Actualizar campos
     if nombre:
         direccionDB.nombre = nombre
     if calle:
@@ -64,16 +91,28 @@ def actualizarDireccion(
     if esPredeterminada is not None:
         direccionDB.esPredeterminada = esPredeterminada
     
+    # Insertar y guardar cambios en la DB
     session.add(direccionDB)
     session.commit()
     session.refresh(direccionDB)
     return direccionDB
 
+    
+
 # DELETE - Eliminar direccion por ID
 @router.delete("/{direccionID}", status_code=204)
 def eliminarDireccion(direccionID: int, session: SessionDep):
+    """
+    Endpoint para eliminar direccion por ID
+    """
+    
+    # Obtener direccion por ID
     direccionDB = session.get(DireccionEnvio, direccionID)
+    
+    # Si no existe la direccion, mostrar error
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
+    
+    # Eliminar direccion y guardar cambios en la DB
     session.delete(direccionDB)
     session.commit()

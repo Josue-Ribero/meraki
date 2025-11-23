@@ -13,9 +13,24 @@ def crearSolicitud(
     session: SessionDep = None,
     cliente=Depends(clienteActual)
 ):
+    """
+    Endpoint para crear una solicitud de recuperacion
+    """
+    
+    # Crear la solicitud
     solicitud = SolicitudRecuperacion(
         clienteID=cliente.id
     )
+
+    # Insertar la solicitud en la DB y guardar los cambios
+    session.add(solicitud)
+    session.commit()
+    session.refresh(solicitud)
+    return solicitud
+
+    # Generar el token
+    solicitud.token = generarToken()
+    solicitud.expiracion = datetime.now() + timedelta(hours=1)
     session.add(solicitud)
     session.commit()
     session.refresh(solicitud)
@@ -24,7 +39,14 @@ def crearSolicitud(
 # READ - Validar token
 @router.get("/validar/{token}", response_model=SolicitudRecuperacion)
 def validarToken(token: str, session: SessionDep):
+    """
+    Endpoint para validar un token de recuperacion
+    """
+    
+    # Validar el token
     solicitudDB = session.exec(select(SolicitudRecuperacion).where(SolicitudRecuperacion.token == token)).first()
+    
+    # Si no existe el token, mostrar error
     if not solicitudDB or solicitudDB.expiracion < datetime.now() or solicitudDB.usado:
         raise HTTPException(400, "Token inválido o expirado")
     return solicitudDB
