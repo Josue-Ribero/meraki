@@ -26,10 +26,12 @@ class ProductoBase(SQLModel):
 
 class Producto(ProductoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    categoriaID: Optional[int] = Field(default=None, foreign_key="categoria.id")
-    categoria: Optional["Categoria"] = Relationship(back_populates="productos")
-    detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="producto")
-    detallesPedido: list["DetallePedido"] = Relationship(back_populates="producto")
+    administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
+    administrador: "Administrador" = Relationship(back_populates="productos")
+    categoriaID: int = Field(foreign_key="categoria.id")
+    categoria: "Categoria" = Relationship(back_populates="productos")
+    detallesCarrito: list["DetalleCarrito"] = Relationship(back_populates="producto", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    detallesPedido: list["DetallePedido"] = Relationship(back_populates="producto", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
     wishlistItems: list["WishlistItem"] = Relationship(back_populates="producto")
 
 

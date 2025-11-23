@@ -5,6 +5,14 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from .db.db import createAllTables
 
+"""
+    Punto de entrada principal de la aplicación FastAPI.
+
+    Configura la instancia de la aplicación, middlewares, archivos estáticos,
+    plantillas Jinja2 y registra todos los routers del sistema.
+    También define las rutas principales para el frontend.
+"""
+
 # Instancia del objeto FastAPI
 app = FastAPI(title="Meraki", lifespan=createAllTables)
 
@@ -58,10 +66,13 @@ routers = [
     wishlist_router.router
 ]
 
+# Incluir los routers en la app
 for router in routers:
     app.include_router(router)
 
-# Rutas Front-end
+
+
+# RUTAS FRONTEND
 
 # Imagenes
 @app.post("/bucket")
@@ -70,7 +81,9 @@ async def subirImagen(archivo: UploadFile = File(...)):
     resultado = await cargarArchivo(archivo)
     return resultado
 
-# Híbridas
+
+
+# Autenticacion de usuarios
 @app.get("/registrar")
 async def paginaRegistro(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
@@ -78,6 +91,8 @@ async def paginaRegistro(request: Request):
 @app.get("/ingresar")
 async def paginaIngreso(request: Request):
     return templates.TemplateResponse("auth/login.html", {"request": request})
+
+
 
 # Cliente
 @app.get("/")
@@ -135,6 +150,8 @@ async def disenoPersonalizado(request: Request):
 @app.get("/recuperar-contrasena")
 async def recuperacionContrasena(request: Request):
     return templates.TemplateResponse("contrasena/recuperacion.html", {"request": request})
+
+
 
 # Administrador - Rutas simples que solo verifican sesión
 @app.get("/clientes")

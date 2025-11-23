@@ -4,6 +4,14 @@ from ..db.db import SessionDep
 from ..models.cliente import Cliente
 from ..models.administrador import Administrador
 
+"""
+    Módulo de autenticación y dependencias de seguridad.
+
+    Provee funciones para verificar la sesión actual del usuario (Cliente o Administrador)
+    y proteger las rutas que requieren autenticación, asegurando que solo usuarios
+    autorizados accedan a recursos protegidos.
+"""
+
 # Dependencia para saber que cliente esta en la sesion
 def clienteActual(request: Request, session: SessionDep):
     # Busca el id del cliente

@@ -6,6 +6,13 @@ from supabase import create_client, Client
 
 from dotenv import load_dotenv
 
+"""
+    Cliente de integración con Supabase.
+
+    Gestiona la conexión y las operaciones de almacenamiento (Storage) para la subida de archivos,
+    manejando la configuración de credenciales y la generación de URLs públicas para los recursos subidos.
+"""
+
 load_dotenv()
 
 SUPABASE_URL:str = os.getenv("SUPABASE_URL")
@@ -20,6 +27,8 @@ else:
 
 _supabase_client:Optional[Client] = None
 
+
+
 def getSupabaseClient():
     global _supabase_client
     if _supabase_client is None:
@@ -28,6 +37,8 @@ def getSupabaseClient():
         _supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
     return _supabase_client
+    
+    
 
 async def uploadarchivoBucket(archivo: UploadFile):
     client = getSupabaseClient()
