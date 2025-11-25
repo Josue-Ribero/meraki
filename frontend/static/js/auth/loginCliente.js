@@ -31,6 +31,10 @@ document.getElementById('register-form').addEventListener('submit', async (event
   const email = formData.get('email');
   const contrasena = formData.get('contrasena');
 
+  const errorDiv = document.getElementById('register-error');
+  errorDiv.classList.add('hidden');
+  errorDiv.textContent = '';
+
   try {
     const response = await fetch('/clientes/registrar', {
       method: 'POST',
@@ -43,10 +47,14 @@ document.getElementById('register-form').addEventListener('submit', async (event
     if (response.ok) {
       window.location.href = '/';
     } else {
-      console.error('Error en el registro:', response.status);
+      const data = await response.json();
+      errorDiv.textContent = data.detail || 'Error al registrarse. Intente nuevamente.';
+      errorDiv.classList.remove('hidden');
     }
   } catch (error) {
     console.error('Error de red:', error);
+    errorDiv.textContent = 'Error de conexión. Intente nuevamente.';
+    errorDiv.classList.remove('hidden');
   }
 });
 
