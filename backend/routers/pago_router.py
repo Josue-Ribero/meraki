@@ -163,33 +163,24 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
     Endpoint para confirmar el pago (admin)
     """
     
-    print(f"Confirmando pago ID: {pagoID}")
-    
     # Buscar el pago en la DB
     pagoDB = session.get(Pago, pagoID)
     
     # Si no existe el pago, mostrar error
     if not pagoDB:
-        print(f"Pago {pagoID} no encontrado")
         raise HTTPException(404, "Pago no encontrado")
-    
-    print(f"Pago encontrado: {pagoDB.id}, Confirmado: {pagoDB.confirmado}")
     
     # Verificar si ya está confirmado
     if pagoDB.confirmado:
-        print("Pago ya estaba confirmado")
         return pagoDB
     
     # Se confirma el pago
     pagoDB.confirmado = True
-    print("Marcar pago como confirmado")
     
     # Actualizar estado del pedido
     pedido = session.get(Pedido, pagoDB.pedidoID)
     if pedido:
-        print(f"Pedido asociado: {pedido.id}, Estado actual: {pedido.estado}")
         pedido.estado = EstadoPedido.PAGADO
-        print(f"Estado del pedido actualizado a: {pedido.estado}")
         
         # Otorgar 5% del total en puntos al cliente (Solo si no pagó con puntos)
         if not pedido.pagadoConPuntos:
@@ -199,12 +190,10 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
                 
                 # Si no existe el cliente, mostrar error
                 if not cliente:
-                    print(f"Cliente {pedido.clienteID} no encontrado")
                     raise HTTPException(404, "Cliente no encontrado")
                 
                 # Otorgar puntos al cliente
                 if cliente:
-                    print(f"Otorgando {puntosGanados} puntos al cliente {cliente.id}")
                     cliente.puntos += puntosGanados
                     
                     # Registrar transacción de puntos ganados
@@ -217,7 +206,7 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
                     session.add(transaccion) # Insertar la transacción en la DB
                     session.add(cliente) # Insertar el cliente en la DB
         else:
-            print("No se otorgan puntos porque el pedido se pagó con puntos")
+            return "No se otorgan puntos porque el pedido se pagó con puntos"
     
     # Probar si se puede guardar el pago en la DB
     try:
@@ -225,7 +214,6 @@ def confirmarPago(pagoID: int, session: SessionDep, _=Depends(adminActual)):
         session.add(pedido)
         session.commit()
         session.refresh(pagoDB)
-        print("Pago confirmado y guardado correctamente")
         return pagoDB
     
     # Excepción si no se pudo guardar el pago

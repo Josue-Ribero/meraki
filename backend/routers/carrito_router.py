@@ -106,7 +106,9 @@ def crearPedidoDesdeCarrito(
         direccionEnvioID=direccion.id,
         estado=EstadoPedido.PENDIENTE,
         pagadoConPuntos=False,
+        puntosUsados=0,
         total=0,
+        clienteEliminado=False
     )
     # Insertar el pedido en la DB
     session.add(pedido)

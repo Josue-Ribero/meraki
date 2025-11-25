@@ -17,6 +17,8 @@ class PedidoBase(SQLModel):
     estado: EstadoPedido = Field(default=EstadoPedido.PENDIENTE)
     total: int = Field(default=0)
     clienteEliminado: bool = Field(default=False)
+    pagadoConPuntos: bool = Field(default=False)
+    puntosUsados: int = Field(default=0)
 
     # Metodos pedido
     def calcularTotal(self):
