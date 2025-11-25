@@ -161,7 +161,10 @@ def paginaDashboard(request: Request, session: SessionDep):
 
 # Función para obtener las ventas mensuales
 def obtenerDatosVentasMensuales(session: SessionDep):
-    """Función auxiliar para obtener datos de ventas mensuales para la gráfica"""
+    """
+    Función auxiliar para obtener datos de ventas mensuales para la gráfica
+    """
+    
     try:
         # Obtener pedidos de los últimos 6 meses
         fechaInicio = datetime.now() - timedelta(days=180)
@@ -189,6 +192,10 @@ def obtenerDatosVentasMensuales(session: SessionDep):
 # READ - Obtener resumen de ventas mensuales
 @router.get("/api/dashboard/resumen")
 def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint de obtención de resumen de ventas mensuales
+    """
+
     try:
         # Fecha actual
         ahora = datetime.now()
@@ -283,6 +290,10 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
 # READ - Obtener las ventas mensuales
 @router.get("/api/dashboard/ventas-mensuales")
 def obtenerVentasMensuales(session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint principal del dashboard que renderiza la página completa
+    """
+
     return obtenerDatosVentasMensuales(session)
 
 
@@ -290,6 +301,10 @@ def obtenerVentasMensuales(session: SessionDep, _=Depends(adminActual)):
 # READ - Obtener los pedidos recientes
 @router.get("/api/dashboard/pedidos-recientes")
 def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint de obtención de la lista de pedidos recientes
+    """
+
     try:
         # Obtener la lista de pedidos
         pedidos = session.exec(select(Pedido).where(Pedido.estado != EstadoPedido.CANCELADO).order_by(Pedido.fecha.desc()).limit(5)).all()
@@ -316,6 +331,10 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
 # READ - Obtener la lista de productos más vendidos
 @router.get("/api/dashboard/productos-mas-vendidos")
 def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
+    """
+    Endpoint de obtención de la lista de productos más vendidos
+    """
+
     try:
         # Obtener todos los detalles de pedidos
         todosDetalles = session.exec(select(DetallePedido)).all()
