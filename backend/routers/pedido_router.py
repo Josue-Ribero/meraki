@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, Form
 from sqlmodel import select, join
 from ..auth.auth import clienteActual, adminActual
-from ..utils.enums import EstadoPedido
+from ..utils.enums import MetodoPago, EstadoPedido, TipoTransaccion
 from ..models.pedido import Pedido, PedidoCreate, PedidoUpdate
 from ..models.cliente import Cliente
 from ..models.pago import Pago
+from ..models.transaccionPuntos import TransaccionPuntos
 from ..db.db import SessionDep
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
@@ -112,7 +113,7 @@ def confirmarPedido(
     _=Depends(adminActual)
 ):
     """
-    Endpoint para confirmar el pedido
+    Endpoint para confirmar el pedido y su pago asociado
     """
     
     # Obtener pedido con ese ID desde la DB
@@ -122,11 +123,54 @@ def confirmarPedido(
     if not pedidoDB:
         raise HTTPException(404, "Pedido no encontrado")
     
+    # Buscar el pago asociado al pedido
+    pagoDB = session.exec(select(Pago).where(Pago.pedidoID == pedidoID)).first()
+    
+    # Si no existe un pago asociado, mostrar error
+    if not pagoDB:
+        raise HTTPException(400, "Este pedido no tiene un pago asociado")
+    
+    # Verificar si el pago ya está confirmado
+    if pagoDB.confirmado:
+        raise HTTPException(400, "El pago de este pedido ya está confirmado")
+    
     # Cambiar estado del pedido a PAGADO
     pedidoDB.estado = EstadoPedido.PAGADO
-
-    # Insertar pedido en la DB y guardar los cambios
-    session.add(pedidoDB)
-    session.commit()
-    session.refresh(pedidoDB)
-    return pedidoDB
+    
+    # Confirmar el pago
+    pagoDB.confirmado = True
+    
+    # Otorgar 5% del total en puntos al cliente (Solo si no pagó con puntos)
+    if not pedidoDB.pagadoConPuntos:
+        puntosGanados = int(pedidoDB.total * 0.05)
+        if puntosGanados > 0:
+            cliente = session.get(Cliente, pedidoDB.clienteID)
+            
+            # Si no existe el cliente, mostrar error
+            if not cliente:
+                raise HTTPException(404, "Cliente no encontrado")
+            
+            # Otorgar puntos al cliente
+            cliente.puntos += puntosGanados
+            
+            # Registrar transacción de puntos ganados
+            transaccion = TransaccionPuntos(
+                clienteID=cliente.id,
+                pedidoID=pedidoDB.id,
+                tipo=TipoTransaccion.GANADOS,
+                cantidad=puntosGanados
+            )
+            session.add(transaccion)
+            session.add(cliente)
+    
+    # Guardar todos los cambios en la DB
+    try:
+        session.add(pedidoDB)
+        session.add(pagoDB)
+        session.commit()
+        session.refresh(pedidoDB)
+        return pedidoDB
+    
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(500, f"Error al confirmar pedido y pago: {str(e)}")

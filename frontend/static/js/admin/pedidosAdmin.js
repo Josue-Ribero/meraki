@@ -1,35 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const perPage = 5;
-  let currentPage = 1;
-  let allOrders = [];
+  const pedidosPorPagina = 5;
+  let paginaActual = 1;
+  let todosLosPedidos = [];
+  let cacheDetalles = new Map();
+  let estaInicializado = false;
 
-  const tbody = document.getElementById("tabla-body");
-  const statusFilter = document.getElementById("status-filter");
-  const dateFilter = document.getElementById("date-filter");
-  const clientFilter = document.getElementById("client-filter");
-  // CAMBIO: Cambiar productFilter por orderIdFilter
-  const orderIdFilter = document.getElementById("order-id-filter");
-  const filterBtn = document.getElementById("filter-button");
-  const resultsInfo = document.querySelector(".results-info");
-  const paginationEl = document.querySelector(".pagination");
+  const cuerpoTabla = document.getElementById("tabla-body");
+  const filtroEstado = document.getElementById("status-filter");
+  const filtroFecha = document.getElementById("date-filter");
+  const filtroCliente = document.getElementById("client-filter");
+  const filtroIdPedido = document.getElementById("order-id-filter");
+  const botonFiltrar = document.getElementById("filter-button");
+  const infoResultados = document.querySelector(".results-info");
+  const elementoPaginacion = document.querySelector(".pagination");
 
-  // Verificar si el elemento tbody existe
-  if (!tbody) {
+  if (!cuerpoTabla) {
     console.error('No se encontró el elemento tbody con id "tabla-body"');
     return;
   }
 
-  console.log('Inicializando gestión de pedidos...');
-
   // Función para obtener los pedidos desde la API
-  async function fetchPedidos() {
+  async function obtenerPedidos() {
     try {
-      console.log('Haciendo petición a /pedidos/');
-
       const token = localStorage.getItem('token');
-      console.log('Token encontrado:', token ? 'Sí' : 'No');
-
-      const response = await fetch('/pedidos/', {
+      const respuesta = await fetch('/pedidos/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -37,49 +31,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      console.log('📡 Respuesta recibida. Status:', response.status);
-
-      // Si la respuesta no es exitosa
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error en la respuesta:', response.status, errorText);
-        throw new Error(`Error ${response.status}: ${errorText}`);
+      if (!respuesta.ok) {
+        const textoError = await respuesta.text();
+        throw new Error(`Error ${respuesta.status}: ${textoError}`);
       }
 
-      const pedidos = await response.json();
-      console.log('Pedidos recibidos correctamente. Cantidad:', pedidos.length);
-      console.log('Datos de pedidos:', pedidos);
-
-      // Verificar la estructura de los datos del cliente
-      pedidos.forEach((pedido, index) => {
-        console.log(`Pedido ${index + 1}:`, {
-          id: pedido.id,
-          cliente: pedido.cliente,
-          clienteID: pedido.clienteID,
-          tieneCliente: !!pedido.cliente,
-          nombreCliente: pedido.cliente ? pedido.cliente.nombre : 'NO TIENE'
-        });
-      });
-
+      const pedidos = await respuesta.json();
       return pedidos;
     } catch (error) {
-      console.error('Error fetching pedidos:', error);
+      console.error('Error obteniendo pedidos:', error);
       alert('Error al cargar los pedidos: ' + error.message);
       return [];
     }
   }
 
-  // Función para obtener información del cliente por ID (como respaldo)
-  async function fetchCliente(clienteID) {
+  // Función para obtener información del cliente por ID
+  async function obtenerCliente(clienteID) {
     try {
-      const response = await fetch(`/clientes/${clienteID}`, {
+      const respuesta = await fetch(`/clientes/${clienteID}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         }
       });
 
-      if (response.ok) {
-        return await response.json();
+      if (respuesta.ok) {
+        return await respuesta.json();
       }
       return null;
     } catch (error) {
@@ -88,13 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // NUEVA FUNCIÓN: Confirmar pedido
+  // Confirmar pedido
   async function confirmarPedido(pedidoID) {
     try {
-      console.log('Confirmando pedido ID:', pedidoID);
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`/pedidos/${pedidoID}/confirmar`, {
+      const respuesta = await fetch(`/pedidos/${pedidoID}/confirmar`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token || ''}`,
@@ -102,38 +77,42 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      console.log('Respuesta de confirmación:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error en la respuesta:', response.status, errorText);
-        throw new Error(`Error ${response.status}: ${errorText}`);
+      if (!respuesta.ok) {
+        const textoError = await respuesta.text();
+        throw new Error(`Error ${respuesta.status}: ${textoError}`);
       }
 
-      const resultado = await response.json();
-      console.log('Pedido confirmado:', resultado);
+      const resultado = await respuesta.json();
       return resultado;
     } catch (error) {
-      console.error('Error confirmando pedido:', error);
       alert('Error al confirmar el pedido: ' + error.message);
       throw error;
     }
   }
 
-  // Función para obtener detalles del pedido
-  async function fetchDetallesPedido(pedidoID) {
+  // Función para obtener detalles del pedido CON CACHE
+  async function obtenerDetallesPedido(pedidoID) {
+    // Verificar cache primero
+    if (cacheDetalles.has(pedidoID)) {
+      return cacheDetalles.get(pedidoID);
+    }
+
     try {
-      const response = await fetch(`/detallePedido/pedido/${pedidoID}`, {
+      const respuesta = await fetch(`/detallePedido/pedido/${pedidoID}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         }
       });
 
-      if (!response.ok) {
+      if (!respuesta.ok) {
         throw new Error('Error al obtener detalles del pedido');
       }
 
-      return await response.json();
+      const detalles = await respuesta.json();
+
+      // Guardar en cache
+      cacheDetalles.set(pedidoID, detalles);
+      return detalles;
     } catch (error) {
       console.error('Error:', error);
       return [];
@@ -141,10 +120,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para formatear fecha en formato largo
-  function formatDateLong(iso) {
+  function formatearFechaLarga(iso) {
     if (!iso) return "";
-    const d = new Date(iso);
-    return d.toLocaleDateString("es-ES", {
+    const fecha = new Date(iso);
+    return fecha.toLocaleDateString("es-ES", {
       day: "numeric",
       month: "long",
       year: "numeric"
@@ -152,17 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para formatear moneda
-  function formatCurrency(amount) {
+  function formatearMoneda(monto) {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(monto);
   }
 
   // Función para obtener clases CSS según el estado
-  function badgeClassesFor(status) {
-    switch (status) {
+  function obtenerClasesBadge(estado) {
+    switch (estado) {
       case "PENDIENTE":
         return "inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800";
       case "PAGADO":
@@ -175,28 +154,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para traducir estados
-  function translateStatus(status) {
-    const statusMap = {
+  function traducirEstado(estado) {
+    const mapaEstados = {
       'PENDIENTE': 'Pendiente',
       'PAGADO': 'Pagado',
       'CANCELADO': 'Cancelado'
     };
-    return statusMap[status] || status;
+    return mapaEstados[estado] || estado;
   }
 
-  // Función mejorada para obtener el nombre del cliente
+  // Función para obtener el nombre del cliente
   function obtenerNombreCliente(pedido) {
-    // Verificar si el cliente está cargado directamente
     if (pedido.cliente && pedido.cliente.nombre) {
       return pedido.cliente.nombre;
     }
 
-    // Si no, intentar obtenerlo de otras propiedades
     if (pedido.cliente_nombre) {
       return pedido.cliente_nombre;
     }
 
-    // Si el clienteID existe pero no el objeto cliente, intentar cargarlo después
     if (pedido.clienteID) {
       return 'Cargando...';
     }
@@ -204,40 +180,33 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'Cliente no disponible';
   }
 
-  // CAMBIO: Función para aplicar filtros - ahora incluye filtro por ID de pedido
-  function applyFilters() {
-    const status = statusFilter.value || "Todos";
-    const date = dateFilter.value || "";
-    const client = (clientFilter.value || "").trim().toLowerCase();
-    // CAMBIO: Usar orderIdFilter en lugar de productFilter
-    const orderId = (orderIdFilter.value || "").trim();
+  // Función para aplicar filtros
+  function aplicarFiltros() {
+    const estado = filtroEstado.value || "Todos";
+    const fecha = filtroFecha.value || "";
+    const cliente = (filtroCliente.value || "").trim().toLowerCase();
+    const idPedido = (filtroIdPedido.value || "").trim();
 
-    console.log('Aplicando filtros:', { status, date, client, orderId });
-
-    return allOrders.filter(o => {
-      // Filtrar por estado
-      if (status !== "Todos") {
-        const statusMap = {
+    return todosLosPedidos.filter(pedido => {
+      if (estado !== "Todos") {
+        const mapaEstados = {
           'Pendiente': 'PENDIENTE',
           'Pagado': 'PAGADO',
           'Cancelado': 'CANCELADO'
         };
-        if (o.estado !== statusMap[status]) return false;
+        if (pedido.estado !== mapaEstados[estado]) return false;
       }
 
-      // Filtrar por fecha
-      if (date && !o.fecha.startsWith(date)) return false;
+      if (fecha && !pedido.fecha.startsWith(fecha)) return false;
 
-      // Filtrar por cliente
-      if (client) {
-        const nombreCliente = obtenerNombreCliente(o).toLowerCase();
-        if (!nombreCliente.includes(client)) return false;
+      if (cliente) {
+        const nombreCliente = obtenerNombreCliente(pedido).toLowerCase();
+        if (!nombreCliente.includes(cliente)) return false;
       }
 
-      // CAMBIO: Filtrar por ID de pedido
-      if (orderId) {
-        const pedidoIdStr = o.id.toString();
-        if (!pedidoIdStr.includes(orderId)) return false;
+      if (idPedido) {
+        const idPedidoStr = pedido.id.toString();
+        if (!idPedidoStr.includes(idPedido)) return false;
       }
 
       return true;
@@ -245,116 +214,98 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para renderizar la tabla
-  async function renderTable() {
-    console.log('Renderizando tabla...');
+  async function renderizarTabla() {
+    const pedidosFiltrados = aplicarFiltros();
+    const total = pedidosFiltrados.length;
+    const totalPaginas = Math.max(1, Math.ceil(total / pedidosPorPagina));
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
 
-    const filtered = applyFilters();
-    const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / perPage));
-    if (currentPage > totalPages) currentPage = totalPages;
+    const inicio = (paginaActual - 1) * pedidosPorPagina;
+    const elementosPagina = pedidosFiltrados.slice(inicio, inicio + pedidosPorPagina);
 
-    const start = (currentPage - 1) * perPage;
-    const pageItems = filtered.slice(start, start + perPage);
+    cuerpoTabla.innerHTML = "";
 
-    tbody.innerHTML = "";
-
-    console.log('Datos a mostrar:', {
-      totalPedidos: allOrders.length,
-      filtrados: filtered.length,
-      paginaActual: currentPage,
-      itemsEnPagina: pageItems.length
-    });
-
-    // Mostrar loading si no hay datos
-    if (pageItems.length === 0) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
+    if (elementosPagina.length === 0) {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
         <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-          ${allOrders.length === 0 ? 'Cargando pedidos...' : 'No se encontraron pedidos con los filtros aplicados'}
+          ${todosLosPedidos.length === 0 ? 'Cargando pedidos...' : 'No se encontraron pedidos con los filtros aplicados'}
         </td>
       `;
-      tbody.appendChild(tr);
+      cuerpoTabla.appendChild(fila);
     }
 
-    for (const o of pageItems) {
-      console.log('Procesando pedido:', o);
+    // Cargar todos los detalles primero (en paralelo)
+    const promesasDetalles = elementosPagina.map(pedido => obtenerDetallesPedido(pedido.id));
+    await Promise.all(promesasDetalles);
 
-      // Obtener detalles del pedido para mostrar información del producto
-      const detalles = await fetchDetallesPedido(o.id);
+    for (const pedido of elementosPagina) {
+      // Obtener detalles del pedido desde cache
+      const detalles = cacheDetalles.get(pedido.id) || [];
       const primerProducto = detalles.length > 0
         ? (detalles[0].producto?.nombre || 'Producto personalizado')
         : 'Sin productos';
 
-      const tr = document.createElement("tr");
-      tr.className = "hover:bg-gray-50";
+      const fila = document.createElement("tr");
+      fila.className = "hover:bg-gray-50";
 
-      // Mostrar botón de confirmar solo para pedidos pendientes
-      const mostrarConfirmar = o.estado === 'PENDIENTE';
+      const mostrarConfirmar = pedido.estado === 'PENDIENTE';
+      const nombreCliente = obtenerNombreCliente(pedido);
 
-      // Obtener nombre del cliente
-      const nombreCliente = obtenerNombreCliente(o);
-
-      tr.innerHTML = `
-        <td class="px-2 py-4 text-sm font-medium text-[var(--c-363636)] text-center">#${o.id}</td>
-        <td class="px-2 py-4 text-sm text-center">${formatDateLong(o.fecha)}</td>
-        <td class="px-2 py-4 text-sm text-center">${escapeHtml(nombreCliente)}</td>
-        <td class="px-2 py-4 text-sm text-center">${formatCurrency(o.total)}</td>
+      fila.innerHTML = `
+        <td class="px-2 py-4 text-sm font-medium text-[var(--c-363636)] text-center">#${pedido.id}</td>
+        <td class="px-2 py-4 text-sm text-center">${formatearFechaLarga(pedido.fecha)}</td>
+        <td class="px-2 py-4 text-sm text-center">${escaparHTML(nombreCliente)}</td>
+        <td class="px-2 py-4 text-sm text-center">${formatearMoneda(pedido.total)}</td>
         <td class="px-2 py-4 text-center">
-          <span class="${badgeClassesFor(o.estado)}">${translateStatus(o.estado)}</span>
+          <span class="${obtenerClasesBadge(pedido.estado)}">${traducirEstado(pedido.estado)}</span>
         </td>
         <td class="px-2 py-4 text-center">
           <div class="acciones-container">
             ${mostrarConfirmar ? `
-              <button class="action-btn confirmar confirm-btn" data-id="${o.id}" title="Confirmar Pedido">
+              <button class="action-btn confirmar confirm-btn" data-id="${pedido.id}" title="Confirmar Pedido">
                 <span class="material-symbols-outlined text-base">check_circle</span>
               </button>
             ` : ''}
-            <button class="action-btn imprimir print-btn" data-id="${o.id}" title="Imprimir">
+            <button class="action-btn imprimir print-btn" data-id="${pedido.id}" title="Imprimir">
               <span class="material-symbols-outlined text-base">print</span>
             </button>
-            <button class="action-btn correo mail-btn" data-id="${o.id}" title="Enviar por correo">
+            <button class="action-btn correo mail-btn" data-id="${pedido.id}" title="Enviar por correo">
               <span class="material-symbols-outlined text-base">mail</span>
             </button>
           </div>
         </td>
       `;
-      tbody.appendChild(tr);
+      cuerpoTabla.appendChild(fila);
 
-      // Si el cliente no está cargado pero tenemos clienteID, intentar cargarlo
-      if ((!o.cliente || !o.cliente.nombre) && o.clienteID && nombreCliente === 'Cargando...') {
-        console.log(`Cargando cliente para pedido ${o.id}...`);
-        cargarYActualizarCliente(o.id, o.clienteID, tr);
+      if ((!pedido.cliente || !pedido.cliente.nombre) && pedido.clienteID && nombreCliente === 'Cargando...') {
+        cargarYActualizarCliente(pedido.id, pedido.clienteID, fila);
       }
     }
 
-    // Actualizar información de resultados
-    if (resultsInfo) {
-      resultsInfo.textContent = `Mostrando ${pageItems.length} de ${filtered.length} pedidos`;
+    if (infoResultados) {
+      infoResultados.textContent = `Mostrando ${elementosPagina.length} de ${pedidosFiltrados.length} pedidos`;
     }
-    renderPagination(totalPages);
+    renderizarPaginacion(totalPaginas);
   }
 
   // Función para cargar y actualizar el cliente si no está presente
   async function cargarYActualizarCliente(pedidoId, clienteId, fila) {
     try {
-      const cliente = await fetchCliente(clienteId);
+      const cliente = await obtenerCliente(clienteId);
       if (cliente && cliente.nombre) {
-        // Actualizar el pedido en allOrders
-        const pedidoIndex = allOrders.findIndex(p => p.id === pedidoId);
-        if (pedidoIndex !== -1) {
-          if (!allOrders[pedidoIndex].cliente) {
-            allOrders[pedidoIndex].cliente = {};
+        const indicePedido = todosLosPedidos.findIndex(p => p.id === pedidoId);
+        if (indicePedido !== -1) {
+          if (!todosLosPedidos[indicePedido].cliente) {
+            todosLosPedidos[indicePedido].cliente = {};
           }
-          allOrders[pedidoIndex].cliente.nombre = cliente.nombre;
+          todosLosPedidos[indicePedido].cliente.nombre = cliente.nombre;
         }
 
-        // Actualizar la fila en la tabla
         const celdaCliente = fila.querySelector('td:nth-child(3)');
         if (celdaCliente) {
           celdaCliente.textContent = cliente.nombre;
         }
-
-        console.log(`Cliente cargado para pedido ${pedidoId}: ${cliente.nombre}`);
       }
     } catch (error) {
       console.error(`Error cargando cliente para pedido ${pedidoId}:`, error);
@@ -362,133 +313,137 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para renderizar la paginación
-  function renderPagination(totalPages) {
-    if (!paginationEl) return;
-    paginationEl.innerHTML = "";
+  function renderizarPaginacion(totalPaginas) {
+    if (!elementoPaginacion) return;
+    elementoPaginacion.innerHTML = "";
 
-    // Botón Anterior
-    const prev = document.createElement("button");
-    prev.textContent = "Anterior";
-    prev.className = "page-btn";
-    prev.disabled = currentPage === 1;
-    prev.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderTable();
+    const botonAnterior = document.createElement("button");
+    botonAnterior.textContent = "Anterior";
+    botonAnterior.className = "page-btn";
+    botonAnterior.disabled = paginaActual === 1;
+    botonAnterior.addEventListener("click", () => {
+      if (paginaActual > 1) {
+        paginaActual--;
+        renderizarTabla();
       }
     });
-    paginationEl.appendChild(prev);
+    elementoPaginacion.appendChild(botonAnterior);
 
-    // Números de página
-    for (let i = 1; i <= totalPages; i++) {
-      const pageBtn = document.createElement("button");
-      pageBtn.textContent = i;
-      pageBtn.className = "page-btn" + (i === currentPage ? " active" : "");
-      pageBtn.addEventListener("click", () => {
-        currentPage = i;
-        renderTable();
+    for (let i = 1; i <= totalPaginas; i++) {
+      const botonPagina = document.createElement("button");
+      botonPagina.textContent = i;
+      botonPagina.className = "page-btn" + (i === paginaActual ? " active" : "");
+      botonPagina.addEventListener("click", () => {
+        paginaActual = i;
+        renderizarTabla();
       });
-      paginationEl.appendChild(pageBtn);
+      elementoPaginacion.appendChild(botonPagina);
     }
 
-    // Botón Siguiente
-    const next = document.createElement("button");
-    next.textContent = "Siguiente";
-    next.className = "page-btn";
-    next.disabled = currentPage === totalPages;
-    next.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderTable();
+    const botonSiguiente = document.createElement("button");
+    botonSiguiente.textContent = "Siguiente";
+    botonSiguiente.className = "page-btn";
+    botonSiguiente.disabled = paginaActual === totalPaginas;
+    botonSiguiente.addEventListener("click", () => {
+      if (paginaActual < totalPaginas) {
+        paginaActual++;
+        renderizarTabla();
       }
     });
-    paginationEl.appendChild(next);
+    elementoPaginacion.appendChild(botonSiguiente);
   }
 
-  // Event listeners para acciones
-  tbody.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
+  // Event listeners para acciones - CON DEBOUNCE
+  let tiempoEsperaClick;
+  cuerpoTabla.addEventListener("click", async (evento) => {
+    // Debounce para prevenir múltiples clics rápidos
+    if (tiempoEsperaClick) clearTimeout(tiempoEsperaClick);
 
-    const id = btn.dataset.id;
+    tiempoEsperaClick = setTimeout(async () => {
+      const boton = evento.target.closest("button");
+      if (!boton) return;
 
-    if (!id) return;
+      const id = boton.dataset.id;
+      if (!id) return;
 
-    const order = allOrders.find(o => o.id == id);
-    if (!order) return;
+      const pedido = todosLosPedidos.find(p => p.id == id);
+      if (!pedido) return;
 
-    // Si se hace clic en el botón de confirmar pedido
-    if (btn.classList.contains("confirm-btn")) {
-      if (confirm('¿Estás seguro de que deseas confirmar este pedido? Esta acción cambiará el estado a "PAGADO".')) {
-        try {
-          btn.disabled = true;
-          btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">refresh</span>';
+      if (boton.classList.contains("confirm-btn")) {
+        if (confirm('¿Estás seguro de que deseas confirmar este pedido? Esta acción cambiará el estado a "PAGADO".')) {
+          try {
+            boton.disabled = true;
+            boton.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">refresh</span>';
 
-          await confirmarPedido(id);
-          alert('Pedido confirmado exitosamente');
+            await confirmarPedido(id);
+            alert('Pedido confirmado exitosamente');
 
-          // Recargar los pedidos para actualizar el estado
-          await loadPedidos();
-        } catch (error) {
-          alert('Error al confirmar el pedido: ' + error.message);
-          btn.disabled = false;
-          btn.innerHTML = '<span class="material-symbols-outlined text-base">check_circle</span>';
+            // Limpiar cache y recargar
+            cacheDetalles.clear();
+            await cargarPedidos();
+          } catch (error) {
+            alert('Error al confirmar el pedido: ' + error.message);
+            boton.disabled = false;
+            boton.innerHTML = '<span class="material-symbols-outlined text-base">check_circle</span>';
+          }
         }
+      } else if (boton.classList.contains("print-btn")) {
+        await imprimirPedido(pedido);
+      } else if (boton.classList.contains("mail-btn")) {
+        enviarCorreoPedido(pedido);
       }
-    } else if (btn.classList.contains("print-btn")) {
-      await printOrder(order);
-    } else if (btn.classList.contains("mail-btn")) {
-      mailOrder(order);
-    }
+    }, 100);
   });
 
-  // Event listeners para filtros
-  filterBtn.addEventListener("click", () => {
-    currentPage = 1;
-    renderTable();
-  });
+  // Event listeners para filtros - CON DEBOUNCE
+  let tiempoEsperaFiltro;
+  function renderizarTablaConRetraso() {
+    if (tiempoEsperaFiltro) clearTimeout(tiempoEsperaFiltro);
+    tiempoEsperaFiltro = setTimeout(() => {
+      paginaActual = 1;
+      renderizarTabla();
+    }, 300);
+  }
 
-  // CAMBIO: Incluir orderIdFilter en los event listeners
-  [statusFilter, dateFilter, clientFilter, orderIdFilter].forEach(el => {
-    if (el) {
-      el.addEventListener("change", () => {
-        currentPage = 1;
-        renderTable();
-      });
+  botonFiltrar.addEventListener("click", renderizarTablaConRetraso);
 
-      // Agregar event listener para input (para búsqueda en tiempo real)
-      el.addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
-      });
+  [filtroEstado, filtroFecha, filtroCliente, filtroIdPedido].forEach(elemento => {
+    if (elemento) {
+      elemento.addEventListener("change", renderizarTablaConRetraso);
+      elemento.addEventListener("input", renderizarTablaConRetraso);
     }
   });
 
   // Función para cargar pedidos
-  async function loadPedidos() {
+  async function cargarPedidos() {
     try {
-      console.log('Iniciando carga de pedidos...');
-      allOrders = await fetchPedidos();
-      console.log('Pedidos cargados en loadPedidos:', allOrders);
-      renderTable();
+      todosLosPedidos = await obtenerPedidos();
+
+      // Marcar como inicializado después de la primera carga exitosa
+      if (!estaInicializado) {
+        estaInicializado = true;
+      }
+
+      // Renderizar la tabla
+      renderizarTabla();
     } catch (error) {
       console.error('Error cargando pedidos:', error);
     }
   }
 
-  // Funciones auxiliares para imprimir y enviar por correo
-  async function printOrder(order) {
-    const detalles = await fetchDetallesPedido(order.id);
-    const productos = detalles.map(d =>
-      d.producto?.nombre || 'Producto personalizado'
+  // Función para imprimir el pedido
+  async function imprimirPedido(pedido) {
+    const detalles = await obtenerDetallesPedido(pedido.id);
+    const productos = detalles.map(detalle =>
+      detalle.producto?.nombre || 'Producto personalizado'
     ).join(', ');
 
-    const nombreCliente = obtenerNombreCliente(order);
+    const nombreCliente = obtenerNombreCliente(pedido);
 
     const html = `
       <html>
         <head>
-          <title>Pedido #${order.id}</title>
+          <title>Pedido #${pedido.id}</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
             .header { border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
@@ -498,20 +453,20 @@ document.addEventListener("DOMContentLoaded", () => {
         </head>
         <body>
           <div class="header">
-            <h1>Pedido #${order.id}</h1>
-            <p class="label">Fecha: ${formatDateLong(order.fecha)}</p>
+            <h1>Pedido #${pedido.id}</h1>
+            <p class="label">Fecha: ${formatearFechaLarga(pedido.fecha)}</p>
           </div>
           
           <div class="section">
             <h2>Información del Cliente</h2>
-            <p><span class="label">Nombre:</span> ${escapeHtml(nombreCliente)}</p>
+            <p><span class="label">Nombre:</span> ${escaparHTML(nombreCliente)}</p>
           </div>
 
           <div class="section">
             <h2>Detalles del Pedido</h2>
-            <p><span class="label">Productos:</span> ${escapeHtml(productos)}</p>
-            <p><span class="label">Total:</span> ${formatCurrency(order.total)}</p>
-            <p><span class="label">Estado:</span> ${translateStatus(order.estado)}</p>
+            <p><span class="label">Productos:</span> ${escaparHTML(productos)}</p>
+            <p><span class="label">Total:</span> ${formatearMoneda(pedido.total)}</p>
+            <p><span class="label">Estado:</span> ${traducirEstado(pedido.estado)}</p>
           </div>
 
           <div class="section">
@@ -520,53 +475,50 @@ document.addEventListener("DOMContentLoaded", () => {
         </body>
       </html>`;
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (!printWindow) {
+    const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+    if (!ventanaImpresion) {
       alert('Por favor, permite ventanas emergentes para imprimir');
       return;
     }
 
-    printWindow.document.write(html);
-    printWindow.document.close();
+    ventanaImpresion.document.write(html);
+    ventanaImpresion.document.close();
 
-    // Esperar a que cargue el contenido antes de imprimir
-    printWindow.onload = function () {
-      printWindow.print();
-      // Cerrar la ventana después de imprimir
+    ventanaImpresion.onload = function () {
+      ventanaImpresion.print();
       setTimeout(() => {
-        printWindow.close();
+        ventanaImpresion.close();
       }, 500);
     };
   }
 
-  // Función para enviar pedido por correo
-  function mailOrder(order) {
-    const nombreCliente = obtenerNombreCliente(order);
-    const subject = encodeURIComponent(`Detalles del Pedido #${order.id}`);
-    const body = encodeURIComponent(
+  // Función para enviar correo
+  function enviarCorreoPedido(pedido) {
+    const nombreCliente = obtenerNombreCliente(pedido);
+    const asunto = encodeURIComponent(`Detalles del Pedido #${pedido.id}`);
+    const cuerpo = encodeURIComponent(
       `Hola,\n\n` +
       `Aquí están los detalles de tu pedido:\n\n` +
-      `Pedido: #${order.id}\n` +
-      `Fecha: ${formatDateLong(order.fecha)}\n` +
+      `Pedido: #${pedido.id}\n` +
+      `Fecha: ${formatearFechaLarga(pedido.fecha)}\n` +
       `Cliente: ${nombreCliente}\n` +
-      `Total: ${formatCurrency(order.total)}\n` +
-      `Estado: ${translateStatus(order.estado)}\n\n` +
+      `Total: ${formatearMoneda(pedido.total)}\n` +
+      `Estado: ${traducirEstado(pedido.estado)}\n\n` +
       `Gracias por tu compra.\n\n` +
       `Saludos,\nEquipo de Meraki`
     );
 
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
   }
 
   // Función para escapar HTML
-  function escapeHtml(str) {
-    if (typeof str !== "string") return str;
+  function escaparHTML(texto) {
+    if (typeof texto !== "string") return texto;
     const div = document.createElement('div');
-    div.textContent = str;
+    div.textContent = texto;
     return div.innerHTML;
   }
 
   // Inicializar la carga de pedidos
-  console.log('Inicializando aplicación...');
-  loadPedidos();
+  cargarPedidos();
 });
