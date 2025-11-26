@@ -46,7 +46,7 @@ def paginaDashboard(request: Request, session: SessionDep):
             select(Pedido).where(
                 Pedido.fecha >= inicioMesActual,
                 Pedido.fecha < finMesActual,
-                Pedido.estado != EstadoPedido.CANCELADO
+                Pedido.estado == EstadoPedido.PAGADO
             )
         ).all()
         
@@ -59,7 +59,7 @@ def paginaDashboard(request: Request, session: SessionDep):
 
         # Pedidos recientes (últimos 7 días)
         fechaLimite = datetime.now() - timedelta(days=7)
-        pedidosRecientes = session.exec(select(Pedido).where(Pedido.fecha >= fechaLimite, Pedido.estado != EstadoPedido.CANCELADO)).all()
+        pedidosRecientes = session.exec(select(Pedido).where(Pedido.fecha >= fechaLimite, Pedido.estado == EstadoPedido.PAGADO)).all()
         totalPedidosRecientes = len(pedidosRecientes)
 
         # Producto más vendido
@@ -164,12 +164,12 @@ def obtenerDatosVentasMensuales(session: SessionDep):
     """
     Función auxiliar para obtener datos de ventas mensuales para la gráfica
     """
-    
+
     try:
         # Obtener pedidos de los últimos 6 meses
         fechaInicio = datetime.now() - timedelta(days=180)
         
-        pedidos = session.exec(select(Pedido).where(Pedido.fecha >= fechaInicio, Pedido.estado != EstadoPedido.CANCELADO)).all()
+        pedidos = session.exec(select(Pedido).where(Pedido.fecha >= fechaInicio, Pedido.estado == EstadoPedido.PAGADO)).all()
 
         # Mapear meses a nombres
         mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
@@ -212,7 +212,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
             finMesActual = datetime(anioActual, mesActual + 1, 1)
         
         # Obtener pedidos del mes actual
-        pedidosMesActual = session.exec(select(Pedido).where(Pedido.fecha >= inicioMesActual, Pedido.fecha < finMesActual, Pedido.estado != EstadoPedido.CANCELADO)).all()
+        pedidosMesActual = session.exec(select(Pedido).where(Pedido.fecha >= inicioMesActual, Pedido.fecha < finMesActual, Pedido.estado == EstadoPedido.PAGADO)).all()
         
         # Sumar los totales de los pedidos
         ventasMesActual = sum(pedido.total for pedido in pedidosMesActual)
