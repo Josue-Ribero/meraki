@@ -87,7 +87,6 @@
               <input id="client-filter" type="text" placeholder="Nombre del cliente" class="input" />
             </div>
 
-            <!-- CAMBIO: Filtro de Producto cambiado a ID de Pedido -->
             <div>
               <label for="order-id-filter" class="label">ID Pedido</label>
               <input id="order-id-filter" type="text" placeholder="Número de pedido" class="input" />
@@ -127,6 +126,176 @@
       </main>
     </div>
   </div>
+
+  <div id="detallesModal" class="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="detalles-modal-title">
+      <div class="modal-header">
+        <h3 id="detalles-modal-title" class="text-xl font-bold text-[var(--c-363636)]">Detalles del Pedido</h3>
+        <button type="button" id="cerrarDetallesModal" class="modal-close-btn">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div id="detallesModalContent" class="modal-content">
+        <!-- Los detalles se cargarán aquí dinámicamente -->
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="cerrarDetallesModal2" class="btn-secondary">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template para Detalles del Pedido (Modal) -->
+  <template id="pedido-detalles-template">
+    <div class="pedido-info">
+      <div class="pedido-info-grid">
+        <div class="info-item">
+          <span class="info-label">Número de Pedido</span>
+          <span class="info-value pedido-id"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Fecha</span>
+          <span class="info-value pedido-fecha"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Estado</span>
+          <span class="estado-pedido pedido-estado"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Total</span>
+          <span class="info-value pedido-total"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <h4 class="text-lg font-semibold mb-3 text-[var(--9c642d)]">Información del Cliente</h4>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <div class="info-item mb-2">
+          <span class="info-label">Nombre</span>
+          <span class="info-value cliente-nombre"></span>
+        </div>
+        <div class="info-item mb-2">
+          <span class="info-label">Email</span>
+          <span class="info-value cliente-email"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Teléfono</span>
+          <span class="info-value cliente-telefono"></span>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="text-lg font-semibold mb-3 text-[var(--9c642d)]">Productos del Pedido</h4>
+    <div class="productos-container"></div>
+  </template>
+
+  <!-- Template para Fila de Producto (Modal) -->
+  <template id="producto-fila-template">
+    <div class="producto-fila border-b border-gray-100 py-3 last:border-0">
+      <div class="flex items-center gap-4">
+        <img src="" alt="" class="producto-imagen w-16 h-16 object-cover rounded-md border border-gray-200">
+        <div class="flex-1">
+          <div class="producto-nombre font-medium text-gray-800"></div>
+          <span
+            class="producto-badge hidden text-xs text-[var(--aa8744)] bg-[rgba(170,135,68,0.1)] px-2 py-0.5 rounded-full mt-1 inline-block">Personalizado</span>
+        </div>
+        <div class="text-center w-20">
+          <span class="text-xs text-gray-500 block">Cant.</span>
+          <span class="producto-cantidad font-medium"></span>
+        </div>
+        <div class="text-right w-24">
+          <span class="text-xs text-gray-500 block">Unitario</span>
+          <span class="producto-precio"></span>
+        </div>
+        <div class="text-right w-24 font-semibold">
+          <span class="text-xs text-gray-500 block">Subtotal</span>
+          <span class="producto-subtotal"></span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Template para Impresión -->
+  <template id="impresion-template">
+    <div class="print-header">
+      <h1 style="margin: 0; color: #363636;">Pedido <span class="pedido-id"></span></h1>
+      <p style="margin: 5px 0; color: #666;">Fecha: <span class="pedido-fecha"></span> | Estado: <span
+          class="pedido-estado"></span></p>
+    </div>
+
+    <div class="print-info-grid">
+      <div class="print-info-item">
+        <strong>Número de Pedido:</strong><br><span class="pedido-id"></span>
+      </div>
+      <div class="print-info-item">
+        <strong>Fecha:</strong><br><span class="pedido-fecha"></span>
+      </div>
+      <div class="print-info-item">
+        <strong>Estado:</strong><br><span class="pedido-estado"></span>
+      </div>
+      <div class="print-info-item">
+        <strong>Total:</strong><br><span class="pedido-total"></span>
+      </div>
+    </div>
+
+    <div class="print-cliente-info">
+      <h3 style="margin-top: 0; color: #9c642d;">Información del Cliente</h3>
+      <p><span class="print-label">Nombre:</span> <span class="cliente-nombre"></span></p>
+      <p><span class="print-label">Email:</span> <span class="cliente-email"></span></p>
+      <p><span class="print-label">Teléfono:</span> <span class="cliente-telefono"></span></p>
+    </div>
+
+    <div class="print-section">
+      <h3 style="margin-top: 0; color: #9c642d;">Productos del Pedido</h3>
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th style="width: 45%;">Producto</th>
+            <th style="width: 15%; text-align: center;">Cantidad</th>
+            <th style="width: 20%; text-align: right;">Precio Unitario</th>
+            <th style="width: 20%; text-align: right;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody class="productos-tbody">
+          <!-- Filas de productos se insertarán aquí -->
+        </tbody>
+        <tfoot>
+          <tr class="print-total">
+            <td colspan="3" style="text-align: right; padding: 15px 8px;"><strong>Total del Pedido:</strong></td>
+            <td style="text-align: right; padding: 15px 8px;"><strong class="pedido-total"></strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666;">
+      <p><em>Documento generado el <span class="fecha-generacion"></span></em></p>
+      <p style="font-size: 12px;">Meraki - Joyería Artesanal</p>
+    </div>
+  </template>
+
+  <!-- Template para Fila de Producto (Impresión) -->
+  <template id="impresion-producto-fila-template">
+    <tr>
+      <td>
+        <div class="producto-info">
+          <img src="" alt="" class="producto-imagen producto-miniatura"
+            onerror="this.src='/static/images/default-product.jpg'">
+          <div class="producto-texto">
+            <div class="producto-nombre"></div>
+            <span class="producto-badge hidden">Personalizado</span>
+          </div>
+        </div>
+      </td>
+      <td class="text-center producto-cantidad"></td>
+      <td class="text-right producto-precio"></td>
+      <td class="text-right producto-subtotal"></td>
+    </tr>
+  </template>
 
   <script src="../../static/js/admin/pedidosAdmin.js"></script>
 </body>

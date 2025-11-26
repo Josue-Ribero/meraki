@@ -351,3 +351,372 @@ table tbody tr:hover {
     font-size: 0.75rem;
   }
 }
+
+/* Estilos para el modal de detalles */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  border-bottom: 1px solid var(--d1bc97);
+  padding-bottom: 16px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: var(--363636);
+  transition: background-color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px 24px;
+  border-top: 1px solid var(--d1bc97);
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--d1bc97);
+  background: white;
+  color: var(--363636);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #f9fafb;
+}
+
+/* Información del pedido */
+.pedido-info {
+  background: var(--fdfbf3);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--aa8744);
+}
+
+.pedido-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: var(--9c642d);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: var(--363636);
+  font-weight: 500;
+}
+
+/* Tabla de detalles dentro del modal */
+.detalles-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.875rem;
+}
+
+.detalles-table th {
+  background-color: var(--fdfbf3);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--9c642d);
+  border-bottom: 2px solid var(--d1bc97);
+}
+
+.detalles-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--d1bc97);
+  vertical-align: top;
+}
+
+.detalles-table tr:hover {
+  background-color: rgba(209, 188, 151, 0.05);
+}
+
+.detalles-table .text-center {
+  text-align: center;
+}
+
+.detalles-table .text-right {
+  text-align: right;
+}
+
+/* Miniaturas de productos */
+.producto-miniatura {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--d1bc97);
+}
+
+.producto-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.producto-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-nombre {
+  font-weight: 600;
+  color: var(--363636);
+  margin-bottom: 4px;
+}
+
+.producto-badge {
+  font-size: 0.75rem;
+  color: var(--aa8744);
+  background: rgba(170, 135, 68, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* Estado del pedido en el modal */
+.estado-pedido {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.estado-pendiente {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.estado-pagado {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.estado-cancelado {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-panel {
+  animation: slideIn 0.2s ease-out;
+}
+
+/* Responsive para el modal */
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-panel {
+    max-height: 95vh;
+  }
+
+  .modal-header,
+  .modal-content,
+  .modal-footer {
+    padding: 16px;
+  }
+
+  .pedido-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detalles-table {
+    font-size: 0.75rem;
+  }
+
+  .detalles-table th,
+  .detalles-table td {
+    padding: 8px 4px;
+  }
+
+  .producto-miniatura {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Botón de detalles en la tabla principal */
+.action-btn.detalles {
+  color: var(--aa8744);
+}
+
+.action-btn.detalles:hover {
+  background-color: rgba(170, 135, 68, 0.1);
+}
+
+/* =========================================
+   ESTILOS DE IMPRESIÓN
+   ========================================= */
+@media print {
+  body {
+    font-family: Arial, sans-serif;
+    padding: 25px;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+  }
+
+  .print-header {
+    border-bottom: 3px solid #aa8744;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .print-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+
+  .print-label {
+    font-weight: bold;
+    color: #9c642d;
+    display: inline-block;
+    min-width: 120px;
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+
+  .print-table th,
+  .print-table td {
+    border: 1px solid #ddd;
+    padding: 12px 8px;
+    text-align: left;
+  }
+
+  .print-table th {
+    background-color: #fdfbf3;
+    color: #9c642d;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  .print-total {
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: #f8f8f8;
+  }
+
+  .print-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .print-info-item {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #aa8744;
+  }
+
+  .print-cliente-info {
+    background: #f0f7ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
