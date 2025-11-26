@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaActual = 1;
   const categoriasPorPagina = 7;
 
-  // Configuración de API
-  const API_BASE = `${window.location.protocol}//${window.location.host}`;
+  // Configuración de API automática (igual que productosAdmin.js)
+  const API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
   const CATEGORIAS_ENDPOINT = `${API_BASE_URL}/categorias/`;
 
   console.log("🔗 Endpoint de API:", CATEGORIAS_ENDPOINT);
