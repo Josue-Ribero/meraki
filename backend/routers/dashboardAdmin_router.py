@@ -69,7 +69,7 @@ def paginaDashboard(request: Request, session: SessionDep):
         # Obtener la cantidad de ventas por producto
         for detalle in todosDetalles:
             pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado != EstadoPedido.CANCELADO:
+            if pedido and pedido.estado == EstadoPedido.PAGADO:
                 if detalle.productoID not in ventasPorProducto:
                     ventasPorProducto[detalle.productoID] = 0
                 ventasPorProducto[detalle.productoID] += detalle.cantidad
@@ -90,7 +90,7 @@ def paginaDashboard(request: Request, session: SessionDep):
             return "{:,.0f}".format(valor).replace(",", ".")
 
         # Pedidos recientes para la tabla (últimos 4 pedidos)
-        pedidosTabla = session.exec(select(Pedido).where(Pedido.estado != EstadoPedido.CANCELADO).order_by(Pedido.fecha.desc()).limit(4)).all()
+        pedidosTabla = session.exec(select(Pedido).where(Pedido.estado == EstadoPedido.PAGADO).order_by(Pedido.fecha.desc()).limit(4)).all()
 
         # Para cada pedido, obtener el nombre del cliente
         pedidosConClientes = []
@@ -108,7 +108,7 @@ def paginaDashboard(request: Request, session: SessionDep):
         productosVentas = {}
         for detalle in todosDetalles:
             pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado != EstadoPedido.CANCELADO:
+            if pedido and pedido.estado == EstadoPedido.PAGADO:
                 producto = session.get(Producto, detalle.productoID)
                 if producto:
                     if producto.id not in productosVentas:
