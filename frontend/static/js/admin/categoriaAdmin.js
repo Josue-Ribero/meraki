@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoriasPorPagina = 7;
 
   // Configuración de API
-  const CATEGORIAS_ENDPOINT = `/categorias/`;
+  const API_BASE = '';
+  const CATEGORIAS_ENDPOINT = `${API_BASE}/categorias/`;
 
   console.log("🔗 Endpoint de API:", CATEGORIAS_ENDPOINT);
 

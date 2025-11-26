@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaActual = 1;
   const clientesPorPagina = 10;
 
+  // Configuración de API
+  const API_BASE = '';
+
   // Contenedor para paginación
   let paginacionContainer;
 
@@ -46,11 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // URL para la API
       let url;
       if (filtroActual === "activos") {
-        url = `/clientes/`;
+        url = `${API_BASE}/clientes/`;
       } else if (filtroActual === "todos") {
-        url = `/clientes/todos`;
+        url = `${API_BASE}/clientes/todos`;
       } else if (filtroActual === "eliminados") {
-        url = `/clientes/eliminados`;
+        url = `${API_BASE}/clientes/eliminados`;
       }
 
       // Petición a la API
