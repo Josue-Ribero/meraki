@@ -34,6 +34,13 @@ class DetallePedido(DetallePedidoBase, table=True):
 
 
 
+class DetallePedidoRead(DetallePedidoBase):
+    id: int
+    pedidoID: int
+    producto: "Producto | None" = None
+    disenoPersonalizado: "DisenoPersonalizado | None" = None
+
+
 class DetallePedidoCreate(DetallePedidoBase):
     pass
 
