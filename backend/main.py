@@ -137,6 +137,12 @@ async def paginaCarrito(request: Request):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("carrito/carrito.html", {"request": request})
 
+@app.get("/proceso-pago")
+async def paginaProcesoPago(request: Request):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("pago/procesoPago.html", {"request": request})
+
 @app.get("/proceso-pago-direccion")
 async def paginaProcesoPago(request: Request):
     if not request.session.get("clienteID"):
@@ -148,6 +154,12 @@ async def paginaProcesoPago(request: Request):
     if not request.session.get("clienteID"):
         return RedirectResponse(url="/ingresar", status_code=303)
     return templates.TemplateResponse("pago/procesoPagoDetalles.html", {"request": request})
+
+@app.get("/cancelar-pago/{pedidoID}")
+async def paginaCancelarPago(request: Request, pedidoID: int):
+    if not request.session.get("clienteID"):
+        return RedirectResponse(url="/ingresar", status_code=303)
+    return templates.TemplateResponse("client/panelCliente.html", {"request": request})
 
 @app.get("/personal")
 async def paginaCliente(request: Request):

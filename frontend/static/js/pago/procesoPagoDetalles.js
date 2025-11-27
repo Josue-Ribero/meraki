@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resumenSubtotal = document.getElementById('resumen-subtotal');
   const resumenEnvio = document.getElementById('resumen-envio');
   const resumenTotal = document.getElementById('resumen-total');
+  const cancelarPedidoBtn = document.getElementById('cancelar-pedido-btn');
 
   const formatCOP = (valor) => {
     try {
@@ -33,6 +34,69 @@ document.addEventListener('DOMContentLoaded', async () => {
       return fechaString;
     }
   };
+
+  // Función para cancelar pedido
+  async function cancelarPedido() {
+    if (!pedidoID) {
+      alert('No se puede cancelar el pedido: ID no disponible');
+      return;
+    }
+
+    if (!confirm('¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/pedidos/${pedidoID}/cancelar`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Error al cancelar el pedido');
+      }
+
+      const pedidoCancelado = await response.json();
+
+      // Actualizar la interfaz
+      pedidoEstadoElem.textContent = pedidoCancelado.estado;
+      pedidoEstadoElem.classList.add('text-red-600');
+
+      // Deshabilitar el botón de cancelar
+      cancelarPedidoBtn.disabled = true;
+      cancelarPedidoBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      cancelarPedidoBtn.textContent = 'Pedido cancelado';
+
+      // Mostrar mensaje de éxito
+      alert('Pedido cancelado exitosamente');
+
+      // Actualizar también el mensaje de éxito
+      const successMessage = document.querySelector('.bg-green-50');
+      if (successMessage) {
+        successMessage.innerHTML = `
+          <p class="text-red-700 text-sm text-center">
+            <span class="material-symbols-outlined align-middle text-base">cancel</span>
+            Pedido cancelado exitosamente
+          </p>
+        `;
+        successMessage.classList.remove('bg-green-50', 'border-green-200');
+        successMessage.classList.add('bg-red-50', 'border-red-200');
+      }
+
+    } catch (error) {
+      console.error('Error al cancelar el pedido:', error);
+      alert('Error al cancelar el pedido: ' + error.message);
+    }
+  }
+
+  // Asignar evento al botón de cancelar
+  if (cancelarPedidoBtn) {
+    cancelarPedidoBtn.addEventListener('click', cancelarPedido);
+  }
 
   // Mostrar mensaje de carga
   productosContainer.innerHTML = "<div class='text-center py-8 text-gray-500'>Cargando productos...</div>";
@@ -73,6 +137,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       pedidoDireccionElem.textContent = '';
       if (direccionContainer) direccionContainer.style.display = 'none';
+    }
+
+    // Si el pedido ya está cancelado, deshabilitar el botón
+    if (pedido.estado === 'CANCELADO' && cancelarPedidoBtn) {
+      cancelarPedidoBtn.disabled = true;
+      cancelarPedidoBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      cancelarPedidoBtn.textContent = 'Pedido cancelado';
     }
 
     // Productos (lista principal)
