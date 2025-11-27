@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Request, UploadFile, File
+import time
+import logging
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -25,6 +27,18 @@ app.mount("/uploads", StaticFiles(directory="bucket"), name="uploads")
 
 # Indicar dónde están los templates
 templates = Jinja2Templates(directory="frontend/templates")
+
+# Configurar logger básico
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+
+# Middleware de logging sencillo
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+    duration = (time.time() - start) * 1000
+    logging.info(f"{request.client.host}:{request.client.port} - \"{request.method} {request.url.path}\" {response.status_code} {duration:.1f}ms")
+    return response
 
 # Routers de la app
 from .routers import (

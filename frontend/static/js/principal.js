@@ -501,7 +501,6 @@ function agregarAlCarrito(productoId) {
       if (respuesta.status === 201 || respuesta.ok) {
         if (icono) icono.textContent = 'check';
         boton.classList.add('bg-green-500');
-        window.location.href = '/carrito';
         return;
       }
 

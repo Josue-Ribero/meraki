@@ -5,8 +5,11 @@ from ..utils.enums import MetodoPago, EstadoPedido, TipoTransaccion
 from ..models.pedido import Pedido, PedidoCreate, PedidoUpdate
 from ..models.cliente import Cliente
 from ..models.pago import Pago
+from ..models.producto import Producto
 from ..models.transaccionPuntos import TransaccionPuntos
 from ..db.db import SessionDep
+from ..models.detallePedido import DetallePedido
+from ..models.disenoPersonalizado import DisenoPersonalizado
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
@@ -103,6 +106,25 @@ def actualizarEstado(
     session.refresh(pedidoDB)
     return pedidoDB
 
+@router.get("/{pedidoID}", response_model=Pedido)
+def pedidoPorID(pedidoID: int, session: SessionDep, _=Depends(clienteActual)):
+    """
+    Endpoint para obtener el pedido por ID (solo administrador)
+    """
+    
+    # Pedido con con id de cliente específico
+    pedidoDB = session.exec(select(Pedido).join(Cliente, Pedido.clienteID == Cliente.id).where(Pedido.id == pedidoID)).first()
+    
+    # Si no existe el pedido, mostrar error
+    if not pedidoDB:
+        raise HTTPException(404, "Pedido no encontrado")
+    
+    # Cargar pago si existe
+    pago = session.exec(select(Pago).where(Pago.pedidoID == pedidoDB.id)).first()
+    pedidoDB.pago = pago
+    
+    return pedidoDB
+
 
 
 # UPDATE - Confirmar pedido
@@ -174,3 +196,82 @@ def confirmarPedido(
     except Exception as e:
         session.rollback()
         raise HTTPException(500, f"Error al confirmar pedido y pago: {str(e)}")
+
+
+# READ - Obtener pedido del cliente por ID con detalles
+@router.get("/mi-pedido/{pedidoID}")
+def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Devuelve el pedido del cliente autenticado con productos, detalles, subtotal y envío.
+    """
+    pedidoDB = session.exec(
+        select(Pedido)
+        .join(Cliente, Pedido.clienteID == Cliente.id)
+        .where(Pedido.id == pedidoID, Pedido.clienteID == cliente.id)
+    ).first()
+
+    if not pedidoDB:
+        raise HTTPException(404, "Pedido no encontrado")
+
+    # Pago asociado si existe
+    pago = session.exec(select(Pago).where(Pago.pedidoID == pedidoDB.id)).first()
+    pedidoDB.pago = pago
+
+    productos = []
+    detalles_list = []
+    subtotal = 0.0
+
+    # Cargar detalles del pedido
+    detallesDB = session.exec(select(DetallePedido).where(DetallePedido.pedidoID == pedidoDB.id)).all()
+    for detalle in detallesDB:
+        producto = None
+        diseno = None
+        if getattr(detalle, 'productoID', None):
+            producto = session.get(Producto, detalle.productoID)
+        if getattr(detalle, 'disenoPersonalizadoID', None):
+            diseno = session.get(DisenoPersonalizado, detalle.disenoPersonalizadoID)
+
+        # Lista compacta para la UI izquierda
+        productos.append({
+            "name": getattr(producto, 'nombre', None) or getattr(diseno, 'nombre', None) or "Producto",
+            "img": getattr(producto, 'imagenURL', None) or getattr(diseno, 'imagenURL', None) or "https://via.placeholder.com/60",
+            "qty": detalle.cantidad or 0,
+            "price": detalle.subtotal or 0,
+        })
+
+        # Estructura detallada similar al admin
+        detalles_list.append({
+            "producto": {
+                "nombre": getattr(producto, 'nombre', None),
+                "imagenURL": getattr(producto, 'imagenURL', None)
+            } if producto else None,
+            "disenoPersonalizado": {
+                "nombre": getattr(diseno, 'nombre', None),
+                "imagenURL": getattr(diseno, 'imagenURL', None)
+            } if diseno else None,
+            "esPersonalizado": bool(getattr(detalle, 'esPersonalizado', False)),
+            "cantidad": detalle.cantidad or 0,
+            "precioUnidad": detalle.precioUnidad or 0,
+            "subtotal": detalle.subtotal or 0,
+        })
+
+        try:
+            subtotal += float(detalle.subtotal or 0)
+        except Exception:
+            pass
+
+    pedido_dict = pedidoDB.dict()
+    pedido_dict["productos"] = productos
+    pedido_dict["detalles"] = detalles_list
+    pedido_total = float(pedidoDB.total or 0)
+    envio = max(pedido_total - subtotal, 0)
+    pedido_dict["subtotal"] = subtotal
+    pedido_dict["envio"] = envio
+    
+    # Asegurar que la fecha esté incluida
+    if hasattr(pedidoDB, 'fecha') and pedidoDB.fecha:
+        pedido_dict["fecha"] = pedidoDB.fecha.isoformat() if hasattr(pedidoDB.fecha, 'isoformat') else str(pedidoDB.fecha)
+    else:
+        pedido_dict["fecha"] = None
+        
+    return pedido_dict

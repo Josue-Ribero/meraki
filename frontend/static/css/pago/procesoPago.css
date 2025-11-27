@@ -1,5 +1,6 @@
 :root {
   --c-gold: #aa8744;
+  --c-dark-gold: #B8860B;
   --c-dark-gray: #363636;
   --c-off-white: #fdfbf3;
   --c-light-tan: #d1bc97;
@@ -96,4 +97,14 @@ input:checked+.slider {
 
 input:checked+.slider:before {
   transform: translateX(16px);
+}
+
+.btn-gold {
+  background-color: var(--c-gold);
+  transition: background-color 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: var(--c-dark-gold) !important;
+  transform: translateY(-1px);
 }
