@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Obtiene todos los pedidos desde la API del servidor
-   * @returns {Promise<Array>} Lista de pedidos
+   * @returns {Promise<Array>} Lista de pedidos ordenados por fecha descendente
    */
   async function obtenerPedidos() {
     try {
@@ -41,7 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const pedidos = await respuesta.json();
-      return pedidos;
+
+      // Ordenar pedidos por fecha más reciente primero
+      return pedidos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
     } catch (error) {
       console.error('Error obteniendo pedidos:', error);
       alert('Error al cargar los pedidos: ' + error.message);
@@ -615,9 +618,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const estadoNormalizado = estado.replace(/\s/g, '_').toUpperCase();
 
     const mapaEstados = {
+      'PAGADO': 'Pagado',
       'PENDIENTE': 'Pendiente',
       'POR_PAGAR': 'Por pagar',
-      'PAGADO': 'Pagado',
       'CANCELADO': 'Cancelado'
     };
 
@@ -643,8 +646,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Aplica los filtros seleccionados a la lista de pedidos
-   * @returns {Array} Pedidos filtrados
+   * Aplica los filtros seleccionados a la lista de pedidos y mantiene el orden por fecha
+   * @returns {Array} Pedidos filtrados y ordenados por fecha descendente
    */
   function aplicarFiltros() {
     const estado = filtroEstado.value || "Todos";
@@ -652,13 +655,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const cliente = (filtroCliente.value || "").trim().toLowerCase();
     const idPedido = (filtroIdPedido.value || "").trim();
 
-    return todosLosPedidos.filter(pedido => {
+    const pedidosFiltrados = todosLosPedidos.filter(pedido => {
       // Filtrar por estado
       if (estado !== "Todos") {
         const mapaEstados = {
+          'Pagado': 'PAGADO',
           'Pendiente': 'PENDIENTE',
           'Por pagar': 'POR_PAGAR',
-          'Pagado': 'PAGADO',
           'Cancelado': 'CANCELADO'
         };
 
@@ -686,6 +689,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return true;
     });
+
+    // Asegurar que los pedidos filtrados mantengan el orden por fecha (más reciente primero)
+    return pedidosFiltrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
   }
 
   /**
@@ -859,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       console.log('Cargando pedidos...');
       todosLosPedidos = await obtenerPedidos();
-      console.log('Pedidos cargados:', todosLosPedidos);
+      console.log('Pedidos cargados y ordenados:', todosLosPedidos);
       renderizarTabla();
     } catch (error) {
       console.error('Error cargando pedidos:', error);
