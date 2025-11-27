@@ -68,16 +68,17 @@ def agregarCarrito(
         session.refresh(nuevo_detalle)
         return nuevo_detalle
 
-
-
 # CREATE - Convertir el carrito en un pedido (SIN PAGO)
 @router.post("/pedir", response_model=Pedido)
 def crearPedidoDesdeCarrito(
     session: SessionDep = None,
+    direccion: int = Form(None),
+    aplicarEnvio: bool = Form(False),
     cliente=Depends(clienteActual)
 ):
     """
     Este endpoint convierte el carrito del cliente en un pedido.
+    Aplica envío de 8900 si el subtotal es menor a 30000.
     """
     
     # Obtener el carrito del cliente
@@ -86,36 +87,37 @@ def crearPedidoDesdeCarrito(
     if not carritoDB or not carritoDB.detalles:
         raise HTTPException(400, "Carrito vacío")
 
-    # Buscar la dirección predeterminada
-    direccion = session.exec(
-        select(DireccionEnvio).where(
-            DireccionEnvio.clienteID == cliente.id,
-            DireccionEnvio.esPredeterminada == True,
-        )
-    ).first()
-    # Si no tiene una predeterminada, usar la primera
-    if not direccion:
-        direccion = session.exec(select(DireccionEnvio).where(DireccionEnvio.clienteID == cliente.id)).first()
-    # Si no tiene ninguna, mostrar error
-    if not direccion:
-        raise HTTPException(400, "Necesitas una dirección")
+    # Verificar que la dirección existe
+    if direccion:
+        direccionDB = session.get(DireccionEnvio, direccion)
+        if not direccionDB or direccionDB.clienteID != cliente.id:
+            raise HTTPException(400, "Dirección no válida")
+
+    # Calcular el subtotal
+    subtotal = sum(detalle.subtotal for detalle in carritoDB.detalles)
+    
+    # Calcular el total con envío si aplica
+    costo_envio = 8900 if aplicarEnvio and subtotal < 30000 else 0
+    total = subtotal + costo_envio
 
     # Crear el pedido
     pedido = Pedido(
         clienteID=cliente.id,
-        direccionEnvioID=direccion.id,
-        estado=EstadoPedido.PENDIENTE,
+        direccionEnvioID=direccion,
+        estado=EstadoPedido.POR_PAGAR,
         pagadoConPuntos=False,
         puntosUsados=0,
-        total=0,
+        subtotal=subtotal,
+        costoEnvio=costo_envio,
+        total=total,
         clienteEliminado=False
     )
+    
     # Insertar el pedido en la DB
     session.add(pedido)
     session.flush()
 
-    # Calcular el total
-    total = 0
+    # Crear los detalles del pedido
     for detalle in carritoDB.detalles:
         detallePedido = DetallePedido(
             pedidoID=pedido.id,
@@ -126,18 +128,16 @@ def crearPedidoDesdeCarrito(
             subtotal=detalle.subtotal,
             esPersonalizado=detalle.esPersonalizado,
         )
+        
         # Insertar el detalle del pedido en la DB
         session.add(detallePedido)
-        total += detalle.subtotal
+        
+        # Actualizar stock del producto
         if detalle.productoID and detalle.producto:
-            detalle.producto.stock -= detalle.cantidad
-            if detalle.producto.stock < 0:
+            if detalle.producto.stock < detalle.cantidad:
                 raise HTTPException(400, f"Stock insuficiente para {detalle.producto.nombre}")
+            detalle.producto.stock -= detalle.cantidad
             session.add(detalle.producto)
-
-    # Actualizar el total del pedido
-    pedido.total = total
-    session.add(pedido)
 
     # Vaciar carrito
     for detalle in carritoDB.detalles:
@@ -146,9 +146,8 @@ def crearPedidoDesdeCarrito(
     # Guardar cambios en la DB
     session.commit()
     session.refresh(pedido)
+    
     return pedido
-
-
 
 # READ - Obtener el carrito del cliente
 @router.get("/mi-carrito", response_model=list[DetalleCarrito])
@@ -166,8 +165,6 @@ def miCarrito(session: SessionDep, cliente=Depends(clienteActual)):
     # Obtener los detalles del carrito
     detalles = session.exec(select(DetalleCarrito).where(DetalleCarrito.carritoID == carritoDB.id)).all()
     return detalles
-
-
 
 # UPDATE - Actualizar la cantidad de un producto
 @router.patch("/actualizar-cantidad/{productoID}", response_model=DetalleCarrito)
@@ -212,8 +209,6 @@ def actualizarCantidad(
     session.refresh(detalle)
     return detalle
 
-
-
 # DELETE - Eliminar un producto del carrito
 @router.delete("/{productoID}", status_code=200)
 def eliminarDeCarrito(productoID: int, session: SessionDep, cliente=Depends(clienteActual)):
@@ -241,8 +236,6 @@ def eliminarDeCarrito(productoID: int, session: SessionDep, cliente=Depends(clie
     session.commit()
 
     return {"mensaje": "Producto eliminado del carrito"}
-
-
 
 # DELETE - Vaciar todo el carrito
 @router.delete("/vaciar", status_code=200)

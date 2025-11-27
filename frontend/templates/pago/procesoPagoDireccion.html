@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dirección – Checkout</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../static/css/pago/procesoPago.css">
+</head>
+
+<body class="bg-[var(--c-off-white)] text-[var(--c-dark-gray)]" x-data="checkoutApp()" x-init="init()">
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 md:px-16 lg:px-24 py-12 max-w-6xl mx-auto">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <main class="space-y-8">
+
+      <h1 class="text-2xl font-bold mb-6">Direcciones de envío</h1>
+
+      <label class="block mb-2 font-semibold">Selecciona una dirección de envío:</label>
+      <div class="space-y-2">
+        <template x-for="(dir, index) in addresses" :key="dir.id">
+          <label
+            class="flex items-center p-4 border rounded-lg cursor-pointer transition hover:border-[var(--c-gold)] bg-white">
+            <input type="radio" class="form-radio text-[var(--c-gold)] mr-4" name="direccionSeleccionada"
+              :value="dir.id" x-model="form.direccionSeleccionada">
+            <div class="flex-1">
+              <span class="font-semibold" x-text="dir.nombre"></span>
+              <span class="block text-sm text-gray-600"
+                x-text="dir.calle + ', ' + dir.localidad + ' (' + dir.codigoPostal + ')' "></span>
+              <span class="text-xs text-[var(--c-gold)] font-bold" x-show="dir.esPredeterminada">Predeterminada</span>
+            </div>
+            <div class="flex space-x-2 ml-4">
+              <button type="button" @click="editAddress(index)" class="text-blue-600 hover:text-blue-800 text-sm">
+                Editar
+              </button>
+              <button type="button" @click="deleteAddress(index)" class="text-red-600 hover:text-red-800 text-sm">
+                Eliminar
+              </button>
+            </div>
+          </label>
+        </template>
+      </div>
+
+      <!-- Formulario para agregar/editar dirección -->
+      <div class="bg-white p-6 rounded-lg border border-[var(--c-light-tan)] mt-4">
+        <h3 class="font-semibold mb-4" x-text="editIndex===null ? 'Agregar nueva dirección' : 'Editar dirección'"></h3>
+
+        <div class="space-y-4">
+          <input type="text" placeholder="Nombre completo" class="input" x-model="form.nombre">
+          <input type="text" placeholder="Calle y número" class="input" x-model="form.calle">
+          <input type="text" placeholder="Localidad" class="input" x-model="form.localidad">
+          <input type="text" placeholder="Código Postal" class="input" x-model="form.codigoPostal">
+
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Establecer como dirección predeterminada</span>
+            <label class="switch">
+              <input type="checkbox" x-model="form.esPredeterminada">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="flex justify-end space-x-2 mt-4">
+            <button class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition" type="button"
+              @click="resetForm()">Cancelar</button>
+            <button class="px-4 py-2 bg-[var(--c-gold)] text-white rounded hover:bg-[var(--c-dark-gold)] transition"
+              type="button" @click="saveAddress()"
+              x-text="editIndex===null?'Guardar Dirección':'Guardar Cambios'"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón para continuar -->
+      <div class="flex justify-end mt-8">
+        <button type="button" @click="crearPedido()"
+          class="px-8 py-3 bg-[var(--c-gold)] text-white rounded-lg hover:bg-[var(--c-dark-gold)] transition font-semibold"
+          :disabled="!form.direccionSeleccionada"
+          :class="{'opacity-50 cursor-not-allowed': !form.direccionSeleccionada}">
+          Proceder al Pago
+        </button>
+      </div>
+
+    </main>
+
+    <!-- COLUMNA DERECHA (RESUMEN) -->
+    <aside class="summary-box bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <h2 class="section-title mb-6">Resumen del pedido</h2>
+
+      <template x-for="item in items" :key="item.name">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="bg-center bg-no-repeat bg-cover rounded-md w-16 h-16 flex items-center justify-center">
+            <img :src="item.img" alt="Foto producto" class="w-14 h-14 object-cover rounded-md" />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold" x-text="item.name"></p>
+            <p class="text-sm text-gray-500" x-text="'Cantidad: ' + item.qty"></p>
+          </div>
+          <p class="font-semibold" x-text="formatearMoneda(item.price * item.qty)"></p>
+        </div>
+      </template>
+
+      <!-- Desglose de precios -->
+      <div class="border-t border-gray-200 mt-6 pt-4 space-y-2">
+        <div class="flex justify-between">
+          <p>Subtotal</p>
+          <p x-text="formatearMoneda(subtotal)"></p>
+        </div>
+
+        <div class="flex justify-between" x-show="subtotal < 30000">
+          <p>Envío</p>
+          <p x-text="formatearMoneda(costoEnvio)"></p>
+        </div>
+
+        <div class="flex justify-between" x-show="subtotal >= 30000">
+          <p>Envío</p>
+          <p class="text-green-600">Gratis</p>
+        </div>
+
+        <div class="flex justify-between font-bold text-lg border-t border-gray-200 mt-2 pt-2">
+          <p>Total</p>
+          <p x-text="formatearMoneda(totalConEnvio)"></p>
+        </div>
+
+        <div class="text-sm text-gray-500 mt-2" x-show="subtotal < 30000">
+          * Envío gratis en compras mayores a $30,000
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="../../static/js/pago/procesoPago.js"></script>
+</body>
+
+</html>
