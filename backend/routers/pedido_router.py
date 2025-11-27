@@ -43,6 +43,8 @@ def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
     
     return pedidosConInfo
 
+
+
 # READ - Obtener lista de pedidos (solo administrador - optimizado)
 @router.get("/", response_model=list[Pedido])
 def listaPedidos(session: SessionDep, _=Depends(adminActual)):
@@ -68,6 +70,8 @@ def listaPedidos(session: SessionDep, _=Depends(adminActual)):
         pedidosConInfo.append(pedido)
     
     return pedidosConInfo
+
+
 
 # READ - Obtener pedido por ID con detalles completos (solo administrador)
 @router.get("/admin/{pedidoID}")
@@ -178,6 +182,8 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
         
     return diccionarioPedido
 
+
+
 # READ - Obtener pedido del cliente por ID con detalles (optimizado)
 @router.get("/mi-pedido/{pedidoID}")
 def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteActual)):
@@ -284,6 +290,8 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
         
     return diccionarioPedido
 
+
+
 # UPDATE - Cancelar pedido (cliente - optimizado)
 @router.patch("/{pedidoID}/cancelar")
 def cancelarPedidoCliente(
@@ -316,6 +324,8 @@ def cancelarPedidoCliente(
     
     return pedidoDB
 
+
+
 # UPDATE - Actualizar el estado del pedido (solo administrador - optimizado)
 @router.patch("/{pedidoID}")
 def actualizarEstado(
@@ -339,6 +349,8 @@ def actualizarEstado(
     session.commit()
     
     return pedidoDB
+
+    
 
 # UPDATE - Confirmar pedido (optimizado)
 @router.patch("/{pedidoID}/confirmar")

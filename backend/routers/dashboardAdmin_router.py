@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlmodel import select
+from sqlmodel import select, func, join
 from datetime import datetime, timedelta
 from ..auth.auth import adminActual
 from ..models.pedido import Pedido, EstadoPedido
@@ -32,56 +32,48 @@ def paginaDashboard(request: Request, session: SessionDep):
         mesActual = ahora.month
         anioActual = ahora.year
         
-        # Ventas del mes actual
+        # Ventas del mes actual (CONSULTA OPTIMIZADA)
         inicioMesActual = datetime(anioActual, mesActual, 1)
-        # Si es diciembre, suma uno al año actual porque pasa ser enero del 2026
         if mesActual == 12:
             finMesActual = datetime(anioActual + 1, 1, 1)
-        # Si es diferente de diciembre, suma uno al mes actual
         else:
             finMesActual = datetime(anioActual, mesActual + 1, 1)
         
-        # Obtener pedidos del mes actual
-        pedidosMesActual = session.exec(
-            select(Pedido).where(
-                Pedido.fecha >= inicioMesActual,
-                Pedido.fecha < finMesActual,
-                Pedido.estado == EstadoPedido.PAGADO
-            )
-        ).all()
-        
-        # Suma de las ventas del mes actual
-        ventasMesActual = sum(pedido.total for pedido in pedidosMesActual)
+        # Consulta optimizada para ventas del mes
+        queryVentasMes = select(func.sum(Pedido.total)).where(
+            Pedido.fecha >= inicioMesActual,
+            Pedido.fecha < finMesActual,
+            Pedido.estado == EstadoPedido.PAGADO
+        )
+        ventasMesActual = session.exec(queryVentasMes).first() or 0
 
-        # Clientes activos
-        clientesActivos = session.exec(select(Cliente).where(Cliente.activo == True)).all()
-        totalClientesActivos = len(clientesActivos)
+        # Clientes activos (CONSULTA OPTIMIZADA)
+        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
+        totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
-        # Pedidos recientes (últimos 7 días)
+        # Pedidos recientes (últimos 7 días) - CONSULTA OPTIMIZADA
         fechaLimite = datetime.now() - timedelta(days=7)
-        pedidosRecientes = session.exec(select(Pedido).where(Pedido.fecha >= fechaLimite, Pedido.estado == EstadoPedido.PAGADO)).all()
-        totalPedidosRecientes = len(pedidosRecientes)
+        queryPedidosRecientes = select(func.count(Pedido.id)).where(
+            Pedido.fecha >= fechaLimite, 
+            Pedido.estado == EstadoPedido.PAGADO
+        )
+        totalPedidosRecientes = session.exec(queryPedidosRecientes).first() or 0
 
-        # Producto más vendido
-        todosDetalles = session.exec(select(DetallePedido)).all()
-        ventasPorProducto = {}
-        
-        # Obtener la cantidad de ventas por producto
-        for detalle in todosDetalles:
-            pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado == EstadoPedido.PAGADO:
-                if detalle.productoID not in ventasPorProducto:
-                    ventasPorProducto[detalle.productoID] = 0
-                ventasPorProducto[detalle.productoID] += detalle.cantidad
-        
-        # Si hay ventas, obtener el producto más vendido
-        if ventasPorProducto:
-            productoIdMasVendido = max(ventasPorProducto, key=ventasPorProducto.get)
-            productoMasVendidoObj = session.get(Producto, productoIdMasVendido)
-            productoMasVendido = productoMasVendidoObj.nombre if productoMasVendidoObj else "No hay ventas"
-        # Si no hay ventas, mostrar "No hay ventas"
-        else:
-            productoMasVendido = "No hay ventas"
+        # Producto más vendido (CONSULTA OPTIMIZADA CON JOIN)
+        queryProductoMasVendido = select(
+            Producto.nombre
+        ).select_from(
+            join(DetallePedido, Pedido).join(Producto)
+        ).where(
+            Pedido.estado == EstadoPedido.PAGADO
+        ).group_by(
+            Producto.id, Producto.nombre
+        ).order_by(
+            func.sum(DetallePedido.cantidad).desc()
+        ).limit(1)
+
+        resultadoProducto = session.exec(queryProductoMasVendido).first()
+        productoMasVendido = resultadoProducto if resultadoProducto else "No hay ventas"
 
         # Función auxiliar para formatear precios (. por cada tres cifras)
         def formatearPrecio(valor):
@@ -89,43 +81,55 @@ def paginaDashboard(request: Request, session: SessionDep):
                 return "0"
             return "{:,.0f}".format(valor).replace(",", ".")
 
-        # Pedidos recientes para la tabla (últimos 4 pedidos)
-        pedidosTabla = session.exec(select(Pedido).where(Pedido.estado == EstadoPedido.PAGADO).order_by(Pedido.fecha.desc()).limit(4)).all()
+        # Pedidos recientes para la tabla (últimos 4 pedidos) - CONSULTA OPTIMIZADA
+        queryPedidosTabla = select(
+            Pedido.id,
+            Pedido.fecha,
+            Pedido.estado,
+            Pedido.total,
+            Cliente.nombre
+        ).join(Cliente).where(
+            Pedido.estado == EstadoPedido.PAGADO
+        ).order_by(
+            Pedido.fecha.desc()
+        ).limit(4)
 
-        # Para cada pedido, obtener el nombre del cliente
+        resultadosPedidos = session.exec(queryPedidosTabla).all()
+        
         pedidosConClientes = []
-        for pedido in pedidosTabla:
-            cliente = session.get(Cliente, pedido.clienteID)
+        for pedidoId, fecha, estado, total, clienteNombre in resultadosPedidos:
             pedidosConClientes.append({
-                "id": pedido.id,
-                "clienteNombre": cliente.nombre if cliente else "Cliente no encontrado",
-                "fecha": pedido.fecha.strftime('%Y-%m-%d') if pedido.fecha else 'N/A',
-                "estado": pedido.estado.value if pedido.estado else 'PENDIENTE',
-                "total": formatearPrecio(pedido.total)
+                "id": pedidoId,
+                "clienteNombre": clienteNombre or "Cliente no encontrado",
+                "fecha": fecha.strftime('%Y-%m-%d') if fecha else 'N/A',
+                "estado": estado.value if estado else 'PENDIENTE',
+                "total": formatearPrecio(total)
             })
 
-        # Productos más vendidos para la tabla
-        productosVentas = {}
-        for detalle in todosDetalles:
-            pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado == EstadoPedido.PAGADO:
-                producto = session.get(Producto, detalle.productoID)
-                if producto:
-                    if producto.id not in productosVentas:
-                        productosVentas[producto.id] = {
-                            "nombre": producto.nombre,
-                            "totalVendido": 0,
-                            "ingresosTotales": 0
-                        }
-                    productosVentas[producto.id]["totalVendido"] += detalle.cantidad
-                    productosVentas[producto.id]["ingresosTotales"] += detalle.subtotal
+        # Productos más vendidos para la tabla (CONSULTA OPTIMIZADA CON JOIN)
+        queryProductosMasVendidos = select(
+            Producto.nombre,
+            func.sum(DetallePedido.cantidad).label('totalVendido'),
+            func.sum(DetallePedido.subtotal).label('ingresosTotales')
+        ).select_from(
+            join(DetallePedido, Pedido).join(Producto)
+        ).where(
+            Pedido.estado == EstadoPedido.PAGADO
+        ).group_by(
+            Producto.id, Producto.nombre
+        ).order_by(
+            func.sum(DetallePedido.cantidad).desc()
+        ).limit(3)
 
-        # Ordenar por cantidad vendida y tomar los top 3
-        productosMasVendidos = sorted(productosVentas.values(), key=lambda x: x["totalVendido"], reverse=True)[:3]
+        resultadosProductos = session.exec(queryProductosMasVendidos).all()
         
-        # Formatear ingresos totales de productos
-        for prod in productosMasVendidos:
-            prod["ingresosTotales"] = formatearPrecio(prod["ingresosTotales"])
+        productosMasVendidos = []
+        for nombre, totalVendido, ingresosTotales in resultadosProductos:
+            productosMasVendidos.append({
+                "nombre": nombre,
+                "totalVendido": totalVendido or 0,
+                "ingresosTotales": formatearPrecio(ingresosTotales or 0)
+            })
 
         # Obtener datos para la gráfica de ventas mensuales
         datosGrafica = obtenerDatosVentasMensuales(session)
@@ -159,17 +163,21 @@ def paginaDashboard(request: Request, session: SessionDep):
 
 
 
-# Función para obtener las ventas mensuales
+# Función para obtener las ventas mensuales (OPTIMIZADA)
 def obtenerDatosVentasMensuales(session: SessionDep):
     """
-    Función auxiliar para obtener datos de ventas mensuales para la gráfica
+    Función auxiliar optimizada para obtener datos de ventas mensuales para la gráfica
     """
-
     try:
-        # Obtener pedidos de los últimos 6 meses
+        # Obtener pedidos de los últimos 6 meses con consulta optimizada
         fechaInicio = datetime.now() - timedelta(days=180)
         
-        pedidos = session.exec(select(Pedido).where(Pedido.fecha >= fechaInicio, Pedido.estado == EstadoPedido.PAGADO)).all()
+        # Consulta optimizada que trae solo los datos necesarios
+        query = select(Pedido).where(
+            Pedido.fecha >= fechaInicio, 
+            Pedido.estado == EstadoPedido.PAGADO
+        )
+        pedidos = session.exec(query).all()
 
         # Mapear meses a nombres
         mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
@@ -180,7 +188,7 @@ def obtenerDatosVentasMensuales(session: SessionDep):
         # Procesar pedidos por mes
         for pedido in pedidos:
             mesIndex = pedido.fecha.month - 1
-            datosMensuales[mesIndex] += pedido.total
+            datosMensuales[mesIndex] += float(pedido.total or 0)
 
         return {"meses": mesesNombres, "ventas": datosMensuales}
     except Exception as e:
@@ -189,7 +197,7 @@ def obtenerDatosVentasMensuales(session: SessionDep):
 
 
 
-# READ - Obtener resumen de ventas mensuales
+# READ - Obtener resumen de ventas mensuales (OPTIMIZADO)
 @router.get("/api/dashboard/resumen")
 def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
     """
@@ -202,22 +210,21 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         mesActual = ahora.month
         anioActual = ahora.year
         
-        # Ventas del mes actual
+        # Ventas del mes actual (CONSULTA OPTIMIZADA)
         inicioMesActual = datetime(anioActual, mesActual, 1)
-        # Si es diciembre, suma uno al año actual porque pasa ser enero del 2026
         if mesActual == 12:
             finMesActual = datetime(anioActual + 1, 1, 1)
-        # Si es diferente de diciembre, suma uno al mes actual
         else:
             finMesActual = datetime(anioActual, mesActual + 1, 1)
         
-        # Obtener pedidos del mes actual
-        pedidosMesActual = session.exec(select(Pedido).where(Pedido.fecha >= inicioMesActual, Pedido.fecha < finMesActual, Pedido.estado == EstadoPedido.PAGADO)).all()
-        
-        # Sumar los totales de los pedidos
-        ventasMesActual = sum(pedido.total for pedido in pedidosMesActual)
+        queryVentasActual = select(func.sum(Pedido.total)).where(
+            Pedido.fecha >= inicioMesActual, 
+            Pedido.fecha < finMesActual, 
+            Pedido.estado == EstadoPedido.PAGADO
+        )
+        ventasMesActual = session.exec(queryVentasActual).first() or 0
 
-        # Ventas del mes anterior para calcular el porcentaje
+        # Ventas del mes anterior para calcular el porcentaje (CONSULTA OPTIMIZADA)
         if mesActual == 1:
             mesAnterior = 12
             anioAnterior = anioActual - 1
@@ -225,18 +232,18 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
             mesAnterior = mesActual - 1
             anioAnterior = anioActual
         
-        # Fecha de inicio del mes pasado
         inicioMesAnterior = datetime(anioAnterior, mesAnterior, 1)
         if mesAnterior == 12:
             finMesAnterior = datetime(anioAnterior + 1, 1, 1)
         else:
             finMesAnterior = datetime(anioAnterior, mesAnterior + 1, 1)
         
-        # Obtener pedidos del mes anterior
-        pedidosMesAnterior = session.exec(select(Pedido).where(Pedido.fecha >= inicioMesAnterior, Pedido.fecha < finMesAnterior, Pedido.estado != EstadoPedido.CANCELADO)).all()
-        
-        # Sumar los totales de los pedidos del mes anterior
-        ventasMesAnterior = sum(pedido.total for pedido in pedidosMesAnterior)
+        queryVentasAnterior = select(func.sum(Pedido.total)).where(
+            Pedido.fecha >= inicioMesAnterior, 
+            Pedido.fecha < finMesAnterior, 
+            Pedido.estado != EstadoPedido.CANCELADO
+        )
+        ventasMesAnterior = session.exec(queryVentasAnterior).first() or 0
 
         # Cálculo de porcentaje de aumento o decremento
         if ventasMesAnterior > 0:
@@ -244,35 +251,33 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         else:
             porcentajeCambio = 100 if ventasMesActual > 0 else 0
 
-        # Total de pedidos recientes (últimos 7 días)
+        # Total de pedidos recientes (últimos 7 días) - CONSULTA OPTIMIZADA
         fechaLimite = datetime.now() - timedelta(days=7)
-        pedidosRecientes = session.exec(select(Pedido).where(Pedido.fecha >= fechaLimite, Pedido.estado != EstadoPedido.CANCELADO)).all()
-        pedidosRecientesCount = len(pedidosRecientes)
+        queryPedidosRecientes = select(func.count(Pedido.id)).where(
+            Pedido.fecha >= fechaLimite, 
+            Pedido.estado != EstadoPedido.CANCELADO
+        )
+        pedidosRecientesCount = session.exec(queryPedidosRecientes).first() or 0
 
-        # Clientes activos
-        clientesActivos = session.exec(select(Cliente).where(Cliente.activo == True)).all()
-        totalClientesActivos = len(clientesActivos)
+        # Clientes activos (CONSULTA OPTIMIZADA)
+        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
+        totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
-        # Producto más vendido
-        todosDetalles = session.exec(select(DetallePedido)).all()
-        ventasPorProducto = {}
-        
-        # Sumar las cantidades de los productos
-        for detalle in todosDetalles:
-            pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado != EstadoPedido.CANCELADO:
-                if detalle.productoID not in ventasPorProducto:
-                    ventasPorProducto[detalle.productoID] = 0
-                ventasPorProducto[detalle.productoID] += detalle.cantidad
-        
-        # Obtener el producto más vendido
-        if ventasPorProducto:
-            productoIdMasVendido = max(ventasPorProducto, key=ventasPorProducto.get)
-            productoMasVendidoObj = session.get(Producto, productoIdMasVendido)
-            productoMasVendido = productoMasVendidoObj.nombre if productoMasVendidoObj else "No hay ventas"
-        # Si no hay ventas, mostrar "No hay ventas"
-        else:
-            productoMasVendido = "No hay ventas"
+        # Producto más vendido (CONSULTA OPTIMIZADA CON JOIN)
+        queryProductoMasVendido = select(
+            Producto.nombre
+        ).select_from(
+            join(DetallePedido, Pedido).join(Producto)
+        ).where(
+            Pedido.estado != EstadoPedido.CANCELADO
+        ).group_by(
+            Producto.id, Producto.nombre
+        ).order_by(
+            func.sum(DetallePedido.cantidad).desc()
+        ).limit(1)
+
+        resultadoProducto = session.exec(queryProductoMasVendido).first()
+        productoMasVendido = resultadoProducto if resultadoProducto else "No hay ventas"
 
         # Devolver los datos del resumen
         return {
@@ -291,14 +296,13 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
 @router.get("/api/dashboard/ventas-mensuales")
 def obtenerVentasMensuales(session: SessionDep, _=Depends(adminActual)):
     """
-    Endpoint principal del dashboard que renderiza la página completa
+    Endpoint optimizado para ventas mensuales
     """
-
     return obtenerDatosVentasMensuales(session)
 
 
 
-# READ - Obtener los pedidos recientes
+# READ - Obtener los pedidos recientes (OPTIMIZADO)
 @router.get("/api/dashboard/pedidos-recientes")
 def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
     """
@@ -306,19 +310,30 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
     """
 
     try:
-        # Obtener la lista de pedidos
-        pedidos = session.exec(select(Pedido).where(Pedido.estado != EstadoPedido.CANCELADO).order_by(Pedido.fecha.desc()).limit(5)).all()
+        # Obtener la lista de pedidos con consulta optimizada
+        query = select(
+            Pedido.id,
+            Pedido.fecha,
+            Pedido.estado,
+            Pedido.total,
+            Cliente.nombre
+        ).join(Cliente).where(
+            Pedido.estado != EstadoPedido.CANCELADO
+        ).order_by(
+            Pedido.fecha.desc()
+        ).limit(5)
+
+        resultados = session.exec(query).all()
 
         # Lista con el resultado de la consulta
         resultado = []
-        for pedido in pedidos:
-            cliente = session.get(Cliente, pedido.clienteID)
+        for pedidoId, fecha, estado, total, clienteNombre in resultados:
             resultado.append({
-                "id": pedido.id,
-                "cliente": cliente.nombre if cliente else "Cliente eliminado",
-                "fecha": pedido.fecha.strftime("%Y-%m-%d"),
-                "estado": pedido.estado.value,
-                "total": pedido.total
+                "id": pedidoId,
+                "cliente": clienteNombre or "Cliente eliminado",
+                "fecha": fecha.strftime("%Y-%m-%d") if fecha else "N/A",
+                "estado": estado.value,
+                "total": total or 0
             })
 
         # Devolver la lista de pedidos recientes
@@ -328,7 +343,7 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
 
 
 
-# READ - Obtener la lista de productos más vendidos
+# READ - Obtener la lista de productos más vendidos (OPTIMIZADO)
 @router.get("/api/dashboard/productos-mas-vendidos")
 def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
     """
@@ -336,31 +351,30 @@ def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
     """
 
     try:
-        # Obtener todos los detalles de pedidos
-        todosDetalles = session.exec(select(DetallePedido)).all()
-        
-        # Calcular ventas por producto
-        productosVentas = {}
-        for detalle in todosDetalles:
-            pedido = session.get(Pedido, detalle.pedidoID)
-            if pedido and pedido.estado != EstadoPedido.CANCELADO:
-                producto = session.get(Producto, detalle.productoID)
-                if producto:
-                    if producto.id not in productosVentas:
-                        productosVentas[producto.id] = {
-                            "nombre": producto.nombre,
-                            "ventas": 0,
-                            "ingresos": 0
-                        }
-                    productosVentas[producto.id]["ventas"] += detalle.cantidad
-                    productosVentas[producto.id]["ingresos"] += detalle.subtotal
+        # Consulta optimizada con JOIN para productos más vendidos
+        query = select(
+            Producto.nombre,
+            func.sum(DetallePedido.cantidad).label('ventas'),
+            func.sum(DetallePedido.subtotal).label('ingresos')
+        ).select_from(
+            join(DetallePedido, Pedido).join(Producto)
+        ).where(
+            Pedido.estado != EstadoPedido.CANCELADO
+        ).group_by(
+            Producto.id, Producto.nombre
+        ).order_by(
+            func.sum(DetallePedido.cantidad).desc()
+        ).limit(5)
 
-        # Ordenar por cantidad vendida y tomar los top 5
-        productosMasVendidos = sorted(productosVentas.values(), key=lambda x: x["ventas"], reverse=True)[:5]
+        resultados = session.exec(query).all()
         
-        # Convertir ventas a enteros
-        for producto in productosMasVendidos:
-            producto["ventas"] = int(producto["ventas"])
+        productosMasVendidos = []
+        for nombre, ventas, ingresos in resultados:
+            productosMasVendidos.append({
+                "nombre": nombre,
+                "ventas": int(ventas or 0),
+                "ingresos": ingresos or 0
+            })
 
         return productosMasVendidos
     
