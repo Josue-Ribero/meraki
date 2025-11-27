@@ -17,7 +17,7 @@ def registrarClienteForm(
     nombre: str = Form(...),
     email: str = Form(...),
     contrasena: str = Form(...),
-    telefono: str = Form(None),
+    telefono: str = Form(...),  # Cambiado de Form(None) a Form(...) para hacerlo obligatorio
     session: SessionDep = None
 ):
     """
@@ -30,6 +30,10 @@ def registrarClienteForm(
     # Si el email ya esta registrado, mostrar error
     if clienteDB:
         raise HTTPException(400, "Este email ya tiene una cuenta asociada")
+    
+    # Validar formato de teléfono (opcional, pero recomendado)
+    if telefono and len(telefono) < 7:
+        raise HTTPException(400, "El número de teléfono debe tener al menos 7 dígitos")
     
     # Crear el nuevo cliente si no esta registrado
     nuevoCliente = Cliente(
@@ -215,6 +219,9 @@ def actualizarCliente(
     if nombre:
         clienteDB.nombre = nombre
     if telefono:
+        # Validar teléfono si se proporciona
+        if len(telefono) < 7:
+            raise HTTPException(400, "El número de teléfono debe tener al menos 7 dígitos")
         clienteDB.telefono = telefono
     if contrasena:
         clienteDB.contrasenaHash = contrasenaContext.hash(contrasena)

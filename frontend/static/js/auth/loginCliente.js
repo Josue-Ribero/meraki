@@ -30,10 +30,18 @@ document.getElementById('register-form').addEventListener('submit', async (event
   const nombre = formData.get('nombre');
   const email = formData.get('email');
   const contrasena = formData.get('contrasena');
+  const telefono = formData.get('telefono'); // Nuevo campo
 
   const errorDiv = document.getElementById('register-error');
   errorDiv.classList.add('hidden');
   errorDiv.textContent = '';
+
+  // Validación básica del teléfono en el frontend
+  if (telefono && telefono.replace(/\D/g, '').length < 7) {
+    errorDiv.textContent = 'El número de teléfono debe tener al menos 7 dígitos';
+    errorDiv.classList.remove('hidden');
+    return;
+  }
 
   try {
     const response = await fetch('/clientes/registrar', {
@@ -41,7 +49,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
+      body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}&telefono=${encodeURIComponent(telefono)}`,
     });
 
     if (response.ok) {

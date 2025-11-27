@@ -11,7 +11,8 @@
 </head>
 
 <body class="bg-[var(--c-off-white)] text-[var(--c-dark-gray)]">
-  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start min-h-screen px-4 md:px-6 py-8">
+  <div
+    class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start min-h-screen px-4 md:px-6 py-8">
     <form class="bg-white p-6 md:p-7 rounded-lg shadow-md w-full space-y-6">
       <h1 class="text-2xl font-bold mb-4">Pago</h1>
       <div>
@@ -27,7 +28,8 @@
           <h3 class="font-semibold mb-2 text-yellow-800">Transferencia Bancaria</h3>
           <p class="mb-2 text-sm text-yellow-700">Transfiere a <span class="font-bold">310 1000 100</span></p>
           <label for="referencia" class="block font-semibold mb-1">Referencia de pago</label>
-          <input type="text" id="referencia" name="referencia" class="w-full border rounded px-3 py-2 mb-2" placeholder="Ingresa referencia o número de comprobante">
+          <input type="text" id="referencia" name="referencia" class="w-full border rounded px-3 py-2 mb-2"
+            placeholder="Ingresa referencia o número de comprobante">
         </div>
       </div>
       <div>
@@ -35,108 +37,107 @@
         <input type="text" id="fechaPago" name="fechaPago" class="w-full border rounded px-3 py-2 bg-gray-100"
           value="{{ fecha_pago | default('') }}" readonly placeholder="Cargando fecha...">
       </div>
-      <button type="submit"
-        id="confirmar-pago-btn"
+      <button type="submit" id="confirmar-pago-btn"
         class="w-full bg-[var(--c-gold)] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[var(--c-dark-gold)] transition">
         Confirmar Pago
       </button>
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            const metodoSelect = document.getElementById('metodo');
-            const transferenciaForm = document.getElementById('transferencia-form');
-            metodoSelect.addEventListener('change', function() {
-              if (this.value === 'TRANSFERENCIA') {
-                transferenciaForm.classList.remove('hidden');
-              } else {
-                transferenciaForm.classList.add('hidden');
-              }
-            });
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const metodoSelect = document.getElementById('metodo');
+          const transferenciaForm = document.getElementById('transferencia-form');
+          metodoSelect.addEventListener('change', function () {
+            if (this.value === 'TRANSFERENCIA') {
+              transferenciaForm.classList.remove('hidden');
+            } else {
+              transferenciaForm.classList.add('hidden');
+            }
+          });
 
-            // Manejar el submit del formulario
-            const form = document.querySelector('form');
-            const confirmarBtn = document.getElementById('confirmar-pago-btn');
-            form.addEventListener('submit', function(e) {
-              e.preventDefault();
-              const metodo = metodoSelect.value;
-              const fechaPago = document.getElementById('fechaPago').value;
-              // Si es Nequi, mostrar formulario de transferencia y referencia
-              if (metodo === 'NEQUI') {
-                let nequiForm = document.getElementById('nequi-form');
-                if (!nequiForm) {
-                  nequiForm = document.createElement('div');
-                  nequiForm.id = 'nequi-form';
-                  nequiForm.className = 'mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4';
-                  nequiForm.innerHTML = `
+          // Manejar el submit del formulario
+          const form = document.querySelector('form');
+          const confirmarBtn = document.getElementById('confirmar-pago-btn');
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const metodo = metodoSelect.value;
+            const fechaPago = document.getElementById('fechaPago').value;
+            // Si es Nequi, mostrar formulario de transferencia y referencia
+            if (metodo === 'NEQUI') {
+              let nequiForm = document.getElementById('nequi-form');
+              if (!nequiForm) {
+                nequiForm = document.createElement('div');
+                nequiForm.id = 'nequi-form';
+                nequiForm.className = 'mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4';
+                nequiForm.innerHTML = `
                     <h3 class='font-semibold mb-2 text-blue-800'>Transferencia Nequi</h3>
                     <p class='mb-2 text-sm text-blue-700'>Transfiere a <span class='font-bold'>300 100 1000</span></p>
                     <label for='referencia-nequi' class='block font-semibold mb-1'>Referencia de pago</label>
                     <input type='text' id='referencia-nequi' name='referencia-nequi' class='w-full border rounded px-3 py-2 mb-2' placeholder='Ingresa referencia o número de comprobante'>
                     <button type='button' id='confirmar-nequi-btn' class='w-full bg-[var(--c-gold)] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[var(--c-dark-gold)] transition mt-2'>Confirmar transferencia</button>
                   `;
-                  form.appendChild(nequiForm);
-                  document.getElementById('confirmar-nequi-btn').onclick = async function() {
-                    const ref = document.getElementById('referencia-nequi').value.trim();
-                    if (!ref) {
-                      alert('Por favor ingresa la referencia de pago.');
-                      return;
+                form.appendChild(nequiForm);
+                document.getElementById('confirmar-nequi-btn').onclick = async function () {
+                  const ref = document.getElementById('referencia-nequi').value.trim();
+                  if (!ref) {
+                    alert('Por favor ingresa la referencia de pago.');
+                    return;
+                  }
+                  // Obtener el pedidoID de la URL
+                  const params = new URLSearchParams(window.location.search);
+                  const pedidoID = params.get('id') || params.get('pedidoId');
+                  if (!pedidoID) {
+                    alert('No se encontró el pedido.');
+                    return;
+                  }
+                  // Enviar al backend
+                  try {
+                    const formData = new FormData();
+                    formData.append('pedidoID', pedidoID);
+                    formData.append('metodo', 'NEQUI');
+                    formData.append('referencia', ref);
+                    // Agregar fechaPago en formato ISO
+                    formData.append('fechaPago', new Date().toISOString());
+                    const response = await fetch('/pagos/crear', {
+                      method: 'POST',
+                      body: formData
+                    });
+                    if (!response.ok) {
+                      const error = await response.json();
+                      throw new Error(error.detail || 'Error al procesar el pago');
                     }
-                    // Obtener el pedidoID de la URL
-                    const params = new URLSearchParams(window.location.search);
-                    const pedidoID = params.get('id') || params.get('pedidoId');
-                    if (!pedidoID) {
-                      alert('No se encontró el pedido.');
-                      return;
-                    }
-                    // Enviar al backend
-                    try {
-                      const formData = new FormData();
-                      formData.append('pedidoID', pedidoID);
-                      formData.append('metodo', 'NEQUI');
-                      formData.append('referencia', ref);
-                      // Agregar fechaPago en formato ISO
-                      formData.append('fechaPago', new Date().toISOString());
-                      const response = await fetch('/pagos/crear', {
-                        method: 'POST',
-                        body: formData
-                      });
-                      if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.detail || 'Error al procesar el pago');
-                      }
-                      nequiForm.innerHTML += `<div class='mt-4 p-3 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold'>¡Pago Nequi confirmado!</div>`;
-                      this.disabled = true;
-                      this.classList.add('opacity-60', 'cursor-not-allowed');
-                    } catch (err) {
-                      nequiForm.innerHTML += `<div class='mt-4 p-3 bg-red-100 border border-red-300 rounded text-red-800 text-center font-semibold'>${err.message}</div>`;
-                    }
-                  };
-                }
+                    nequiForm.innerHTML += `<div class='mt-4 p-3 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold'>¡Pago Nequi confirmado!</div>`;
+                    this.disabled = true;
+                    this.classList.add('opacity-60', 'cursor-not-allowed');
+                  } catch (err) {
+                    nequiForm.innerHTML += `<div class='mt-4 p-3 bg-red-100 border border-red-300 rounded text-red-800 text-center font-semibold'>${err.message}</div>`;
+                  }
+                };
+              }
+              return;
+            }
+            // Si es transferencia, validar referencia
+            let referencia = '';
+            if (metodo === 'TRANSFERENCIA') {
+              referencia = document.getElementById('referencia').value.trim();
+              if (!referencia) {
+                alert('Por favor ingresa la referencia de pago.');
                 return;
               }
-              // Si es transferencia, validar referencia
-              let referencia = '';
-              if (metodo === 'TRANSFERENCIA') {
-                referencia = document.getElementById('referencia').value.trim();
-                if (!referencia) {
-                  alert('Por favor ingresa la referencia de pago.');
-                  return;
-                }
-              }
-              // Simulación de éxito para otros métodos
-              const msg = document.createElement('div');
-              msg.className = 'mt-4 p-4 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold';
-              msg.textContent = '¡Pago confirmado exitosamente!';
-              form.appendChild(msg);
-              confirmarBtn.disabled = true;
-              confirmarBtn.classList.add('opacity-60', 'cursor-not-allowed');
-            });
+            }
+            // Simulación de éxito para otros métodos
+            const msg = document.createElement('div');
+            msg.className = 'mt-4 p-4 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold';
+            msg.textContent = '¡Pago confirmado exitosamente!';
+            form.appendChild(msg);
+            confirmarBtn.disabled = true;
+            confirmarBtn.classList.add('opacity-60', 'cursor-not-allowed');
           });
-        </script>
+        });
+      </script>
       <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
           const metodoSelect = document.getElementById('metodo');
           const transferenciaForm = document.getElementById('transferencia-form');
-          metodoSelect.addEventListener('change', function() {
+          metodoSelect.addEventListener('change', function () {
             if (this.value === 'TRANSFERENCIA') {
               transferenciaForm.classList.remove('hidden');
             } else {
