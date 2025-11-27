@@ -9,7 +9,8 @@ btnDisminuir.addEventListener('click', () => {
   if (cantidadValor > 1) { cantidadValor--; cantidadEl.textContent = cantidadValor; }
 });
 btnAumentar.addEventListener('click', () => {
-  cantidadValor++; cantidadEl.textContent = cantidadValor;
+  const stockDisponible = parseInt(document.getElementById('stock').textContent) || 1;
+  if (cantidadValor < stockDisponible) { cantidadValor++; cantidadEl.textContent = cantidadValor; }
 });
 
 // Añadir al carrito
