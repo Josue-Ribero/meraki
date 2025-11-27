@@ -6,8 +6,10 @@
   --9c642d: #9c642d;
 }
 
-/* Estilos del Sidebar Unificado */
-.flex.w-64 {
+/* =========================================
+   ESTILOS DEL SIDEBAR
+   ========================================= */
+.admin-sidebar {
   width: 16rem;
   background-color: var(--363636);
   color: var(--fdfbf3);
@@ -16,7 +18,7 @@
   min-height: 100vh;
 }
 
-.flex.h-full.flex-col.justify-between.p-4 {
+.sidebar-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,13 +26,13 @@
   padding: 1rem;
 }
 
-.flex.flex-col.gap-6 {
+.sidebar-header {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.text-2xl.font-bold.text-center.text-\[\#aa8744\] {
+.sidebar-title {
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -40,7 +42,7 @@
   border-bottom: 1px solid rgba(209, 188, 151, 0.2);
 }
 
-.flex.flex-col.gap-2 {
+.sidebar-nav {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -77,14 +79,15 @@
   text-align: center;
 }
 
-/* Footer del sidebar */
-.nav-item:last-child {
+.sidebar-footer {
   margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid rgba(209, 188, 151, 0.2);
 }
 
-/* Contenido principal ajustado para el sidebar */
+/* =========================================
+   ESTILOS DEL CONTENIDO PRINCIPAL
+   ========================================= */
 .flex-1 {
   margin-left: 0;
   flex: 1;
@@ -92,7 +95,9 @@
   background-color: white;
 }
 
-/* Estilos específicos de pedidos */
+/* =========================================
+   ESTILOS DE FORMULARIOS Y FILTROS
+   ========================================= */
 .label {
   display: block;
   font-size: 0.875rem;
@@ -137,7 +142,14 @@
   background-color: var(--9c642d);
 }
 
-/* Tabla - MEJORADO CENTRADO */
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   ESTILOS DE LA TABLA
+   ========================================= */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -170,52 +182,47 @@ table td:nth-child(1) {
   width: 10%;
 }
 
-/* Pedido */
 table th:nth-child(2),
 table td:nth-child(2) {
   width: 15%;
 }
 
-/* Fecha */
 table th:nth-child(3),
 table td:nth-child(3) {
   width: 25%;
 }
 
-/* Cliente */
 table th:nth-child(4),
 table td:nth-child(4) {
   width: 15%;
 }
 
-/* Total */
 table th:nth-child(5),
 table td:nth-child(5) {
   width: 15%;
 }
 
-/* Estado */
 table th:nth-child(6),
 table td:nth-child(6) {
   width: 20%;
 }
-
-/* Acciones */
 
 table tbody tr:hover {
   background-color: rgba(209, 188, 151, 0.1);
 }
 
 /* Contenedor de acciones centrado */
-.acciones-container {
+.contenedor-acciones {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* Paginación */
-.page-btn {
+/* =========================================
+   ESTILOS DE PAGINACIÓN
+   ========================================= */
+.boton-pagina {
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -227,28 +234,30 @@ table tbody tr:hover {
   transition: all 0.2s ease;
 }
 
-.page-btn.active {
+.boton-pagina.activo {
   background-color: var(--aa8744);
   color: white;
   border-color: var(--aa8744);
 }
 
-.page-btn:hover:not(.active) {
+.boton-pagina:hover:not(.activo) {
   background-color: #f3f3f3;
 }
 
-.page-btn:disabled {
+.boton-pagina:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.results-info {
+.info-resultados {
   color: var(--9c642d);
   font-size: 0.875rem;
 }
 
-/* Botones de acción */
-.action-btn {
+/* =========================================
+   ESTILOS DE BOTONES DE ACCIÓN
+   ========================================= */
+.boton-accion {
   background: none;
   border: none;
   cursor: pointer;
@@ -260,35 +269,109 @@ table tbody tr:hover {
   justify-content: center;
 }
 
-.action-btn:hover {
+.boton-accion:hover {
   background-color: #f3f4f6;
 }
 
-.action-btn.confirmar {
+.boton-accion.confirmar {
   color: #16a34a;
 }
 
-.action-btn.confirmar:hover {
+.boton-accion.confirmar:hover {
   background-color: #f0fdf4;
 }
 
-.action-btn.imprimir {
+.boton-accion.imprimir {
   color: var(--aa8744);
 }
 
-.action-btn.imprimir:hover {
+.boton-accion.imprimir:hover {
   background-color: #fefce8;
 }
 
-.action-btn.correo {
-  color: #3b82f6;
+.boton-accion.detalles {
+  color: var(--aa8744);
 }
 
-.action-btn.correo:hover {
-  background-color: #eff6ff;
+.boton-accion.detalles:hover {
+  background-color: rgba(170, 135, 68, 0.1);
 }
 
-/* Animación de carga */
+/* =========================================
+   ESTILOS DE ESTADOS DE PEDIDOS
+   ========================================= */
+.estado-pedido {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Estado "Por pagar" en azul como se solicita */
+.estado-por-pagar {
+  background: #dbeafe !important;
+  color: #1e40af !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.estado-pendiente {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.estado-pagado {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.estado-cancelado {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Badge estados para tabla principal */
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Clases específicas para colores de estados */
+.bg-por-pagar {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+}
+
+.bg-pendiente {
+  background-color: #fef3c7 !important;
+  color: #d97706 !important;
+}
+
+.bg-pagado {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.bg-cancelado {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+/* =========================================
+   ANIMACIONES
+   ========================================= */
 .animate-spin {
   animation: spin 1s linear infinite;
 }
@@ -303,56 +386,9 @@ table tbody tr:hover {
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .flex.w-64 {
-    width: 100%;
-    height: auto;
-    min-height: auto;
-  }
-
-  .flex-1 {
-    margin-left: 0;
-  }
-
-  .flex.flex-col.gap-2 {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 0.25rem;
-  }
-
-  .nav-item {
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.5rem;
-    font-size: 0.75rem;
-    min-width: 80px;
-  }
-
-  .nav-item span:first-child {
-    margin-bottom: 0.25rem;
-  }
-
-  /* Tabla responsive */
-  .overflow-x-auto {
-    overflow-x: auto;
-  }
-
-  table {
-    min-width: 800px;
-  }
-
-  .page-btn {
-    padding: 0.375rem 0.5rem;
-    font-size: 0.75rem;
-  }
-
-  #infoPaginacion {
-    font-size: 0.75rem;
-  }
-}
-
-/* Estilos para el modal de detalles */
+/* =========================================
+   ESTILOS DEL MODAL
+   ========================================= */
 .modal {
   position: fixed;
   inset: 0;
@@ -432,8 +468,10 @@ table tbody tr:hover {
   background-color: #f9fafb;
 }
 
-/* Información del pedido */
-.pedido-info {
+/* =========================================
+   INFORMACIÓN DEL PEDIDO EN MODAL
+   ========================================= */
+.info-pedido {
   background: var(--fdfbf3);
   padding: 20px;
   border-radius: 8px;
@@ -441,39 +479,41 @@ table tbody tr:hover {
   border-left: 4px solid var(--aa8744);
 }
 
-.pedido-info-grid {
+.grid-info-pedido {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
 
-.info-item {
+.item-info {
   display: flex;
   flex-direction: column;
 }
 
-.info-label {
+.etiqueta-info {
   font-size: 0.875rem;
   color: var(--9c642d);
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-.info-value {
+.valor-info {
   font-size: 1rem;
   color: var(--363636);
   font-weight: 500;
 }
 
-/* Tabla de detalles dentro del modal */
-.detalles-table {
+/* =========================================
+   TABLA DE DETALLES DENTRO DEL MODAL
+   ========================================= */
+.tabla-detalles {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
   font-size: 0.875rem;
 }
 
-.detalles-table th {
+.tabla-detalles th {
   background-color: var(--fdfbf3);
   padding: 12px 16px;
   text-align: left;
@@ -482,26 +522,28 @@ table tbody tr:hover {
   border-bottom: 2px solid var(--d1bc97);
 }
 
-.detalles-table td {
+.tabla-detalles td {
   padding: 12px 16px;
   border-bottom: 1px solid var(--d1bc97);
   vertical-align: top;
 }
 
-.detalles-table tr:hover {
+.tabla-detalles tr:hover {
   background-color: rgba(209, 188, 151, 0.05);
 }
 
-.detalles-table .text-center {
+.tabla-detalles .text-center {
   text-align: center;
 }
 
-.detalles-table .text-right {
+.tabla-detalles .text-right {
   text-align: right;
 }
 
-/* Miniaturas de productos */
-.producto-miniatura {
+/* =========================================
+   MINIATURAS DE PRODUCTOS
+   ========================================= */
+.miniatura-producto {
   width: 60px;
   height: 60px;
   border-radius: 8px;
@@ -509,24 +551,24 @@ table tbody tr:hover {
   border: 1px solid var(--d1bc97);
 }
 
-.producto-info {
+.info-producto {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.producto-texto {
+.texto-producto {
   display: flex;
   flex-direction: column;
 }
 
-.producto-nombre {
+.nombre-producto {
   font-weight: 600;
   color: var(--363636);
   margin-bottom: 4px;
 }
 
-.producto-badge {
+.badge-personalizado {
   font-size: 0.75rem;
   color: var(--aa8744);
   background: rgba(170, 135, 68, 0.1);
@@ -535,33 +577,9 @@ table tbody tr:hover {
   display: inline-block;
 }
 
-/* Estado del pedido en el modal */
-.estado-pedido {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.estado-pendiente {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-.estado-pagado {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.estado-cancelado {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-/* Animaciones */
+/* =========================================
+   ANIMACIONES DEL MODAL
+   ========================================= */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -588,8 +606,104 @@ table tbody tr:hover {
   animation: slideIn 0.2s ease-out;
 }
 
-/* Responsive para el modal */
+/* =========================================
+   ESTILOS PARA FILTROS ACTIVOS
+   ========================================= */
+.etiqueta-filtro {
+  background: var(--aa8744);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.boton-limpiar-filtro {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-limpiar-filtro:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================
+   ESTILOS DE CARGA
+   ========================================= */
+.estado-carga {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--9c642d);
+}
+
+.estado-carga .material-symbols-outlined {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* =========================================
+   ESTILOS RESPONSIVOS
+   ========================================= */
 @media (max-width: 768px) {
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+
+  .flex-1 {
+    margin-left: 0;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
+
+  .nav-item span:first-child {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Tabla responsive */
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 800px;
+  }
+
+  .boton-pagina {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .info-resultados {
+    font-size: 0.75rem;
+  }
+
+  /* Modal responsive */
   .modal {
     padding: 10px;
   }
@@ -604,32 +718,23 @@ table tbody tr:hover {
     padding: 16px;
   }
 
-  .pedido-info-grid {
+  .grid-info-pedido {
     grid-template-columns: 1fr;
   }
 
-  .detalles-table {
+  .tabla-detalles {
     font-size: 0.75rem;
   }
 
-  .detalles-table th,
-  .detalles-table td {
+  .tabla-detalles th,
+  .tabla-detalles td {
     padding: 8px 4px;
   }
 
-  .producto-miniatura {
+  .miniatura-producto {
     width: 40px;
     height: 40px;
   }
-}
-
-/* Botón de detalles en la tabla principal */
-.action-btn.detalles {
-  color: var(--aa8744);
-}
-
-.action-btn.detalles:hover {
-  background-color: rgba(170, 135, 68, 0.1);
 }
 
 /* =========================================
@@ -644,76 +749,6 @@ table tbody tr:hover {
     max-width: 1000px;
     margin: 0 auto;
     background: white;
-  }
-
-  .print-header {
-    border-bottom: 3px solid #aa8744;
-    padding-bottom: 15px;
-    margin-bottom: 25px;
-    text-align: center;
-  }
-
-  .print-section {
-    margin-bottom: 25px;
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-  }
-
-  .print-label {
-    font-weight: bold;
-    color: #9c642d;
-    display: inline-block;
-    min-width: 120px;
-  }
-
-  .print-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 14px;
-  }
-
-  .print-table th,
-  .print-table td {
-    border: 1px solid #ddd;
-    padding: 12px 8px;
-    text-align: left;
-  }
-
-  .print-table th {
-    background-color: #fdfbf3;
-    color: #9c642d;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 12px;
-  }
-
-  .print-total {
-    font-weight: bold;
-    font-size: 1.2em;
-    background-color: #f8f8f8;
-  }
-
-  .print-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-
-  .print-info-item {
-    background: #f9f9f9;
-    padding: 12px;
-    border-radius: 6px;
-    border-left: 3px solid #aa8744;
-  }
-
-  .print-cliente-info {
-    background: #f0f7ff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
   }
 
   .no-print {

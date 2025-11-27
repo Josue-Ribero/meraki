@@ -1,64 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const perPage = 5;
-  let currentPage = 1;
-  let allOrders = [];
+  // Constantes de configuración
+  const PEDIDOS_POR_PAGINA = 5;
+  let paginaActual = 1;
+  let todosLosPedidos = [];
 
-  const tbody = document.getElementById("tabla-body");
-  const statusFilter = document.getElementById("status-filter");
-  const dateFilter = document.getElementById("date-filter");
-  const clientFilter = document.getElementById("client-filter");
-  const orderIdFilter = document.getElementById("order-id-filter");
-  const filterBtn = document.getElementById("filter-button");
-  const resultsInfo = document.querySelector(".results-info");
-  const paginationEl = document.querySelector(".pagination");
+  // Elementos del DOM
+  const cuerpoTabla = document.getElementById("cuerpo-tabla");
+  const filtroEstado = document.getElementById("filtro-estado");
+  const filtroFecha = document.getElementById("filtro-fecha");
+  const filtroCliente = document.getElementById("filtro-cliente");
+  const filtroIdPedido = document.getElementById("filtro-id-pedido");
+  const botonFiltrar = document.getElementById("boton-filtrar");
+  const infoResultados = document.querySelector(".info-resultados");
+  const elementoPaginacion = document.querySelector(".paginacion");
 
-  // Verificar si el elemento tbody existe
-  if (!tbody) {
-    console.error('No se encontró el elemento tbody con id "tabla-body"');
+  // Verificar que los elementos esenciales existan
+  if (!cuerpoTabla) {
+    console.error('No se encontró el elemento cuerpo-tabla');
     return;
   }
 
-  console.log('Inicializando gestión de pedidos...');
+  console.log('Inicializando sistema de gestión de pedidos...');
 
   // ========== FUNCIONES PRINCIPALES ==========
 
-  // Función para obtener los pedidos desde la API
-  async function fetchPedidos() {
+  /**
+   * Obtiene todos los pedidos desde la API del servidor
+   * @returns {Promise<Array>} Lista de pedidos
+   */
+  async function obtenerPedidos() {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/pedidos/', {
+      const respuesta = await fetch('/pedidos/', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token || ''}`
-        }
+        credentials: 'include'
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${errorText}`);
+      if (!respuesta.ok) {
+        const textoError = await respuesta.text();
+        throw new Error(`Error ${respuesta.status}: ${textoError}`);
       }
 
-      const pedidos = await response.json();
+      const pedidos = await respuesta.json();
       return pedidos;
     } catch (error) {
-      console.error('Error fetching pedidos:', error);
+      console.error('Error obteniendo pedidos:', error);
       alert('Error al cargar los pedidos: ' + error.message);
       return [];
     }
   }
 
-  // Función para obtener información del cliente por ID (como respaldo)
-  async function fetchCliente(clienteID) {
+  /**
+   * Obtiene información de un cliente específico por ID
+   * @param {number} clienteID - ID del cliente
+   * @returns {Promise<Object|null>} Información del cliente o null si hay error
+   */
+  async function obtenerCliente(clienteID) {
     try {
-      const response = await fetch(`/clientes/${clienteID}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-        }
+      const respuesta = await fetch(`/clientes/${clienteID}`, {
+        credentials: 'include'
       });
 
-      if (response.ok) {
-        return await response.json();
+      if (respuesta.ok) {
+        return await respuesta.json();
       }
       return null;
     } catch (error) {
@@ -67,24 +70,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para confirmar pedido
+  /**
+   * Confirma un pedido cambiando su estado a Pagado
+   * @param {number} pedidoID - ID del pedido a confirmar
+   * @returns {Promise<Object>} Pedido confirmado
+   */
   async function confirmarPedido(pedidoID) {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/pedidos/${pedidoID}/confirmar`, {
+      const respuesta = await fetch(`/pedidos/${pedidoID}/confirmar`, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token || ''}`,
           'Content-Type': 'application/json'
         }
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${errorText}`);
+      if (!respuesta.ok) {
+        const textoError = await respuesta.text();
+        throw new Error(`Error ${respuesta.status}: ${textoError}`);
       }
 
-      return await response.json();
+      return await respuesta.json();
     } catch (error) {
       console.error('Error confirmando pedido:', error);
       alert('Error al confirmar el pedido: ' + error.message);
@@ -92,38 +98,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para obtener detalles del pedido
-  async function fetchDetallesPedido(pedidoID) {
-    try {
-      const response = await fetch(`/detallePedido/pedido/${pedidoID}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al obtener detalles del pedido');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Error:', error);
-      return [];
-    }
-  }
-
   // ========== FUNCIONES PARA EL MODAL DE DETALLES ==========
 
-  // Función para obtener información completa del pedido
+  /**
+   * Obtiene información completa de un pedido específico
+   * @param {number} pedidoID - ID del pedido
+   * @returns {Promise<Object>} Información completa del pedido
+   */
   async function obtenerInformacionCompletaPedido(pedidoID) {
     try {
-      const token = localStorage.getItem('token');
-
-      // Obtener pedido
-      const respuestaPedido = await fetch(`/pedidos/${pedidoID}`, {
-        headers: {
-          'Authorization': `Bearer ${token || ''}`
-        }
+      // Obtener pedido con detalles desde el endpoint de administrador
+      const respuestaPedido = await fetch(`/pedidos/admin/${pedidoID}`, {
+        credentials: 'include'
       });
 
       if (!respuestaPedido.ok) {
@@ -132,21 +118,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const pedido = await respuestaPedido.json();
 
-      // Obtener detalles del pedido
-      const detalles = await fetchDetallesPedido(pedidoID);
+      console.log('Pedido obtenido:', pedido); // Debug
 
       // Obtener información del cliente si está disponible
-      let clienteInfo = {};
+      let informacionCliente = {};
       if (pedido.clienteID) {
         try {
           const respuestaCliente = await fetch(`/clientes/${pedido.clienteID}`, {
-            headers: {
-              'Authorization': `Bearer ${token || ''}`
-            }
+            credentials: 'include'
           });
 
           if (respuestaCliente.ok) {
-            clienteInfo = await respuestaCliente.json();
+            informacionCliente = await respuestaCliente.json();
           }
         } catch (error) {
           console.error('Error obteniendo información del cliente:', error);
@@ -155,8 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return {
         pedido,
-        detalles,
-        cliente: clienteInfo
+        detalles: pedido.detalles || [],
+        cliente: informacionCliente
       };
     } catch (error) {
       console.error('Error:', error);
@@ -164,14 +147,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para mostrar el modal de detalles
+  /**
+   * Muestra el modal con los detalles completos de un pedido
+   * @param {number} pedidoID - ID del pedido a mostrar
+   */
   async function mostrarDetallesPedido(pedidoID) {
     try {
-      const modal = document.getElementById('detallesModal');
-      const contenido = document.getElementById('detallesModalContent');
-      const titulo = document.getElementById('detalles-modal-title');
+      const modal = document.getElementById('modalDetalles');
+      const contenido = document.getElementById('contenidoModalDetalles');
+      const titulo = document.getElementById('titulo-modal-detalles');
 
-      // Mostrar loading
+      // Mostrar estado de carga
       contenido.innerHTML = `
         <div class="text-center py-8">
           <span class="material-symbols-outlined animate-spin text-3xl text-[var(--aa8744)] mb-2">refresh</span>
@@ -182,15 +168,15 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute('aria-hidden', 'false');
       titulo.textContent = `Detalles del Pedido #${pedidoID}`;
 
-      // Obtener información completa
+      // Obtener información completa del pedido
       const { pedido, detalles, cliente } = await obtenerInformacionCompletaPedido(pedidoID);
 
-      // Renderizar usando template
+      // Renderizar los detalles en el modal
       renderizarDetallesPedido(pedido, detalles, cliente, contenido);
 
     } catch (error) {
       console.error('Error al mostrar detalles:', error);
-      const contenido = document.getElementById('detallesModalContent');
+      const contenido = document.getElementById('contenidoModalDetalles');
       contenido.innerHTML = `
         <div class="text-center py-8 text-red-600">
           <span class="material-symbols-outlined text-3xl mb-2">error</span>
@@ -201,169 +187,448 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Función para renderizar los detalles del pedido usando templates
+  /**
+   * Renderiza los detalles del pedido en el modal usando templates
+   * @param {Object} pedido - Información del pedido
+   * @param {Array} detalles - Lista de detalles del pedido
+   * @param {Object} cliente - Información del cliente
+   * @param {HTMLElement} contenedor - Elemento donde se insertará el contenido
+   */
   function renderizarDetallesPedido(pedido, detalles, cliente, contenedor) {
-    const template = document.getElementById('pedido-detalles-template');
-    if (!template) return;
+    console.log('Renderizando detalles:', { pedido, detalles, cliente }); // Debug
+
+    const template = document.getElementById('template-detalles-pedido');
+    if (!template) {
+      console.error('Template no encontrado');
+      return;
+    }
 
     const clone = template.content.cloneNode(true);
 
-    // Llenar información básica
-    clone.querySelector('.pedido-id').textContent = `#${pedido.id}`;
-    clone.querySelector('.pedido-fecha').textContent = formatDateLong(pedido.fecha);
+    // Llenar información básica del pedido
+    clone.querySelector('.id-pedido').textContent = `#${pedido.id}`;
+    clone.querySelector('.fecha-pedido').textContent = formatearFechaLarga(pedido.fecha);
 
-    const estadoEl = clone.querySelector('.pedido-estado');
-    estadoEl.textContent = translateStatus(pedido.estado);
+    const elementoEstado = clone.querySelector('.estado-pedido');
+    elementoEstado.textContent = traducirEstado(pedido.estado);
 
-    // Usar clases CSS existentes
-    let estadoClase = '';
-    switch (pedido.estado) {
-      case 'PENDIENTE': estadoClase = 'estado-pendiente'; break;
-      case 'PAGADO': estadoClase = 'estado-pagado'; break;
-      case 'CANCELADO': estadoClase = 'estado-cancelado'; break;
+    // Aplicar clase CSS según el estado
+    let claseEstado = '';
+    const estadoNormalizado = pedido.estado?.replace(/\s/g, '_') || 'PENDIENTE';
+
+    switch (estadoNormalizado.toUpperCase()) {
+      case 'PENDIENTE': claseEstado = 'estado-pendiente'; break;
+      case 'PAGADO': claseEstado = 'estado-pagado'; break;
+      case 'CANCELADO': claseEstado = 'estado-cancelado'; break;
+      case 'POR_PAGAR': claseEstado = 'estado-por-pagar'; break;
+      default: claseEstado = 'estado-pendiente'; break;
     }
-    estadoEl.className = `estado-pedido ${estadoClase}`;
+    elementoEstado.className = `estado-pedido ${claseEstado}`;
 
-    clone.querySelector('.pedido-total').textContent = formatCurrency(pedido.total);
+    clone.querySelector('.total-pedido').textContent = formatearMoneda(pedido.total || 0);
 
-    // Llenar información cliente
-    clone.querySelector('.cliente-nombre').textContent = cliente.nombre || obtenerNombreCliente(pedido);
-    clone.querySelector('.cliente-email').textContent = cliente.email || 'No disponible';
-    clone.querySelector('.cliente-telefono').textContent = cliente.telefono || 'No disponible';
+    // Llenar información del cliente
+    const nombreCliente = cliente?.nombre || pedido.cliente?.nombre || 'Cliente no disponible';
+    const emailCliente = cliente?.email || pedido.cliente?.email || 'No disponible';
+    const telefonoCliente = cliente?.telefono || pedido.cliente?.telefono || 'No disponible';
 
-    // Llenar productos
-    const productosContainer = clone.querySelector('.productos-container');
-    const itemTemplate = document.getElementById('producto-fila-template');
+    clone.querySelector('.nombre-cliente').textContent = nombreCliente;
+    clone.querySelector('.email-cliente').textContent = emailCliente;
+    clone.querySelector('.telefono-cliente').textContent = telefonoCliente;
 
-    if (detalles.length === 0) {
-      productosContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No hay productos en este pedido</p>';
-    } else if (itemTemplate) {
-      // Crear tabla para los productos
-      const table = document.createElement('table');
-      table.className = 'detalles-table';
-      table.innerHTML = `
+    // Llenar información de productos
+    const contenedorProductos = clone.querySelector('.contenedor-productos');
+
+    if (!detalles || detalles.length === 0) {
+      contenedorProductos.innerHTML = '<p class="text-gray-500 text-center py-4">No hay productos en este pedido</p>';
+    } else {
+      // Crear tabla para mostrar los productos
+      const tabla = document.createElement('table');
+      tabla.className = 'tabla-detalles w-full';
+      tabla.innerHTML = `
         <thead>
           <tr>
-            <th>Producto</th>
-            <th class="text-center">Cantidad</th>
-            <th class="text-right">Precio Unitario</th>
-            <th class="text-right">Subtotal</th>
+            <th style="text-align: left; padding: 12px 16px;">Producto</th>
+            <th style="text-align: center; padding: 12px 16px;">Cantidad</th>
+            <th style="text-align: right; padding: 12px 16px;">Precio Unitario</th>
+            <th style="text-align: right; padding: 12px 16px;">Subtotal</th>
           </tr>
         </thead>
         <tbody></tbody>
         <tfoot>
           <tr>
-            <td colspan="3" class="text-right font-semibold py-3 border-t border-[var(--d1bc97)]">Total del Pedido:</td>
-            <td class="text-right font-semibold text-lg py-3 border-t border-[var(--d1bc97)]">${formatCurrency(pedido.total)}</td>
+            <td colspan="3" style="text-align: right; padding: 15px 16px; border-top: 1px solid var(--d1bc97); font-weight: 600;">Total del Pedido:</td>
+            <td style="text-align: right; padding: 15px 16px; border-top: 1px solid var(--d1bc97); font-weight: 600; font-size: 1.1em;">${formatearMoneda(pedido.total || 0)}</td>
           </tr>
         </tfoot>
       `;
 
-      const tbody = table.querySelector('tbody');
+      const cuerpoTabla = tabla.querySelector('tbody');
 
       detalles.forEach(detalle => {
-        const itemClone = itemTemplate.content.cloneNode(true);
-        const nombreProducto = detalle.producto?.nombre || detalle.disenoPersonalizado?.nombre || 'Producto personalizado';
+        const nombreProducto = detalle.producto?.nombre ||
+          detalle.disenoPersonalizado?.nombre ||
+          'Producto personalizado';
+        const urlImagen = detalle.producto?.imagenURL ||
+          detalle.disenoPersonalizado?.imagenURL ||
+          '/static/images/default-product.jpg';
 
-        // USAR DIRECTAMENTE LA URL DE SUPABASE
-        const imagenURL = detalle.producto?.imagenURL || detalle.disenoPersonalizado?.imagenURL || '/static/images/default-product.jpg';
-
-        const imgEl = itemClone.querySelector('.producto-imagen');
-        imgEl.src = imagenURL;
-        imgEl.alt = nombreProducto;
-        imgEl.onerror = function () { this.src = '/static/images/default-product.jpg'; };
-
-        itemClone.querySelector('.producto-nombre').textContent = nombreProducto;
-
-        if (detalle.esPersonalizado) {
-          itemClone.querySelector('.producto-badge').classList.remove('hidden');
-        }
-
-        itemClone.querySelector('.producto-cantidad').textContent = detalle.cantidad;
-        itemClone.querySelector('.producto-precio').textContent = formatCurrency(detalle.precioUnidad);
-        itemClone.querySelector('.producto-subtotal').textContent = formatCurrency(detalle.subtotal);
-
-        // El template es un div, pero necesitamos tr para la tabla. 
-        // Extraemos el contenido del div y lo metemos en un tr
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>
-            <div class="producto-info">
-              <img src="${imagenURL}" alt="${nombreProducto}" class="producto-miniatura" onerror="this.src='/static/images/default-product.jpg'">
-              <div class="producto-texto">
-                <div class="producto-nombre">${nombreProducto}</div>
-                ${detalle.esPersonalizado ? '<span class="producto-badge">Personalizado</span>' : ''}
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td style="padding: 12px 16px; border-bottom: 1px solid var(--d1bc97);">
+            <div class="info-producto flex items-center gap-3">
+              <img src="${urlImagen}" alt="${nombreProducto}" 
+                   class="miniatura-producto w-16 h-16 object-cover rounded-md border border-gray-200"
+                   onerror="this.src='/static/images/default-product.jpg'">
+              <div class="texto-producto">
+                <div class="nombre-producto font-medium text-gray-800">${nombreProducto}</div>
+                ${detalle.esPersonalizado ? '<span class="badge-personalizado text-xs text-[var(--aa8744)] bg-[rgba(170,135,68,0.1)] px-2 py-0.5 rounded-full mt-1 inline-block">Personalizado</span>' : ''}
               </div>
             </div>
           </td>
-          <td class="text-center">${detalle.cantidad}</td>
-          <td class="text-right">${formatCurrency(detalle.precioUnidad)}</td>
-          <td class="text-right font-semibold">${formatCurrency(detalle.subtotal)}</td>
+          <td style="padding: 12px 16px; border-bottom: 1px solid var(--d1bc97); text-align: center; vertical-align: top;">
+            ${detalle.cantidad || 0}
+          </td>
+          <td style="padding: 12px 16px; border-bottom: 1px solid var(--d1bc97); text-align: right; vertical-align: top;">
+            ${formatearMoneda(detalle.precioUnidad || 0)}
+          </td>
+          <td style="padding: 12px 16px; border-bottom: 1px solid var(--d1bc97); text-align: right; vertical-align: top; font-weight: 600;">
+            ${formatearMoneda(detalle.subtotal || 0)}
+          </td>
         `;
 
-        tbody.appendChild(tr);
+        cuerpoTabla.appendChild(fila);
       });
 
-      productosContainer.appendChild(table);
+      contenedorProductos.appendChild(tabla);
     }
 
     contenedor.innerHTML = '';
     contenedor.appendChild(clone);
   }
 
-  // Función para cerrar el modal
-  function cerrarDetallesModal() {
-    const modal = document.getElementById('detallesModal');
+  /**
+   * Cierra el modal de detalles
+   */
+  function cerrarModalDetalles() {
+    const modal = document.getElementById('modalDetalles');
     modal.setAttribute('aria-hidden', 'true');
+  }
+
+  // ========== FUNCIÓN DE IMPRESIÓN MEJORADA ==========
+
+  /**
+   * Genera e imprime un documento con los detalles del pedido
+   * @param {number} pedidoID - ID del pedido a imprimir
+   */
+  async function imprimirPedido(pedidoID) {
+    try {
+      // Obtener información completa del pedido
+      const { pedido, detalles, cliente } = await obtenerInformacionCompletaPedido(pedidoID);
+
+      // Crear ventana de impresión
+      const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+      if (!ventanaImpresion) {
+        alert('Por favor, permite ventanas emergentes para imprimir');
+        return;
+      }
+
+      // Construir contenido HTML
+      const contenidoHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Pedido #${pedido.id} - Meraki</title>
+          <meta charset="UTF-8">
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+              color: #333;
+              line-height: 1.4;
+            }
+            .encabezado {
+              text-align: center;
+              border-bottom: 3px solid #aa8744;
+              padding-bottom: 15px;
+              margin-bottom: 25px;
+            }
+            .encabezado h1 {
+              margin: 0;
+              color: #363636;
+              font-size: 24px;
+            }
+            .grid-info {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 15px;
+              margin-bottom: 20px;
+            }
+            .item-info {
+              background: #f9f9f9;
+              padding: 12px;
+              border-radius: 6px;
+              border-left: 3px solid #aa8744;
+            }
+            .info-cliente {
+              background: #f0f7ff;
+              padding: 15px;
+              border-radius: 8px;
+              margin-bottom: 20px;
+            }
+            .tabla-productos {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+              font-size: 14px;
+            }
+            .tabla-productos th,
+            .tabla-productos td {
+              border: 1px solid #ddd;
+              padding: 12px 8px;
+              text-align: left;
+            }
+            .tabla-productos th {
+              background-color: #fdfbf3;
+              color: #9c642d;
+              font-weight: bold;
+              text-transform: uppercase;
+              font-size: 12px;
+            }
+            .tabla-productos .text-center {
+              text-align: center;
+            }
+            .tabla-productos .text-right {
+              text-align: right;
+            }
+            .fila-total {
+              font-weight: bold;
+              font-size: 1.2em;
+              background-color: #f8f8f8;
+            }
+            .pie-pagina {
+              text-align: center;
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+              color: #666;
+              font-size: 12px;
+            }
+            .badge-personalizado {
+              background: rgba(170, 135, 68, 0.1);
+              color: #aa8744;
+              padding: 2px 8px;
+              border-radius: 12px;
+              font-size: 10px;
+              margin-left: 8px;
+            }
+            .miniatura-imprimir {
+              width: 40px;
+              height: 40px;
+              object-fit: cover;
+              border-radius: 4px;
+              border: 1px solid #ddd;
+              margin-right: 10px;
+            }
+            .info-producto-imprimir {
+              display: flex;
+              align-items: center;
+            }
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="encabezado">
+            <h1>Meraki - Pedido #${pedido.id}</h1>
+            <p>Fecha: ${formatearFechaLarga(pedido.fecha)} | Estado: ${traducirEstado(pedido.estado)}</p>
+          </div>
+
+          <div class="grid-info">
+            <div class="item-info">
+              <strong>Número de Pedido:</strong><br>#${pedido.id}
+            </div>
+            <div class="item-info">
+              <strong>Fecha:</strong><br>${formatearFechaLarga(pedido.fecha)}
+            </div>
+            <div class="item-info">
+              <strong>Estado:</strong><br>${traducirEstado(pedido.estado)}
+            </div>
+            <div class="item-info">
+              <strong>Total:</strong><br>${formatearMoneda(pedido.total || 0)}
+            </div>
+          </div>
+
+          <div class="info-cliente">
+            <h3 style="margin-top: 0; color: #9c642d;">Información del Cliente</h3>
+            <p><strong>Nombre:</strong> ${cliente?.nombre || pedido.cliente?.nombre || 'Cliente no disponible'}</p>
+            <p><strong>Email:</strong> ${cliente?.email || pedido.cliente?.email || 'No disponible'}</p>
+            <p><strong>Teléfono:</strong> ${cliente?.telefono || pedido.cliente?.telefono || 'No disponible'}</p>
+          </div>
+
+          <h3 style="margin-top: 0; color: #9c642d;">Productos del Pedido</h3>
+          <table class="tabla-productos">
+            <thead>
+              <tr>
+                <th style="width: 45%;">Producto</th>
+                <th style="width: 15%; text-align: center;">Cantidad</th>
+                <th style="width: 20%; text-align: right;">Precio Unitario</th>
+                <th style="width: 20%; text-align: right;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${detalles.map(detalle => {
+        const nombreProducto = detalle.producto?.nombre ||
+          detalle.disenoPersonalizado?.nombre ||
+          'Producto personalizado';
+        const urlImagen = detalle.producto?.imagenURL ||
+          detalle.disenoPersonalizado?.imagenURL ||
+          '/static/images/default-product.jpg';
+        const esPersonalizado = detalle.esPersonalizado;
+
+        return `
+                  <tr>
+                    <td>
+                      <div class="info-producto-imprimir">
+                        <img src="${urlImagen}" alt="${nombreProducto}" 
+                             class="miniatura-imprimir"
+                             onerror="this.src='/static/images/default-product.jpg'">
+                        <div>
+                          ${nombreProducto}
+                          ${esPersonalizado ? '<span class="badge-personalizado">Personalizado</span>' : ''}
+                        </div>
+                      </div>
+                    </td>
+                    <td style="text-align: center;">${detalle.cantidad || 0}</td>
+                    <td style="text-align: right;">${formatearMoneda(detalle.precioUnidad || 0)}</td>
+                    <td style="text-align: right; font-weight: bold;">${formatearMoneda(detalle.subtotal || 0)}</td>
+                  </tr>
+                `;
+      }).join('')}
+            </tbody>
+            <tfoot>
+              <tr class="fila-total">
+                <td colspan="3" style="text-align: right; padding: 15px 8px;"><strong>Total del Pedido:</strong></td>
+                <td style="text-align: right; padding: 15px 8px;"><strong>${formatearMoneda(pedido.total || 0)}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div class="pie-pagina">
+            <p><em>Documento generado el ${new Date().toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}</em></p>
+            <p>Meraki - Joyería Artesanal</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Escribir el contenido en la ventana
+      ventanaImpresion.document.write(contenidoHTML);
+      ventanaImpresion.document.close();
+
+      // Esperar a que cargue el contenido y luego imprimir
+      ventanaImpresion.onload = function () {
+        setTimeout(() => {
+          ventanaImpresion.print();
+          // No cerrar automáticamente para que el usuario pueda ver el preview
+        }, 500);
+      };
+
+    } catch (error) {
+      console.error('Error al imprimir el pedido:', error);
+      alert('Error al imprimir el pedido: ' + error.message);
+    }
   }
 
   // ========== FUNCIONES DE UTILIDAD ==========
 
-  // Función para formatear fecha en formato largo
-  function formatDateLong(iso) {
-    if (!iso) return "";
-    const d = new Date(iso);
-    return d.toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+  /**
+   * Formatea una fecha ISO a formato largo en español
+   * @param {string} fechaISO - Fecha en formato ISO
+   * @returns {string} Fecha formateada
+   */
+  function formatearFechaLarga(fechaISO) {
+    if (!fechaISO) return "Fecha no disponible";
+    try {
+      const fecha = new Date(fechaISO);
+      return fecha.toLocaleDateString("es-ES", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+    } catch (error) {
+      return "Fecha inválida";
+    }
   }
 
-  // Función para formatear moneda
-  function formatCurrency(amount) {
+  /**
+   * Formatea una cantidad como moneda en pesos colombianos
+   * @param {number} cantidad - Cantidad a formatear
+   * @returns {string} Cantidad formateada como moneda
+   */
+  function formatearMoneda(cantidad) {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0
-    }).format(amount);
+    }).format(cantidad || 0);
   }
 
-  // Función para obtener clases CSS según el estado
-  function badgeClassesFor(status) {
-    switch (status) {
+  /**
+   * Devuelve las clases CSS apropiadas para el badge de estado
+   * @param {string} estado - Estado del pedido
+   * @returns {string} Clases CSS para el badge
+   */
+  function obtenerClasesBadge(estado) {
+    const estadoNormalizado = estado?.replace(/\s/g, '_') || 'PENDIENTE';
+
+    switch (estadoNormalizado.toUpperCase()) {
       case "PENDIENTE":
-        return "inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800";
+        return "badge-estado bg-pendiente";
+      case "POR_PAGAR":
+        return "badge-estado bg-por-pagar";
       case "PAGADO":
-        return "inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800";
+        return "badge-estado bg-pagado";
       case "CANCELADO":
-        return "inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800";
+        return "badge-estado bg-cancelado";
       default:
-        return "inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800";
+        return "badge-estado bg-pendiente";
     }
   }
 
-  // Función para traducir estados
-  function translateStatus(status) {
-    const statusMap = {
+  /**
+   * Traduce los estados del pedido al español
+   * @param {string} estado - Estado en inglés o mayúsculas
+   * @returns {string} Estado traducido al español
+   */
+  function traducirEstado(estado) {
+    if (!estado) return "Desconocido";
+
+    const estadoNormalizado = estado.replace(/\s/g, '_').toUpperCase();
+
+    const mapaEstados = {
       'PENDIENTE': 'Pendiente',
+      'POR_PAGAR': 'Por pagar',
       'PAGADO': 'Pagado',
       'CANCELADO': 'Cancelado'
     };
-    return statusMap[status] || status;
+
+    return mapaEstados[estadoNormalizado] || estado;
   }
 
-  // Función mejorada para obtener el nombre del cliente
+  /**
+   * Obtiene el nombre del cliente desde diferentes fuentes de datos
+   * @param {Object} pedido - Objeto del pedido
+   * @returns {string} Nombre del cliente
+   */
   function obtenerNombreCliente(pedido) {
     if (pedido.cliente && pedido.cliente.nombre) {
       return pedido.cliente.nombre;
@@ -377,373 +642,306 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'Cliente no disponible';
   }
 
-  // Función para aplicar filtros
-  function applyFilters() {
-    const status = statusFilter.value || "Todos";
-    const date = dateFilter.value || "";
-    const client = (clientFilter.value || "").trim().toLowerCase();
-    const orderId = (orderIdFilter.value || "").trim();
+  /**
+   * Aplica los filtros seleccionados a la lista de pedidos
+   * @returns {Array} Pedidos filtrados
+   */
+  function aplicarFiltros() {
+    const estado = filtroEstado.value || "Todos";
+    const fecha = filtroFecha.value || "";
+    const cliente = (filtroCliente.value || "").trim().toLowerCase();
+    const idPedido = (filtroIdPedido.value || "").trim();
 
-    return allOrders.filter(o => {
-      if (status !== "Todos") {
-        const statusMap = { 'Pendiente': 'PENDIENTE', 'Pagado': 'PAGADO', 'Cancelado': 'CANCELADO' };
-        if (o.estado !== statusMap[status]) return false;
+    return todosLosPedidos.filter(pedido => {
+      // Filtrar por estado
+      if (estado !== "Todos") {
+        const mapaEstados = {
+          'Pendiente': 'PENDIENTE',
+          'Por pagar': 'POR_PAGAR',
+          'Pagado': 'PAGADO',
+          'Cancelado': 'CANCELADO'
+        };
+
+        const estadoFiltro = mapaEstados[estado];
+        const estadoPedidoNormalizado = (pedido.estado || '').replace(/\s/g, '_').toUpperCase();
+        const estadoFiltroNormalizado = (estadoFiltro || '').replace(/\s/g, '_').toUpperCase();
+
+        if (estadoPedidoNormalizado !== estadoFiltroNormalizado) return false;
       }
-      if (date && !o.fecha.startsWith(date)) return false;
-      if (client) {
-        const nombreCliente = obtenerNombreCliente(o).toLowerCase();
-        if (!nombreCliente.includes(client)) return false;
+
+      // Filtrar por fecha
+      if (fecha && pedido.fecha && !pedido.fecha.startsWith(fecha)) return false;
+
+      // Filtrar por cliente
+      if (cliente) {
+        const nombreCliente = obtenerNombreCliente(pedido).toLowerCase();
+        if (!nombreCliente.includes(cliente)) return false;
       }
-      if (orderId) {
-        const pedidoIdStr = o.id.toString();
-        if (!pedidoIdStr.includes(orderId)) return false;
+
+      // Filtrar por ID de pedido
+      if (idPedido) {
+        const idPedidoStr = pedido.id.toString();
+        if (!idPedidoStr.includes(idPedido)) return false;
       }
+
       return true;
     });
   }
 
-  // Función para escapar HTML
-  function escapeHtml(str) {
-    if (typeof str !== "string") return str;
+  /**
+   * Escapa caracteres HTML para prevenir XSS
+   * @param {string} texto - Texto a escapar
+   * @returns {string} Texto escapado
+   */
+  function escaparHTML(texto) {
+    if (typeof texto !== "string") return texto;
     const div = document.createElement('div');
-    div.textContent = str;
+    div.textContent = texto;
     return div.innerHTML;
-  }
-
-  // ========== FUNCIONES DE IMPRESIÓN ==========
-
-  // Función para imprimir pedido usando templates
-  async function printOrder(order) {
-    try {
-      // Obtener información completa del pedido
-      const { pedido, detalles, cliente } = await obtenerInformacionCompletaPedido(order.id);
-
-      const template = document.getElementById('impresion-template');
-      if (!template) return;
-
-      const clone = template.content.cloneNode(true);
-
-      // Llenar datos básicos
-      clone.querySelectorAll('.pedido-id').forEach(el => el.textContent = `#${pedido.id}`);
-      clone.querySelectorAll('.pedido-fecha').forEach(el => el.textContent = formatDateLong(pedido.fecha));
-      clone.querySelectorAll('.pedido-estado').forEach(el => el.textContent = translateStatus(pedido.estado));
-      clone.querySelectorAll('.pedido-total').forEach(el => el.textContent = formatCurrency(pedido.total));
-
-      // Llenar datos cliente
-      clone.querySelector('.cliente-nombre').textContent = cliente.nombre || obtenerNombreCliente(pedido);
-      clone.querySelector('.cliente-email').textContent = cliente.email || 'No disponible';
-      clone.querySelector('.cliente-telefono').textContent = cliente.telefono || 'No disponible';
-
-      // Llenar fecha de generación
-      clone.querySelector('.fecha-generacion').textContent = new Date().toLocaleDateString('es-ES', {
-        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-
-      // Llenar productos
-      const tbody = clone.querySelector('.productos-tbody');
-      const itemTemplate = document.getElementById('impresion-producto-fila-template');
-
-      if (detalles.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">No hay productos en este pedido</td></tr>';
-      } else if (itemTemplate) {
-        detalles.forEach(detalle => {
-          const itemClone = itemTemplate.content.cloneNode(true);
-          const nombreProducto = detalle.producto?.nombre || detalle.disenoPersonalizado?.nombre || 'Producto personalizado';
-          const imagenURL = detalle.producto?.imagenURL || detalle.disenoPersonalizado?.imagenURL || '/static/images/default-product.jpg';
-
-          const imgEl = itemClone.querySelector('.producto-imagen');
-          imgEl.src = imagenURL;
-          imgEl.alt = nombreProducto;
-
-          itemClone.querySelector('.producto-nombre').textContent = nombreProducto;
-
-          if (detalle.esPersonalizado) {
-            itemClone.querySelector('.producto-badge').classList.remove('hidden');
-          }
-
-          itemClone.querySelector('.producto-cantidad').textContent = detalle.cantidad;
-          itemClone.querySelector('.producto-precio').textContent = formatCurrency(detalle.precioUnidad);
-          itemClone.querySelector('.producto-subtotal').textContent = formatCurrency(detalle.subtotal);
-
-          tbody.appendChild(itemClone);
-        });
-      }
-
-      // Crear ventana de impresión
-      const printWindow = window.open('', '_blank', 'width=1000,height=700');
-      if (!printWindow) {
-        alert('Por favor, permite ventanas emergentes para imprimir');
-        return;
-      }
-
-      // Escribir HTML en la nueva ventana
-      printWindow.document.write('<html><head><title>Detalles Pedido #' + pedido.id + '</title>');
-      // Incluir CSS
-      printWindow.document.write('<link rel="stylesheet" href="../../static/css/admin/pedidosAdmin.css">');
-      printWindow.document.write('</head><body>');
-
-      // Convertir el fragmento clonado a string HTML
-      const div = document.createElement('div');
-      div.appendChild(clone);
-      printWindow.document.write(div.innerHTML);
-
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-
-      // Esperar a que cargue el contenido y CSS antes de imprimir
-      printWindow.onload = function () {
-        setTimeout(() => {
-          printWindow.print();
-          // Cerrar la ventana después de imprimir (opcional)
-          // setTimeout(() => { printWindow.close(); }, 500);
-        }, 500);
-      };
-
-    } catch (error) {
-      console.error('Error al imprimir el pedido:', error);
-      alert('Error al imprimir el pedido: ' + error.message);
-    }
   }
 
   // ========== FUNCIONES DE RENDERIZADO ==========
 
-  // Función para renderizar la tabla
-  async function renderTable() {
-    const filtered = applyFilters();
-    const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / perPage));
-    if (currentPage > totalPages) currentPage = totalPages;
+  /**
+   * Renderiza la tabla de pedidos con paginación
+   */
+  async function renderizarTabla() {
+    const pedidosFiltrados = aplicarFiltros();
+    const totalPedidos = pedidosFiltrados.length;
+    const totalPaginas = Math.max(1, Math.ceil(totalPedidos / PEDIDOS_POR_PAGINA));
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
 
-    const start = (currentPage - 1) * perPage;
-    const pageItems = filtered.slice(start, start + perPage);
+    const inicio = (paginaActual - 1) * PEDIDOS_POR_PAGINA;
+    const pedidosPagina = pedidosFiltrados.slice(inicio, inicio + PEDIDOS_POR_PAGINA);
 
-    tbody.innerHTML = "";
+    cuerpoTabla.innerHTML = "";
 
-    if (pageItems.length === 0) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
+    if (pedidosPagina.length === 0) {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
         <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-          ${allOrders.length === 0 ? 'Cargando pedidos...' : 'No se encontraron pedidos con los filtros aplicados'}
+          ${todosLosPedidos.length === 0 ? 'Cargando pedidos...' : 'No se encontraron pedidos con los filtros aplicados'}
         </td>
       `;
-      tbody.appendChild(tr);
+      cuerpoTabla.appendChild(fila);
     }
 
-    for (const o of pageItems) {
-      const tr = document.createElement("tr");
-      tr.className = "hover:bg-gray-50";
+    for (const pedido of pedidosPagina) {
+      const fila = document.createElement("tr");
+      fila.className = "hover:bg-gray-50";
 
-      const mostrarConfirmar = o.estado === 'PENDIENTE';
-      const nombreCliente = obtenerNombreCliente(o);
+      const mostrarConfirmar = pedido.estado === 'PENDIENTE' || pedido.estado === 'POR_PAGAR';
+      const nombreCliente = obtenerNombreCliente(pedido);
 
-      tr.innerHTML = `
-        <td class="px-2 py-4 text-sm font-medium text-[var(--c-363636)] text-center">#${o.id}</td>
-        <td class="px-2 py-4 text-sm text-center">${formatDateLong(o.fecha)}</td>
-        <td class="px-2 py-4 text-sm text-center">${escapeHtml(nombreCliente)}</td>
-        <td class="px-2 py-4 text-sm text-center">${formatCurrency(o.total)}</td>
+      fila.innerHTML = `
+        <td class="px-2 py-4 text-sm font-medium text-[var(--c-363636)] text-center">#${pedido.id}</td>
+        <td class="px-2 py-4 text-sm text-center">${formatearFechaLarga(pedido.fecha)}</td>
+        <td class="px-2 py-4 text-sm text-center cliente-nombre">${escaparHTML(nombreCliente)}</td>
+        <td class="px-2 py-4 text-sm text-center">${formatearMoneda(pedido.total)}</td>
         <td class="px-2 py-4 text-center">
-          <span class="${badgeClassesFor(o.estado)}">${translateStatus(o.estado)}</span>
+          <span class="${obtenerClasesBadge(pedido.estado)}">${traducirEstado(pedido.estado)}</span>
         </td>
         <td class="px-2 py-4 text-center">
-          <div class="acciones-container">
+          <div class="contenedor-acciones">
             ${mostrarConfirmar ? `
-              <button class="action-btn confirmar confirm-btn" data-id="${o.id}" title="Confirmar Pedido">
+              <button class="boton-accion confirmar boton-confirmar" data-id="${pedido.id}" title="Confirmar Pedido">
                 <span class="material-symbols-outlined text-base">check_circle</span>
               </button>
             ` : ''}
-            <button class="action-btn detalles detalles-btn" data-id="${o.id}" title="Ver Detalles">
+            <button class="boton-accion detalles boton-detalles" data-id="${pedido.id}" title="Ver Detalles">
               <span class="material-symbols-outlined text-base">visibility</span>
             </button>
-            <button class="action-btn imprimir print-btn" data-id="${o.id}" title="Imprimir">
+            <button class="boton-accion imprimir boton-imprimir" data-id="${pedido.id}" title="Imprimir">
               <span class="material-symbols-outlined text-base">print</span>
-            </button>
-            <button class="action-btn correo mail-btn" data-id="${o.id}" title="Enviar por correo">
-              <span class="material-symbols-outlined text-base">mail</span>
             </button>
           </div>
         </td>
       `;
-      tbody.appendChild(tr);
+      cuerpoTabla.appendChild(fila);
 
-      if ((!o.cliente || !o.cliente.nombre) && o.clienteID && nombreCliente === 'Cargando...') {
-        cargarYActualizarCliente(o.id, o.clienteID, tr);
+      // Cargar información del cliente si no está disponible
+      if ((!pedido.cliente || !pedido.cliente.nombre) && pedido.clienteID && nombreCliente === 'Cargando...') {
+        cargarYActualizarCliente(pedido.id, pedido.clienteID, fila);
       }
     }
 
-    if (resultsInfo) {
-      resultsInfo.textContent = `Mostrando ${pageItems.length} de ${filtered.length} pedidos`;
+    if (infoResultados) {
+      const inicio = (paginaActual - 1) * PEDIDOS_POR_PAGINA + 1;
+      const fin = Math.min(inicio + PEDIDOS_POR_PAGINA - 1, totalPedidos);
+      infoResultados.textContent = `Mostrando ${inicio}-${fin} de ${totalPedidos} pedidos`;
     }
-    renderPagination(totalPages);
+    renderizarPaginacion(totalPaginas);
   }
 
-  // Función para cargar y actualizar el cliente si no está presente
-  async function cargarYActualizarCliente(pedidoId, clienteId, fila) {
+  /**
+   * Carga y actualiza la información del cliente en una fila
+   * @param {number} pedidoID - ID del pedido
+   * @param {number} clienteID - ID del cliente
+   * @param {HTMLElement} fila - Fila de la tabla a actualizar
+   */
+  async function cargarYActualizarCliente(pedidoID, clienteID, fila) {
     try {
-      const cliente = await fetchCliente(clienteId);
+      const cliente = await obtenerCliente(clienteID);
       if (cliente && cliente.nombre) {
-        const pedidoIndex = allOrders.findIndex(p => p.id === pedidoId);
-        if (pedidoIndex !== -1) {
-          if (!allOrders[pedidoIndex].cliente) {
-            allOrders[pedidoIndex].cliente = {};
+        const indicePedido = todosLosPedidos.findIndex(p => p.id === pedidoID);
+        if (indicePedido !== -1) {
+          if (!todosLosPedidos[indicePedido].cliente) {
+            todosLosPedidos[indicePedido].cliente = {};
           }
-          allOrders[pedidoIndex].cliente.nombre = cliente.nombre;
+          todosLosPedidos[indicePedido].cliente.nombre = cliente.nombre;
         }
-        const celdaCliente = fila.querySelector('td:nth-child(3)');
+        const celdaCliente = fila.querySelector('.cliente-nombre');
         if (celdaCliente) {
           celdaCliente.textContent = cliente.nombre;
         }
       }
     } catch (error) {
-      console.error(`Error cargando cliente para pedido ${pedidoId}:`, error);
+      console.error(`Error cargando cliente para pedido ${pedidoID}:`, error);
     }
   }
 
-  // Función para renderizar la paginación
-  function renderPagination(totalPages) {
-    if (!paginationEl) return;
-    paginationEl.innerHTML = "";
+  /**
+   * Renderiza los controles de paginación
+   * @param {number} totalPaginas - Número total de páginas
+   */
+  function renderizarPaginacion(totalPaginas) {
+    if (!elementoPaginacion) return;
+    elementoPaginacion.innerHTML = "";
 
-    const prev = document.createElement("button");
-    prev.textContent = "Anterior";
-    prev.className = "page-btn";
-    prev.disabled = currentPage === 1;
-    prev.addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderTable();
+    const botonAnterior = document.createElement("button");
+    botonAnterior.textContent = "Anterior";
+    botonAnterior.className = "boton-pagina";
+    botonAnterior.disabled = paginaActual === 1;
+    botonAnterior.addEventListener("click", () => {
+      if (paginaActual > 1) {
+        paginaActual--;
+        renderizarTabla();
       }
     });
-    paginationEl.appendChild(prev);
+    elementoPaginacion.appendChild(botonAnterior);
 
-    for (let i = 1; i <= totalPages; i++) {
-      const pageBtn = document.createElement("button");
-      pageBtn.textContent = i;
-      pageBtn.className = "page-btn" + (i === currentPage ? " active" : "");
-      pageBtn.addEventListener("click", () => {
-        currentPage = i;
-        renderTable();
+    const maxBotones = 5;
+    let inicio = Math.max(1, paginaActual - Math.floor(maxBotones / 2));
+    let fin = Math.min(totalPaginas, inicio + maxBotones - 1);
+
+    if (fin - inicio + 1 < maxBotones) {
+      inicio = Math.max(1, fin - maxBotones + 1);
+    }
+
+    for (let i = inicio; i <= fin; i++) {
+      const botonPagina = document.createElement("button");
+      botonPagina.textContent = i;
+      botonPagina.className = "boton-pagina" + (i === paginaActual ? " activo" : "");
+      botonPagina.addEventListener("click", () => {
+        paginaActual = i;
+        renderizarTabla();
       });
-      paginationEl.appendChild(pageBtn);
+      elementoPaginacion.appendChild(botonPagina);
     }
 
-    const next = document.createElement("button");
-    next.textContent = "Siguiente";
-    next.className = "page-btn";
-    next.disabled = currentPage === totalPages;
-    next.addEventListener("click", () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderTable();
+    const botonSiguiente = document.createElement("button");
+    botonSiguiente.textContent = "Siguiente";
+    botonSiguiente.className = "boton-pagina";
+    botonSiguiente.disabled = paginaActual === totalPaginas;
+    botonSiguiente.addEventListener("click", () => {
+      if (paginaActual < totalPaginas) {
+        paginaActual++;
+        renderizarTabla();
       }
     });
-    paginationEl.appendChild(next);
+    elementoPaginacion.appendChild(botonSiguiente);
   }
 
-  // Función para enviar pedido por correo
-  function mailOrder(order) {
-    const nombreCliente = obtenerNombreCliente(order);
-    const subject = encodeURIComponent(`Detalles del Pedido #${order.id}`);
-    const body = encodeURIComponent(
-      `Hola,\n\n` +
-      `Aquí están los detalles de tu pedido:\n\n` +
-      `Pedido: #${order.id}\n` +
-      `Fecha: ${formatDateLong(order.fecha)}\n` +
-      `Cliente: ${nombreCliente}\n` +
-      `Total: ${formatCurrency(order.total)}\n` +
-      `Estado: ${translateStatus(order.estado)}\n\n` +
-      `Gracias por tu compra.\n\n` +
-      `Saludos,\nEquipo de Meraki`
-    );
-
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  }
-
-  // Función para cargar pedidos
-  async function loadPedidos() {
+  /**
+   * Carga todos los pedidos y renderiza la tabla
+   */
+  async function cargarPedidos() {
     try {
-      allOrders = await fetchPedidos();
-      renderTable();
+      console.log('Cargando pedidos...');
+      todosLosPedidos = await obtenerPedidos();
+      console.log('Pedidos cargados:', todosLosPedidos);
+      renderizarTabla();
     } catch (error) {
       console.error('Error cargando pedidos:', error);
     }
   }
 
-  // ========== EVENT LISTENERS ==========
+  // ========== MANEJADORES DE EVENTOS ==========
 
-  tbody.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
+  cuerpoTabla.addEventListener("click", async (e) => {
+    const boton = e.target.closest("button");
+    if (!boton) return;
 
-    const id = btn.dataset.id;
+    const id = boton.dataset.id;
     if (!id) return;
 
-    const order = allOrders.find(o => o.id == id);
-    if (!order) return;
+    const pedido = todosLosPedidos.find(p => p.id == id);
+    if (!pedido) return;
 
-    if (btn.classList.contains("confirm-btn")) {
+    if (boton.classList.contains("boton-confirmar")) {
       if (confirm('¿Estás seguro de que deseas confirmar este pedido? Esta acción cambiará el estado a "PAGADO".')) {
         try {
-          btn.disabled = true;
-          btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">refresh</span>';
+          boton.disabled = true;
+          boton.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">refresh</span>';
           await confirmarPedido(id);
           alert('Pedido confirmado exitosamente');
-          await loadPedidos();
+          await cargarPedidos();
         } catch (error) {
           alert('Error al confirmar el pedido: ' + error.message);
-          btn.disabled = false;
-          btn.innerHTML = '<span class="material-symbols-outlined text-base">check_circle</span>';
+          boton.disabled = false;
+          boton.innerHTML = '<span class="material-symbols-outlined text-base">check_circle</span>';
         }
       }
     }
-    else if (btn.classList.contains("detalles-btn")) {
+    else if (boton.classList.contains("boton-detalles")) {
       mostrarDetallesPedido(id);
     }
-    else if (btn.classList.contains("print-btn")) {
-      await printOrder(order);
-    }
-    else if (btn.classList.contains("mail-btn")) {
-      mailOrder(order);
+    else if (boton.classList.contains("boton-imprimir")) {
+      await imprimirPedido(id);
     }
   });
 
-  filterBtn.addEventListener("click", () => {
-    currentPage = 1;
-    renderTable();
-  });
+  if (botonFiltrar) {
+    botonFiltrar.addEventListener("click", () => {
+      paginaActual = 1;
+      renderizarTabla();
+    });
+  }
 
-  [statusFilter, dateFilter, clientFilter, orderIdFilter].forEach(el => {
-    if (el) {
-      el.addEventListener("change", () => {
-        currentPage = 1;
-        renderTable();
+  [filtroEstado, filtroFecha, filtroCliente, filtroIdPedido].forEach(elemento => {
+    if (elemento) {
+      elemento.addEventListener("change", () => {
+        paginaActual = 1;
+        renderizarTabla();
       });
-      el.addEventListener("input", () => {
-        currentPage = 1;
-        renderTable();
+      elemento.addEventListener("input", () => {
+        paginaActual = 1;
+        renderizarTabla();
       });
     }
   });
 
   // ========== INICIALIZACIÓN ==========
 
-  const modal = document.getElementById('detallesModal');
-  const btnCerrar1 = document.getElementById('cerrarDetallesModal');
-  const btnCerrar2 = document.getElementById('cerrarDetallesModal2');
+  const modal = document.getElementById('modalDetalles');
+  const botonCerrar1 = document.getElementById('botonCerrarModal');
+  const botonCerrar2 = document.getElementById('botonCerrarModal2');
 
-  if (btnCerrar1) btnCerrar1.addEventListener('click', cerrarDetallesModal);
-  if (btnCerrar2) btnCerrar2.addEventListener('click', cerrarDetallesModal);
+  if (botonCerrar1) botonCerrar1.addEventListener('click', cerrarModalDetalles);
+  if (botonCerrar2) botonCerrar2.addEventListener('click', cerrarModalDetalles);
 
   if (modal) {
     modal.addEventListener('click', function (e) {
-      if (e.target === modal) cerrarDetallesModal();
+      if (e.target === modal) cerrarModalDetalles();
     });
   }
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && modal && modal.getAttribute('aria-hidden') === 'false') {
-      cerrarDetallesModal();
+      cerrarModalDetalles();
     }
   });
 
-  loadPedidos();
+  // Cargar pedidos al iniciar
+  cargarPedidos();
 });

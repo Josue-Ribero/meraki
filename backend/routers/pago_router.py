@@ -37,25 +37,20 @@ def crearPago(
     # Si ya existe un pago para este pedido, mostrar error
     if pagoDB:
         raise HTTPException(400, "Este pedido ya tiene un pago asociado")
-    
-    # Manejar pago con puntos
+
+    # Manejar pago con puntos / normal
     puntosUsados = 0
     confirmado = False
-    
-    # Si usa puntos validar que tenga suficientes
+
     if usarPuntos:
         if cliente.puntos <= 0:
             raise HTTPException(400, "No tienes puntos disponibles")
-        
-        # Usar puntos disponibles (hasta cubrir el total o los puntos disponibles)
+
         puntosUsados = min(cliente.puntos, pedido.total)
-        
-        # Actualizar puntos del cliente
         cliente.puntos -= puntosUsados
         pedido.pagadoConPuntos = True
         pedido.puntosUsados = puntosUsados
-        
-        # Registrar transacción de puntos redimidos
+
         if puntosUsados > 0:
             transaccionRedimidos = TransaccionPuntos(
                 clienteID=cliente.id,
@@ -63,13 +58,15 @@ def crearPago(
                 tipo=TipoTransaccion.REDIMIDOS,
                 cantidad=puntosUsados
             )
-            # Insertar la transaccion de puntos redimidos
             session.add(transaccionRedimidos)
-        
-        # Si el pago se cubre completamente con puntos, se confirma automáticamente
+
         if puntosUsados >= pedido.total:
             confirmado = True
             pedido.estado = EstadoPedido.PAGADO
+    else:
+        # No puntos: estado PENDIENTE, confirmado False
+        pedido.estado = EstadoPedido.PENDIENTE
+        confirmado = False
     
     # Crear pago
     pago = Pago(

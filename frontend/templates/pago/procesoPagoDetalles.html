@@ -97,7 +97,7 @@
       </div>
 
       <div class="mt-6 flex flex-col space-y-3">
-        <a href="/proceso-pago"
+        <a id="continuar-pago-btn"
           class="w-full bg-[var(--c-gold)] text-white py-3 px-4 rounded-lg text-center font-semibold hover:bg-[var(--c-dark-gold)] transition">
           Continuar al pago
         </a>
@@ -111,6 +111,16 @@
   </div>
 
   <script src="../../static/js/pago/procesoPagoDetalles.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const pedidoID = params.get('id') || params.get('pedidoId');
+      const continuarBtn = document.getElementById('continuar-pago-btn');
+      if (continuarBtn && pedidoID) {
+        continuarBtn.setAttribute('href', `/proceso-pago?id=${pedidoID}`);
+      }
+    });
+  </script>
 
 </body>
 
