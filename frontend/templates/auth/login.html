@@ -51,6 +51,11 @@
                 required />
             </div>
             <div>
+              <!-- Mensaje de error para login -->
+              <div id="login-error" class="error-message hidden">
+                <span class="error-icon">⚠</span>
+                <span class="error-text">Usuario o contraseña incorrectos</span>
+              </div>
               <button type="submit" class="btn-primary">Iniciar Sesión</button>
             </div>
           </form>
@@ -80,7 +85,10 @@
               <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
             </div>
             <div>
-              <div id="register-error" class="text-red-500 text-sm text-center hidden mb-4"></div>
+              <div id="register-error" class="error-message hidden">
+                <span class="error-icon">⚠</span>
+                <span class="error-text"></span>
+              </div>
               <button type="submit" class="btn-primary">Crear Cuenta</button>
             </div>
           </form>

@@ -4,6 +4,9 @@
   --c3: #fdfbf3;
   --c4: #d1bc97;
   --c5: #9c642d;
+  --c-error: #dc2626;
+  --c-error-bg: #fef2f2;
+  --c-error-border: #fecaca;
 }
 
 /* Estilos base */
@@ -123,6 +126,12 @@ body {
   border-color: #f87171;
 }
 
+/* Estilos para campos con error */
+.form-input.error {
+  border-color: var(--c-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
 .btn-primary {
   display: flex;
   justify-content: center;
@@ -140,6 +149,15 @@ body {
 
 .btn-primary:hover {
   background-color: var(--c5);
+}
+
+.btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-primary:disabled:hover {
+  background-color: #9ca3af;
 }
 
 .link {
@@ -180,4 +198,49 @@ input[type="tel"] {
   font-size: 0.75rem;
   color: rgba(54, 54, 54, 0.6);
   margin-top: 0.25rem;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--c-error-bg);
+  border: 1px solid var(--c-error-border);
+  border-radius: 0.375rem;
+  color: var(--c-error);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.error-icon {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.error-text {
+  flex: 1;
+}
+
+/* Animación para el mensaje de error */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
 }
