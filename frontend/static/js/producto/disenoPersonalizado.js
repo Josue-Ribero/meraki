@@ -1,21 +1,25 @@
+// Elementos del canvas
 const canvas = document.getElementById('designCanvas');
 const ctx = canvas.getContext('2d');
 const pixelSize = 16;
 const gridSize = 32;
 canvas.width = canvas.height = pixelSize * gridSize;
 
+// Variables
 let isDrawing = false;
 let selectedColor = '#aa8744';
 let selectedShape = 'circle';
 let currentMaterial = 'metal';
 let useShape = false;
 
+// Paletas de colores
 const palettes = {
   metal: ['#aa8744', '#363636', '#fdfbf3', '#d1bc97', '#9c642d'],
   pearls: ['#f8f8f8', '#e2e2e2', '#ffffff', '#dcdcdc', '#b0b0b0'],
   gems: ['#ff4d4d', '#4dff4d', '#4d4dff', '#ffff4d', '#ff4dff']
 };
 
+// Funciones
 function drawGrid() {
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -33,6 +37,7 @@ function drawGrid() {
 }
 drawGrid();
 
+// Funciones de dibujo
 function drawPixel(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
@@ -42,6 +47,7 @@ function drawPixel(x, y) {
   }
 }
 
+// Funcion de dibujo de forma
 function drawShape(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
@@ -79,6 +85,7 @@ function drawShape(x, y) {
   }
 }
 
+// Eventos
 canvas.addEventListener('mousedown', (e) => {
   isDrawing = true;
   const rect = canvas.getBoundingClientRect();

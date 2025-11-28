@@ -6,9 +6,7 @@
   --9c642d: #9c642d;
 }
 
-/* =========================================
-   ESTILOS DEL SIDEBAR
-   ========================================= */
+/* Sidebar */
 .admin-sidebar {
   width: 16rem;
   background-color: var(--363636);
@@ -85,9 +83,7 @@
   border-top: 1px solid rgba(209, 188, 151, 0.2);
 }
 
-/* =========================================
-   ESTILOS DEL CONTENIDO PRINCIPAL
-   ========================================= */
+/* Contenido principal */
 .flex-1 {
   margin-left: 0;
   flex: 1;
@@ -95,9 +91,7 @@
   background-color: white;
 }
 
-/* =========================================
-   ESTILOS DE FORMULARIOS Y FILTROS
-   ========================================= */
+/* Formularios y filtros */
 .label {
   display: block;
   font-size: 0.875rem;
@@ -147,9 +141,7 @@
   cursor: not-allowed;
 }
 
-/* =========================================
-   ESTILOS DE LA TABLA
-   ========================================= */
+/* Tabla */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -219,9 +211,7 @@ table tbody tr:hover {
   gap: 0.5rem;
 }
 
-/* =========================================
-   ESTILOS DE PAGINACIÓN
-   ========================================= */
+/* Botones de paginación */
 .boton-pagina {
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
@@ -254,9 +244,7 @@ table tbody tr:hover {
   font-size: 0.875rem;
 }
 
-/* =========================================
-   ESTILOS DE BOTONES DE ACCIÓN
-   ========================================= */
+/* Botones de acción */
 .boton-accion {
   background: none;
   border: none;
@@ -297,9 +285,7 @@ table tbody tr:hover {
   background-color: rgba(170, 135, 68, 0.1);
 }
 
-/* =========================================
-   ESTILOS DE ESTADOS DE PEDIDOS
-   ========================================= */
+/* Estado de pedidos */
 .estado-pedido {
   display: inline-flex;
   align-items: center;
@@ -369,9 +355,7 @@ table tbody tr:hover {
   color: #dc2626 !important;
 }
 
-/* =========================================
-   ANIMACIONES
-   ========================================= */
+/* Animaciones */
 .animate-spin {
   animation: spin 1s linear infinite;
 }
@@ -386,9 +370,7 @@ table tbody tr:hover {
   }
 }
 
-/* =========================================
-   ESTILOS DEL MODAL
-   ========================================= */
+/* Modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -468,9 +450,7 @@ table tbody tr:hover {
   background-color: #f9fafb;
 }
 
-/* =========================================
-   INFORMACIÓN DEL PEDIDO EN MODAL
-   ========================================= */
+/* Información del pedido en modal */
 .info-pedido {
   background: var(--fdfbf3);
   padding: 20px;
@@ -503,9 +483,7 @@ table tbody tr:hover {
   font-weight: 500;
 }
 
-/* =========================================
-   TABLA DE DETALLES DENTRO DEL MODAL
-   ========================================= */
+/* Tabla de detalles dentro del modal */
 .tabla-detalles {
   width: 100%;
   border-collapse: collapse;
@@ -540,9 +518,7 @@ table tbody tr:hover {
   text-align: right;
 }
 
-/* =========================================
-   MINIATURAS DE PRODUCTOS
-   ========================================= */
+/* Miniaturas de productos */
 .miniatura-producto {
   width: 60px;
   height: 60px;
@@ -577,9 +553,7 @@ table tbody tr:hover {
   display: inline-block;
 }
 
-/* =========================================
-   ANIMACIONES DEL MODAL
-   ========================================= */
+/* Animaciones del modal */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -606,9 +580,7 @@ table tbody tr:hover {
   animation: slideIn 0.2s ease-out;
 }
 
-/* =========================================
-   ESTILOS PARA FILTROS ACTIVOS
-   ========================================= */
+/* Estilos para filtros activos */
 .etiqueta-filtro {
   background: var(--aa8744);
   color: white;
@@ -636,9 +608,7 @@ table tbody tr:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* =========================================
-   ESTILOS DE CARGA
-   ========================================= */
+/* Estilos de carga */
 .estado-carga {
   display: flex;
   flex-direction: column;
@@ -653,9 +623,7 @@ table tbody tr:hover {
   margin-bottom: 1rem;
 }
 
-/* =========================================
-   ESTILOS RESPONSIVOS
-   ========================================= */
+/* Estilos responsivos */
 @media (max-width: 768px) {
   .admin-sidebar {
     width: 100%;
@@ -737,9 +705,7 @@ table tbody tr:hover {
   }
 }
 
-/* =========================================
-   ESTILOS DE IMPRESIÓN
-   ========================================= */
+/* Estilos de impresión */
 @media print {
   body {
     font-family: Arial, sans-serif;

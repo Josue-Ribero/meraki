@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnBuscar = document.getElementById("btnBuscar");
 
   // Variables de estado
-  let todosLosClientes = []; // Para almacenar todos los clientes y filtrar en frontend
+  let todosLosClientes = [];
   let filtroActual = "activos";
   let busquedaActual = "";
   let paginaActual = 1;
@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </tr>`;
   }
 
-  // Funcion para escapar HTML para prevenir XSS
+  // Funcion para escapar HTML para prevenir XSS (Cross Site Scripting)
   function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');

@@ -1,3 +1,4 @@
+// Funcion para formatear el precio
 function formatearMoneda(valor) {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
@@ -7,6 +8,7 @@ function formatearMoneda(valor) {
   }).format(valor);
 }
 
+// Funcion para el checkout
 function checkoutApp() {
   return {
     step: 'shipping',
@@ -36,6 +38,7 @@ function checkoutApp() {
       this.totalConEnvio = this.subtotal + envio;
     },
 
+    // Funcion para obtener el carrito
     async fetchCarrito() {
       try {
         const response = await fetch('/carrito/mi-carrito');
@@ -81,6 +84,7 @@ function checkoutApp() {
       }
     },
 
+    // Funcion para guardar la direccion
     saveAddress() {
       if (!this.form.nombre || !this.form.calle || !this.form.localidad || !this.form.codigoPostal) {
         alert('Por favor completa todos los campos de la dirección');
@@ -120,6 +124,7 @@ function checkoutApp() {
         });
     },
 
+    // Funcion para editar la direccion
     editAddress(index) {
       this.editIndex = index;
       const address = this.addresses[index];
@@ -133,6 +138,7 @@ function checkoutApp() {
       };
     },
 
+    // Funcion para eliminar la direccion
     deleteAddress(index) {
       if (confirm('¿Estás seguro de que quieres eliminar esta dirección?')) {
         const addressId = this.addresses[index].id;
@@ -156,6 +162,7 @@ function checkoutApp() {
       }
     },
 
+    // Funcion para resetear el formulario
     resetForm() {
       this.form = {
         nombre: '',
@@ -168,6 +175,7 @@ function checkoutApp() {
       this.editIndex = null;
     },
 
+    // Funcion para inicializar el checkout
     init() {
       this.fetchCarrito();
 
@@ -189,6 +197,7 @@ function checkoutApp() {
         });
     },
 
+    // Funcion para crear el pedido
     crearPedido() {
       if (!this.form.direccionSeleccionada) {
         alert('Por favor selecciona una dirección de envío');

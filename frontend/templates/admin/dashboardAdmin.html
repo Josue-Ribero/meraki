@@ -12,13 +12,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-  <!-- Corregir rutas CSS -->
   <link rel="stylesheet" href="/static/css/admin/dashboardAdmin.css">
   <link rel="stylesheet" href="/static/css/admin/sidebarAdmin.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Estilos de respaldo en caso de que los archivos CSS no carguen */
     .admin-sidebar {
       background-color: #363636;
       color: white;
@@ -192,12 +190,8 @@
     </div>
   </div>
 
-  <!-- Script para pasar datos de Python a JavaScript -->
   <script>
-    // Datos para la gráfica - con manejo de error si no existen
     const datosGrafica = JSON.parse(`{{ datosGrafica | default({}, true) | tojson }}`);
-
-    // Si no hay datos, crear estructura vacía
     if (!datosGrafica.meses || !datosGrafica.ventas) {
       window.datosGrafica = {
         meses: [],
@@ -209,8 +203,6 @@
 
     console.log('Datos de gráfica cargados:', window.datosGrafica);
   </script>
-
-  <!-- Corregir ruta del JS -->
   <script src="/static/js/admin/dashboardAdmin.js"></script>
 </body>
 

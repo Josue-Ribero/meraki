@@ -41,6 +41,7 @@ class PagoCreate(PagoBase):
 
 
 
+# Modelo de pago para actualizar
 class PagoUpdate(PagoBase):
     pass
 

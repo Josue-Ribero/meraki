@@ -19,7 +19,6 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-8 md:px-16 lg:px-24 py-12 max-w-6xl mx-auto">
 
-    <!-- IZQUIERDA -->
     <main class="space-y-8">
       <h1 class="text-2xl font-bold mb-6">Detalles del Pedido</h1>
 
@@ -61,7 +60,6 @@
       </div>
     </main>
 
-    <!-- DERECHA (RESUMEN) -->
     <aside class="summary-box bg-white p-6 rounded-lg shadow-md border border-gray-200">
       <h2 class="section-title mb-6">Resumen del Pedido</h2>
 
@@ -112,7 +110,7 @@
 
   <script src="../../static/js/pago/procesoPagoDetalles.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const params = new URLSearchParams(window.location.search);
       const pedidoID = params.get('id') || params.get('pedidoId');
       const continuarBtn = document.getElementById('continuar-pago-btn');

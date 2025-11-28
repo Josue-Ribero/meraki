@@ -12,6 +12,7 @@ from ..utils.enums import TipoTransaccion
     permitiendo llevar un control detallado del saldo de puntos.
 """
 
+# Modelo base de transaccion de puntos
 class TransaccionPuntosBase(SQLModel):
     tipo: TipoTransaccion = Field()
     cantidad: int = Field()
@@ -19,6 +20,7 @@ class TransaccionPuntosBase(SQLModel):
 
 
 
+# Modelo de transaccion de puntos
 class TransaccionPuntos(TransaccionPuntosBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
@@ -26,16 +28,19 @@ class TransaccionPuntos(TransaccionPuntosBase, table=True):
 
 
 
+# Modelo de transaccion de puntos para crear
 class TransaccionPuntosCreate(TransaccionPuntosBase):
     pass
 
 
 
+# Modelo de transaccion de puntos para actualizar
 class TransaccionPuntosUpdate(TransaccionPuntosBase):
     pass
 
 
 
+# Modelo de transaccion de puntos para eliminar
 class TransaccionPuntosDelete(TransaccionPuntosBase):
     pass
 

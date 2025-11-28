@@ -1,6 +1,3 @@
-/* categoriaAdmin.css - Estilos específicos para categorías */
-
-/* Variables CSS para colores consistentes */
 :root {
   --c-gold: #aa8744;
   --c-dark-gray: #363636;
@@ -142,7 +139,7 @@
   border-color: var(--c-gold) !important;
 }
 
-/* Paginación - EXACTAMENTE como en pedidosAdmin */
+/* Paginación */
 .pagination {
   display: flex;
   gap: 0.5rem;

@@ -1,3 +1,4 @@
+// Configuración de Tailwind
 tailwind.config = {
     darkMode: "class",
     theme: {

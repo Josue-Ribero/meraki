@@ -13,12 +13,14 @@ from dotenv import load_dotenv
     manejando la configuración de credenciales y la generación de URLs públicas para los recursos subidos.
 """
 
+# Cargar variables de entorno
 load_dotenv()
 
+# Variables de entorno
 SUPABASE_URL:str = os.getenv("SUPABASE_URL")
 SUPABASE_KEY:str = os.getenv("SUPABASE_KEY")
 
-# Fallback to "imagenes" if not set, empty, or looks like a JWT token
+# Entorno de bucket
 env_bucket = os.getenv("SUPABASE_BUCKET")
 if not env_bucket or env_bucket.startswith("ey"):
     SUPABASE_BUCKET = "imagenes"
@@ -28,7 +30,7 @@ else:
 _supabase_client:Optional[Client] = None
 
 
-
+# Funcion para obtener el cliente de Supabase
 def getSupabaseClient():
     global _supabase_client
     if _supabase_client is None:
@@ -40,6 +42,7 @@ def getSupabaseClient():
     
     
 
+# Funcion para subir archivos al bucket de Supabase
 async def uploadarchivoBucket(archivo: UploadFile):
     client = getSupabaseClient()
     try:

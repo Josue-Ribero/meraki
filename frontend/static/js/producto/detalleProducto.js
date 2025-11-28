@@ -22,6 +22,7 @@ document.getElementById('agregar-carrito').addEventListener('click', async (e) =
   formulario.append('productoID', productoActualID);
   formulario.append('cantidad', cantidad);
 
+  // Añadir al carrito
   try {
     const respuesta = await fetch('/carrito/agregar-producto', {
       method: 'POST',
@@ -61,11 +62,13 @@ async function cargarProducto() {
     if (ultimo && /^\d+$/.test(ultimo)) productoID = ultimo;
   }
 
+  // Validar productoID
   if (!productoID) {
     console.warn('No se encontró productoID en la URL. Añade ?id=123 o usa /.../123');
     return;
   }
 
+  // Cargar el producto
   try {
     const respuesta = await fetch(`/productos/${productoID}`);
     if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);

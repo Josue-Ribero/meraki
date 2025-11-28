@@ -22,12 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log('Inicializando sistema de gestión de pedidos...');
 
-  // ========== FUNCIONES PRINCIPALES ==========
-
-  /**
-   * Obtiene todos los pedidos desde la API del servidor
-   * @returns {Promise<Array>} Lista de pedidos ordenados por fecha descendente
-   */
+  // Obtiene todos los pedidos desde la API del servidor
   async function obtenerPedidos() {
     try {
       const respuesta = await fetch('/pedidos/', {
@@ -52,11 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Obtiene información de un cliente específico por ID
-   * @param {number} clienteID - ID del cliente
-   * @returns {Promise<Object|null>} Información del cliente o null si hay error
-   */
+  // Obtiene información de un cliente específico por ID
   async function obtenerCliente(clienteID) {
     try {
       const respuesta = await fetch(`/clientes/${clienteID}`, {
@@ -73,11 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Confirma un pedido cambiando su estado a Pagado
-   * @param {number} pedidoID - ID del pedido a confirmar
-   * @returns {Promise<Object>} Pedido confirmado
-   */
+  // Confirma un pedido cambiando su estado a Pagado
   async function confirmarPedido(pedidoID) {
     try {
       const respuesta = await fetch(`/pedidos/${pedidoID}/confirmar`, {
@@ -101,13 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ========== FUNCIONES PARA EL MODAL DE DETALLES ==========
-
-  /**
-   * Obtiene información completa de un pedido específico
-   * @param {number} pedidoID - ID del pedido
-   * @returns {Promise<Object>} Información completa del pedido
-   */
+  // Obtiene información completa de un pedido específico
   async function obtenerInformacionCompletaPedido(pedidoID) {
     try {
       // Obtener pedido con detalles desde el endpoint de administrador
@@ -150,10 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Muestra el modal con los detalles completos de un pedido
-   * @param {number} pedidoID - ID del pedido a mostrar
-   */
+  // Muestra el modal con los detalles completos de un pedido
   async function mostrarDetallesPedido(pedidoID) {
     try {
       const modal = document.getElementById('modalDetalles');
@@ -190,13 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Renderiza los detalles del pedido en el modal usando templates
-   * @param {Object} pedido - Información del pedido
-   * @param {Array} detalles - Lista de detalles del pedido
-   * @param {Object} cliente - Información del cliente
-   * @param {HTMLElement} contenedor - Elemento donde se insertará el contenido
-   */
+  // Renderiza los detalles del pedido en el modal usando templates
   function renderizarDetallesPedido(pedido, detalles, cliente, contenedor) {
     console.log('Renderizando detalles:', { pedido, detalles, cliente }); // Debug
 
@@ -310,20 +282,13 @@ document.addEventListener("DOMContentLoaded", () => {
     contenedor.appendChild(clone);
   }
 
-  /**
-   * Cierra el modal de detalles
-   */
+  // Cierra el modal de detalles
   function cerrarModalDetalles() {
     const modal = document.getElementById('modalDetalles');
     modal.setAttribute('aria-hidden', 'true');
   }
 
-  // ========== FUNCIÓN DE IMPRESIÓN MEJORADA ==========
-
-  /**
-   * Genera e imprime un documento con los detalles del pedido
-   * @param {number} pedidoID - ID del pedido a imprimir
-   */
+  // Genera e imprime un documento con los detalles del pedido
   async function imprimirPedido(pedidoID) {
     try {
       // Obtener información completa del pedido
@@ -553,11 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ========== FUNCIONES DE UTILIDAD ==========
 
-  /**
-   * Formatea una fecha ISO a formato largo en español
-   * @param {string} fechaISO - Fecha en formato ISO
-   * @returns {string} Fecha formateada
-   */
+  // Formatea una fecha ISO a formato largo en español
   function formatearFechaLarga(fechaISO) {
     if (!fechaISO) return "Fecha no disponible";
     try {
@@ -572,11 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Formatea una cantidad como moneda en pesos colombianos
-   * @param {number} cantidad - Cantidad a formatear
-   * @returns {string} Cantidad formateada como moneda
-   */
+  // Formatea una cantidad como moneda en pesos colombianos
   function formatearMoneda(cantidad) {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -585,11 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }).format(cantidad || 0);
   }
 
-  /**
-   * Devuelve las clases CSS apropiadas para el badge de estado
-   * @param {string} estado - Estado del pedido
-   * @returns {string} Clases CSS para el badge
-   */
+  // Devuelve las clases CSS apropiadas para el badge de estado
   function obtenerClasesBadge(estado) {
     const estadoNormalizado = estado?.replace(/\s/g, '_') || 'PENDIENTE';
 
@@ -607,11 +560,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Traduce los estados del pedido al español
-   * @param {string} estado - Estado en inglés o mayúsculas
-   * @returns {string} Estado traducido al español
-   */
+  // Traduce los estados del pedido al español
   function traducirEstado(estado) {
     if (!estado) return "Desconocido";
 
@@ -627,11 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return mapaEstados[estadoNormalizado] || estado;
   }
 
-  /**
-   * Obtiene el nombre del cliente desde diferentes fuentes de datos
-   * @param {Object} pedido - Objeto del pedido
-   * @returns {string} Nombre del cliente
-   */
+  // Obtiene el nombre del cliente desde diferentes fuentes de datos
   function obtenerNombreCliente(pedido) {
     if (pedido.cliente && pedido.cliente.nombre) {
       return pedido.cliente.nombre;
@@ -645,10 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return 'Cliente no disponible';
   }
 
-  /**
-   * Aplica los filtros seleccionados a la lista de pedidos y mantiene el orden por fecha
-   * @returns {Array} Pedidos filtrados y ordenados por fecha descendente
-   */
+  // Aplica los filtros seleccionados a la lista de pedidos y mantiene el orden por fecha
   function aplicarFiltros() {
     const estado = filtroEstado.value || "Todos";
     const fecha = filtroFecha.value || "";
@@ -694,11 +636,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return pedidosFiltrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
   }
 
-  /**
-   * Escapa caracteres HTML para prevenir XSS
-   * @param {string} texto - Texto a escapar
-   * @returns {string} Texto escapado
-   */
+  // Escapa caracteres HTML para prevenir XSS
   function escaparHTML(texto) {
     if (typeof texto !== "string") return texto;
     const div = document.createElement('div');
@@ -706,11 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return div.innerHTML;
   }
 
-  // ========== FUNCIONES DE RENDERIZADO ==========
-
-  /**
-   * Renderiza la tabla de pedidos con paginación
-   */
+  // Renderiza la tabla de pedidos con paginación
   async function renderizarTabla() {
     const pedidosFiltrados = aplicarFiltros();
     const totalPedidos = pedidosFiltrados.length;
@@ -779,12 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarPaginacion(totalPaginas);
   }
 
-  /**
-   * Carga y actualiza la información del cliente en una fila
-   * @param {number} pedidoID - ID del pedido
-   * @param {number} clienteID - ID del cliente
-   * @param {HTMLElement} fila - Fila de la tabla a actualizar
-   */
+  // Carga y actualiza la información del cliente en una fila
   async function cargarYActualizarCliente(pedidoID, clienteID, fila) {
     try {
       const cliente = await obtenerCliente(clienteID);
@@ -806,10 +735,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Renderiza los controles de paginación
-   * @param {number} totalPaginas - Número total de páginas
-   */
+  // Renderiza los controles de paginación
   function renderizarPaginacion(totalPaginas) {
     if (!elementoPaginacion) return;
     elementoPaginacion.innerHTML = "";
@@ -872,7 +798,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ========== MANEJADORES DE EVENTOS ==========
+  // Manejadores de eventos
 
   cuerpoTabla.addEventListener("click", async (e) => {
     const boton = e.target.closest("button");
@@ -927,8 +853,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ========== INICIALIZACIÓN ==========
-
+  // Inicialización
   const modal = document.getElementById('modalDetalles');
   const botonCerrar1 = document.getElementById('botonCerrarModal');
   const botonCerrar2 = document.getElementById('botonCerrarModal2');

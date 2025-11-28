@@ -7,6 +7,7 @@
     --border-color: #d1bc97;
 }
 
+/* Estilos base */
 body {
     margin: 0;
     font-family: Inter, "Noto Sans", sans-serif;
@@ -20,6 +21,7 @@ body {
     background: white;
 }
 
+/* Sidebar */
 .sidebar {
     width: 100%;
     max-width: 260px;
@@ -43,6 +45,7 @@ body {
     letter-spacing: 2px;
 }
 
+/* Navegación */
 .nav-menu {
     margin-top: 2rem;
     display: flex;
@@ -72,6 +75,7 @@ body {
     font-weight: bold;
 }
 
+/* Cierre de sesión */
 .logout {
     margin-top: auto;
     margin-right: auto;
@@ -97,6 +101,7 @@ body {
     color: var(--primary-color);
 }
 
+/* Contenido */
 .main-content {
     flex: 1;
     padding: 40px;
@@ -112,6 +117,7 @@ body {
     color: var(--text-secondary);
 }
 
+/* Tabs */
 .tabs {
     display: flex;
     border-bottom: 1px solid var(--border-color);
@@ -133,6 +139,7 @@ body {
     font-weight: 600;
 }
 
+/* Grid */
 .grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -150,6 +157,7 @@ body {
     gap: 20px;
 }
 
+/* Recompensas */
 .recompensa {
     background: white;
     border: 1px solid var(--border-color);

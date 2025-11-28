@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resumenTotal = document.getElementById('resumen-total');
   const cancelarPedidoBtn = document.getElementById('cancelar-pedido-btn');
 
+  // Función para formatear el precio
   const formatCOP = (valor) => {
     try {
       return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Number(valor) || 0);
@@ -42,10 +43,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // Confirmar cancelación
     if (!confirm('¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.')) {
       return;
     }
 
+    // Cancelar pedido
     try {
       const response = await fetch(`/pedidos/${pedidoID}/cancelar`, {
         method: 'PATCH',
@@ -164,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       productosContainer.innerHTML = "<div class='text-center py-8 text-gray-500'>No hay productos en este pedido.</div>";
     }
 
-    // Resumen del pedido (estilo similar al carrito de dirección)
+    // Resumen del pedido
     resumenProductos.innerHTML = '';
     let subtotal = Number(pedido.subtotal) || 0;
     if (pedido.productos && pedido.productos.length) {

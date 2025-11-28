@@ -5,6 +5,7 @@
     --color-accent1: #d1bc97;
 }
 
+/* Estilos base */
 .page-title {
     font-size: 2rem;
     font-weight: bold;
@@ -40,7 +41,7 @@
     font-weight: 600;
 }
 
-/* Paginación del carrito */
+/* Paginación */
 .cart-pagination {
     display: flex;
     gap: 8px;

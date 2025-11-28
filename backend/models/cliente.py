@@ -11,6 +11,7 @@ from typing import Optional
     Es el eje central para las compras, carritos, wishlists y direcciones de envío.
 """
 
+# Modelo base de cliente
 class ClienteBase(SQLModel):
     nombre: str = Field()
     email: str = Field(unique=True)
@@ -31,6 +32,7 @@ class ClienteBase(SQLModel):
 
 
 
+# Modelo de cliente
 class Cliente(ClienteBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
@@ -45,6 +47,7 @@ class Cliente(ClienteBase, table=True):
 
 
 
+# Modelo de cliente para actualizar
 class ClienteUpdate(SQLModel):
     nombre: Optional[str] = None
     telefono: Optional[str] = None
@@ -52,6 +55,7 @@ class ClienteUpdate(SQLModel):
 
 
 
+# Modelo de cliente para eliminar
 class ClienteDelete(ClienteBase):
     pass
 

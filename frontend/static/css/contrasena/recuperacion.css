@@ -6,6 +6,7 @@
   --c-9c642d: #9c642d;
 }
 
+/* Botones */
 .key-btn {
   display: flex;
   height: 5rem;
@@ -28,6 +29,7 @@
   transform: scale(0.95);
 }
 
+/* Botones */
 #backspace,
 #submit-token {
   display: flex;

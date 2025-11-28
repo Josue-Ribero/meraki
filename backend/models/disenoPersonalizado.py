@@ -13,6 +13,7 @@ from typing import Optional
     asignado por el administrador.
 """
 
+# Modelo base de diseño personalizado
 class DisenoPersonalizadoBase(SQLModel):
     imagenURL: Optional[str] = Field(default=None)
     fecha: dt = Field(default_factory=dt.now)
@@ -29,6 +30,7 @@ class DisenoPersonalizadoBase(SQLModel):
 
 
 
+# Modelo de diseño personalizado
 class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
@@ -40,16 +42,19 @@ class DisenoPersonalizado(DisenoPersonalizadoBase, table=True):
 
 
 
+# Modelo de diseño personalizado para crear
 class DisenoPersonalizadoCreate(DisenoPersonalizadoBase):
     pass
 
 
 
+# Modelo de diseño personalizado para actualizar
 class DisenoPersonalizadoUpdate(DisenoPersonalizadoBase):
     pass
 
 
 
+# Modelo de diseño personalizado para eliminar
 class DisenoPersonalizadoDelete(DisenoPersonalizadoBase):
     pass
 

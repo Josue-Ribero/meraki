@@ -9,6 +9,7 @@ from typing import Optional
     Es la entidad base para el catálogo de productos.
 """
 
+# Modelo base de producto
 class ProductoBase(SQLModel):
     nombre: str = Field(index=True)
     descripcion: str = Field()
@@ -24,6 +25,7 @@ class ProductoBase(SQLModel):
 
 
 
+# Modelo de producto
 class Producto(ProductoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: Optional[int] = Field(default=None, foreign_key="administrador.id")
@@ -36,11 +38,13 @@ class Producto(ProductoBase, table=True):
 
 
 
+# Modelo de producto para crear
 class ProductoCreate(ProductoBase):
     pass
 
 
 
+# Modelo de producto para actualizar
 class ProductoUpdate(SQLModel):
     nombre: Optional[str] = None
     descripcion: Optional[str] = None
@@ -52,6 +56,7 @@ class ProductoUpdate(SQLModel):
 
 
 
+# Modelo de producto para eliminar
 class ProductoDelete(ProductoBase):
     pass
 

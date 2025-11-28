@@ -12,6 +12,7 @@ from ..utils.enums import EstadoPedido
     Es el registro central del proceso de venta.
 """
 
+# Modelo base de pedido
 class PedidoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoPedido = Field(default=EstadoPedido.PENDIENTE)
@@ -27,6 +28,7 @@ class PedidoBase(SQLModel):
 
 
 
+# Modelo de pedido
 class Pedido(PedidoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     administradorID: int | None = Field(default=None, foreign_key="administrador.id")
@@ -40,16 +42,19 @@ class Pedido(PedidoBase, table=True):
 
 
 
+# Modelo de pedido para crear
 class PedidoCreate(PedidoBase):
     pass
 
 
 
+# Modelo de pedido para actualizar
 class PedidoUpdate(PedidoBase):
     pass
 
 
 
+# Modelo de pedido para eliminar
 class PedidoDelete(PedidoBase):
     pass
 

@@ -9,6 +9,7 @@ from ..supabase.supabase import uploadarchivoBucket
     simplificando la interfaz de subida.
 """
 
+# Funcion para cargar archivos al bucket de Supabase
 async def cargarArchivo(archivo: UploadFile):
     # Subir a Supabase y retornar la URL pública
     url = await uploadarchivoBucket(archivo)

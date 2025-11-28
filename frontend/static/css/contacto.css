@@ -7,6 +7,7 @@
     --sombra: 0 4px 12px rgba(0, 0, 0, .08);
 }
 
+/* Estilos base */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,6 +26,7 @@ body {
     min-height: 100vh;
 }
 
+/* Sidebar */
 .sidebar {
     width: 80px;
     background: var(--blanco);
@@ -70,6 +72,7 @@ body {
     background: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAwfRFOpx_t1-W39jlOWpZ1-UZ6s-7XBj-k4EMTdvOY0LG4iqDMKZlSZn8JZePtXY1_p1Dlv6J80glF3mHz3JEZQQ_aHHBdZXZ23OIW4XDLGfhuIgVgGhGomvfUMdP0lI1dyjW06b0DxQ34sLbO-vszky2imha1FA3US8t5_cOss_97Gl6QzQUs1-FEnLBBGAcj8eWKscod5vbkfV4QTjTTtrGUCa0rkA8OBMzEtQVYGD_DSRYRuFYclxUuraA2Wx-QN2mjWaEwN65g') center/cover;
 }
 
+/* Contenido principal */
 .main {
     flex: 1;
     display: flex;
@@ -88,6 +91,7 @@ body {
     text-align: center;
 }
 
+/* Títulos */
 h1 {
     font-size: 2rem;
     font-weight: 700;
@@ -101,6 +105,7 @@ h2 {
     margin: 2rem 0 1rem;
 }
 
+/* Información */
 .info .item {
     display: flex;
     align-items: center;

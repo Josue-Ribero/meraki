@@ -1,3 +1,4 @@
+// Función para mostrar el formulario de login o registro
 function showTab(tabId) {
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
@@ -23,6 +24,7 @@ function showTab(tabId) {
   }
 }
 
+// Función para registrar un cliente
 document.getElementById('register-form').addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -43,6 +45,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     return;
   }
 
+  // Intentar registrar al cliente
   try {
     const response = await fetch('/clientes/registrar', {
       method: 'POST',
@@ -52,14 +55,17 @@ document.getElementById('register-form').addEventListener('submit', async (event
       body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}&telefono=${encodeURIComponent(telefono)}`,
     });
 
+    // Si la respuesta es 200, redirigir al usuario a la página principal
     if (response.ok) {
       window.location.href = '/';
     } else {
+      // Si la respuesta es 400, mostrar el error
       const data = await response.json();
       errorDiv.textContent = data.detail || 'Error al registrarse. Intente nuevamente.';
       errorDiv.classList.remove('hidden');
     }
   } catch (error) {
+    // Si hay un error de red, mostrar el error
     console.error('Error de red:', error);
     errorDiv.textContent = 'Error de conexión. Intente nuevamente.';
     errorDiv.classList.remove('hidden');

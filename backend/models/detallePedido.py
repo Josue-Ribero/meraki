@@ -10,6 +10,7 @@ from sqlalchemy import Column, ForeignKey
     en el momento exacto de la compra, protegiéndolo de cambios futuros de precio.
 """
 
+# Modelo base de detalle de pedido
 class DetallePedidoBase(SQLModel):
     cantidad: int = Field(default=0)
     precioUnidad: int = Field(default=0)
@@ -23,6 +24,7 @@ class DetallePedidoBase(SQLModel):
 
 
 
+# Modelo de detalle de pedido
 class DetallePedido(DetallePedidoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     pedidoID: int = Field(foreign_key="pedido.id")
@@ -34,23 +36,26 @@ class DetallePedido(DetallePedidoBase, table=True):
 
 
 
+# Modelo de detalle de pedido para leer
 class DetallePedidoRead(DetallePedidoBase):
     id: int
     pedidoID: int
     producto: "Producto | None" = None
     disenoPersonalizado: "DisenoPersonalizado | None" = None
 
-
+# Modelo de detalle de pedido para crear
 class DetallePedidoCreate(DetallePedidoBase):
     pass
 
 
 
+# Modelo de detalle de pedido para actualizar
 class DetallePedidoUpdate(DetallePedidoBase):
     pass
 
 
 
+# Modelo de detalle de pedido para eliminar
 class DetallePedidoDelete(DetallePedidoBase):
     pass
 

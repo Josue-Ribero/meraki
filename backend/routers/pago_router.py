@@ -42,6 +42,7 @@ def crearPago(
     puntosUsados = 0
     confirmado = False
 
+    # Si se usan puntos
     if usarPuntos:
         if cliente.puntos <= 0:
             raise HTTPException(400, "No tienes puntos disponibles")
@@ -117,7 +118,7 @@ def pago(pagoID: int, session: SessionDep, cliente=Depends(clienteActual)):
 
 
 
-# READ - Obtener pago por pedidoID (NUEVO ENDPOINT)
+# READ - Obtener pago por pedidoID
 @router.get("/pedido/{pedidoID}", response_model=Pago)
 def pagoPorPedidoID(pedidoID: int, session: SessionDep, _=Depends(adminActual)):
     """

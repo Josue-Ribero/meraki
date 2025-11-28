@@ -3,7 +3,7 @@ let carrito = [];
 // Paginación cliente-side
 let paginaActual = 1;
 const itemsPorPagina = 4;
-// Envío por defecto: si no se define en la plantilla será COP 8,900
+// Envío por defecto de 8,900 COP si el pedido no pasa de 30,000 COP
 const costoEnvio = (typeof window !== 'undefined' && window.envio != null) ? window.envio : 8900;
 
 // Funcion para formatear la moneda a COP

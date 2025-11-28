@@ -11,6 +11,7 @@ Es el encargado de gestionar los carritos de los clientes. Tiene una relacion co
 agregar, eliminar y actualizar los detalles del carrito.
 """
 
+# Modelo base de carrito
 class CarritoBase(SQLModel):
     fecha: dt = Field(default_factory=dt.now)
     estado: EstadoCarrito = Field(default=EstadoCarrito.ACTIVO)
@@ -18,6 +19,7 @@ class CarritoBase(SQLModel):
 
 
 
+# Modelo de carrito
 class Carrito(CarritoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
@@ -34,16 +36,19 @@ class Carrito(CarritoBase, table=True):
 
 
 
+# Modelo de carrito para crear
 class CarritoCreate(CarritoBase):
     pass
 
 
 
+# Modelo de carrito para actualizar
 class CarritoUpdate(CarritoBase):
     pass
 
 
 
+# Modelo de carrito para eliminar
 class CarritoDelete(CarritoBase):
     pass
 

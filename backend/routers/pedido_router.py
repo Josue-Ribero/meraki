@@ -112,8 +112,8 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
 
     for detalle in detallesDB:
         # Obtener información del producto o diseño
-        producto_info = None
-        diseno_info = None
+        productoInfo = None
+        disenoInfo = None
         nombreProducto = "Producto"
         imagenUrl = "https://via.placeholder.com/60"
         esPersonalizado = False
@@ -121,7 +121,7 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
         if detalle.productoID:
             producto = session.get(Producto, detalle.productoID)
             if producto:
-                producto_info = {
+                productoInfo = {
                     "nombre": producto.nombre,
                     "imagenURL": producto.imagenURL
                 }
@@ -130,7 +130,7 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
         elif detalle.disenoPersonalizadoID:
             diseno = session.get(DisenoPersonalizado, detalle.disenoPersonalizadoID)
             if diseno:
-                diseno_info = {
+                disenoInfo = {
                     "nombre": diseno.nombre,
                     "imagenURL": diseno.imagenURL
                 }
@@ -147,8 +147,8 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
 
         # Estructura detallada
         listaDetalles.append({
-            "producto": producto_info,
-            "disenoPersonalizado": diseno_info,
+            "producto": productoInfo,
+            "disenoPersonalizado": disenoInfo,
             "esPersonalizado": esPersonalizado,
             "cantidad": detalle.cantidad or 0,
             "precioUnidad": detalle.precioUnidad or 0,
@@ -222,8 +222,8 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
 
     for detalle in detallesDB:
         # Obtener información del producto o diseño
-        producto_info = None
-        diseno_info = None
+        productoInfo = None
+        disenoInfo = None
         nombreProducto = "Producto"
         imagenUrl = "https://via.placeholder.com/60"
         esPersonalizado = False
@@ -231,7 +231,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
         if detalle.productoID:
             producto = session.get(Producto, detalle.productoID)
             if producto:
-                producto_info = {
+                productoInfo = {
                     "nombre": producto.nombre,
                     "imagenURL": producto.imagenURL
                 }
@@ -240,7 +240,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
         elif detalle.disenoPersonalizadoID:
             diseno = session.get(DisenoPersonalizado, detalle.disenoPersonalizadoID)
             if diseno:
-                diseno_info = {
+                disenoInfo = {
                     "nombre": diseno.nombre,
                     "imagenURL": diseno.imagenURL
                 }
@@ -256,8 +256,8 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
         })
 
         listaDetalles.append({
-            "producto": producto_info,
-            "disenoPersonalizado": diseno_info,
+            "producto": productoInfo,
+            "disenoPersonalizado": disenoInfo,
             "esPersonalizado": esPersonalizado,
             "cantidad": detalle.cantidad or 0,
             "precioUnidad": detalle.precioUnidad or 0,

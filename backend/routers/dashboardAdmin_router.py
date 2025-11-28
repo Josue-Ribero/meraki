@@ -32,7 +32,7 @@ def paginaDashboard(request: Request, session: SessionDep):
         mesActual = ahora.month
         anioActual = ahora.year
         
-        # Ventas del mes actual (CONSULTA OPTIMIZADA)
+        # Ventas del mes actual
         inicioMesActual = datetime(anioActual, mesActual, 1)
         if mesActual == 12:
             finMesActual = datetime(anioActual + 1, 1, 1)
@@ -47,11 +47,11 @@ def paginaDashboard(request: Request, session: SessionDep):
         )
         ventasMesActual = session.exec(queryVentasMes).first() or 0
 
-        # Clientes activos (CONSULTA OPTIMIZADA)
+        # Clientes activos
         queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
         totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
-        # Pedidos recientes (últimos 7 días) - CONSULTA OPTIMIZADA
+        # Pedidos recientes (últimos 7 días)
         fechaLimite = datetime.now() - timedelta(days=7)
         queryPedidosRecientes = select(func.count(Pedido.id)).where(
             Pedido.fecha >= fechaLimite, 
@@ -59,7 +59,7 @@ def paginaDashboard(request: Request, session: SessionDep):
         )
         totalPedidosRecientes = session.exec(queryPedidosRecientes).first() or 0
 
-        # Producto más vendido (CONSULTA OPTIMIZADA CON JOIN)
+        # Producto más vendido
         queryProductoMasVendido = select(
             Producto.nombre
         ).select_from(
@@ -81,7 +81,7 @@ def paginaDashboard(request: Request, session: SessionDep):
                 return "0"
             return "{:,.0f}".format(valor).replace(",", ".")
 
-        # Pedidos recientes para la tabla (últimos 4 pedidos) - CONSULTA OPTIMIZADA
+        # Pedidos recientes para la tabla (últimos 4 pedidos)
         queryPedidosTabla = select(
             Pedido.id,
             Pedido.fecha,
@@ -106,7 +106,7 @@ def paginaDashboard(request: Request, session: SessionDep):
                 "total": formatearPrecio(total)
             })
 
-        # Productos más vendidos para la tabla (CONSULTA OPTIMIZADA CON JOIN)
+        # Productos más vendidos para la tabla 
         queryProductosMasVendidos = select(
             Producto.nombre,
             func.sum(DetallePedido.cantidad).label('totalVendido'),
@@ -163,10 +163,10 @@ def paginaDashboard(request: Request, session: SessionDep):
 
 
 
-# Función para obtener las ventas mensuales (OPTIMIZADA)
+# Función para obtener las ventas mensuales
 def obtenerDatosVentasMensuales(session: SessionDep):
     """
-    Función auxiliar optimizada para obtener datos de ventas mensuales para la gráfica
+    Función auxiliar para obtener datos de ventas mensuales para la gráfica
     """
     try:
         # Obtener pedidos de los últimos 6 meses con consulta optimizada
@@ -197,7 +197,7 @@ def obtenerDatosVentasMensuales(session: SessionDep):
 
 
 
-# READ - Obtener resumen de ventas mensuales (OPTIMIZADO)
+# READ - Obtener resumen de ventas mensuales
 @router.get("/api/dashboard/resumen")
 def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
     """
@@ -210,7 +210,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         mesActual = ahora.month
         anioActual = ahora.year
         
-        # Ventas del mes actual (CONSULTA OPTIMIZADA)
+        # Ventas del mes actual
         inicioMesActual = datetime(anioActual, mesActual, 1)
         if mesActual == 12:
             finMesActual = datetime(anioActual + 1, 1, 1)
@@ -224,7 +224,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         )
         ventasMesActual = session.exec(queryVentasActual).first() or 0
 
-        # Ventas del mes anterior para calcular el porcentaje (CONSULTA OPTIMIZADA)
+        # Ventas del mes anterior para calcular el porcentaje
         if mesActual == 1:
             mesAnterior = 12
             anioAnterior = anioActual - 1
@@ -251,7 +251,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         else:
             porcentajeCambio = 100 if ventasMesActual > 0 else 0
 
-        # Total de pedidos recientes (últimos 7 días) - CONSULTA OPTIMIZADA
+        # Total de pedidos recientes (últimos 7 días)
         fechaLimite = datetime.now() - timedelta(days=7)
         queryPedidosRecientes = select(func.count(Pedido.id)).where(
             Pedido.fecha >= fechaLimite, 
@@ -259,11 +259,11 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         )
         pedidosRecientesCount = session.exec(queryPedidosRecientes).first() or 0
 
-        # Clientes activos (CONSULTA OPTIMIZADA)
+        # Clientes activos
         queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
         totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
-        # Producto más vendido (CONSULTA OPTIMIZADA CON JOIN)
+        # Producto más vendido
         queryProductoMasVendido = select(
             Producto.nombre
         ).select_from(
@@ -302,7 +302,7 @@ def obtenerVentasMensuales(session: SessionDep, _=Depends(adminActual)):
 
 
 
-# READ - Obtener los pedidos recientes (OPTIMIZADO)
+# READ - Obtener los pedidos recientes
 @router.get("/api/dashboard/pedidos-recientes")
 def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
     """
@@ -343,7 +343,7 @@ def obtenerPedidosRecientes(session: SessionDep, _=Depends(adminActual)):
 
 
 
-# READ - Obtener la lista de productos más vendidos (OPTIMIZADO)
+# READ - Obtener la lista de productos más vendidos
 @router.get("/api/dashboard/productos-mas-vendidos")
 def obtenerProductosMasVendidos(session: SessionDep, _=Depends(adminActual)):
     """

@@ -9,6 +9,7 @@ from typing import Optional
     Permite gestionar múltiples direcciones y marcar una como predeterminada.
 """
 
+# Modelo base de direccion de envio
 class DireccionEnvioBase(SQLModel):
     nombre: str = Field()
     calle: str = Field()
@@ -22,6 +23,7 @@ class DireccionEnvioBase(SQLModel):
 
 
 
+# Modelo de direccion de envio
 class DireccionEnvio(DireccionEnvioBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
@@ -30,16 +32,19 @@ class DireccionEnvio(DireccionEnvioBase, table=True):
 
 
 
+# Modelo de direccion de envio para crear
 class DireccionEnvioCreate(DireccionEnvioBase):
     pass
 
 
 
+# Modelo de direccion de envio para actualizar
 class DireccionEnvioUpdate(DireccionEnvioBase):
     pass
 
 
 
+# Modelo de direccion de envio para eliminar
 class DireccionEnvioDelete(DireccionEnvioBase):
     pass
 

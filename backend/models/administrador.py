@@ -10,6 +10,7 @@ from typing import Optional
     Asi mismo, tiene su propio panel para revisar las estadisticas del emprendimiento.
 """
 
+# Modelo base de administrador
 class AdministradorBase(SQLModel):
     nombre: str = Field()
     email: str = Field(unique=True)
@@ -40,6 +41,7 @@ class AdministradorBase(SQLModel):
 
 
 
+# Modelo de administrador
 class Administrador(AdministradorBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     categorias: list["Categoria"] = Relationship(back_populates="administrador")
@@ -48,11 +50,14 @@ class Administrador(AdministradorBase, table=True):
     productos: list["Producto"] = Relationship(back_populates="administrador")
     pedidos: list["Pedido"] = Relationship(back_populates="administrador")
     pagos: list["Pago"] = Relationship(back_populates="administrador")
+    
 
 
-
+# Modelo de administrador para actualizar
 class AdministradorUpdate(SQLModel):
     nombre: Optional[str] = None
+
+
 
 # Importaciones diferidas
 from .categoria import Categoria

@@ -6,12 +6,14 @@
     --color-accent: #d1bc97;
 }
 
+/* Estilos base */
 body {
     font-family: Inter, "Noto Sans", sans-serif;
     color: var(--color-text-primary);
     background-color: var(--color-secondary);
 }
 
+/* Titulos */
 h1,
 h2,
 h3 {
@@ -19,10 +21,12 @@ h3 {
     font-weight: 700;
 }
 
+/* Iconos */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* Grid */
 .pixel-grid {
     display: block;
     width: 100%;
@@ -32,6 +36,7 @@ h3 {
     image-rendering: pixelated;
 }
 
+/* Sidebar */
 .sidebar {
     width: 100%;
     max-width: 260px;

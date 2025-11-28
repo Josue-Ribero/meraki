@@ -1,5 +1,3 @@
-// categoriaAdmin.js - CON SOPORTE PARA CATEGORÍAS DESACTIVADAS Y PAGINACIÓN
-
 // Inicialización cuando el DOM está completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ Script categoriaAdmin.js cargado");
@@ -39,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Todos los elementos del DOM encontrados");
 
-  /* ---------- Cargar categorías ---------- */
+  // Cargar categorías
   async function cargarCategorias() {
     console.log("🔄 Cargando categorías...");
 
@@ -81,10 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ---------- Aplicar filtros ---------- */
+  // Aplicar filtros
   function aplicarFiltros() {
     const texto = inputBuscar ? inputBuscar.value.trim().toLowerCase() : '';
 
+    // Filtrar categorías
     categoriasFiltradas = categorias.filter(cat => {
       const coincideTexto = !texto ||
         cat.nombre.toLowerCase().includes(texto) ||
@@ -103,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarCategorias();
   }
 
-  /* ---------- Renderizar categorías ---------- */
+  // Renderizar categorías
   function renderizarCategorias() {
     console.log("🎨 Renderizando categorías");
 
@@ -116,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       paginaActual = totalPaginas;
     }
 
+    // Calcular índices para la paginación
     const inicio = (paginaActual - 1) * categoriasPorPagina;
     const fin = inicio + categoriasPorPagina;
     const categoriasPagina = categoriasFiltradas.slice(inicio, fin);
@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </button>
       `;
 
+      // Botones de acción
       tr.innerHTML = `
         <td class="py-4 px-6 font-medium text-[#363636]">
           ${escapeHtml(categoria.nombre)}${estadoBadge}
@@ -197,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarPaginacion(totalPaginas);
   }
 
-  /* ---------- Funciones de paginación ---------- */
+  // Funciones de paginación
   function actualizarInfoPaginacion(mostrando, total) {
     if (infoPaginacionEl) {
       infoPaginacionEl.textContent = `Mostrando ${mostrando} de ${total} categorías`;
@@ -207,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderizarPaginacion(totalPaginas) {
     paginacionEl.innerHTML = '';
 
-    // Botón Anterior - CORREGIDO: usando paginaActual en lugar de currentPage
+    // Botón Anterior
     const btnAnterior = document.createElement("button");
     btnAnterior.textContent = "Anterior";
     btnAnterior.className = "page-btn";
@@ -245,8 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     paginacionEl.appendChild(btnSiguiente);
   }
-
-  /* ---------- Funciones de API ---------- */
 
   // CREATE - Crear una nueva categoría
   async function crearCategoria(nombre, descripcion) {
@@ -347,8 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return await response.json();
   }
 
-  /* ---------- UI Functions ---------- */
-
   // Abrir modal para agregar nueva categoría
   function openModalForAdd() {
     console.log("➕ Abriendo modal para agregar");
@@ -416,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return div.innerHTML;
   }
 
-  /* ---------- Event Listeners ---------- */
+  // Event Listeners
 
   // Envío del formulario para crear/editar categorías
   form.addEventListener("submit", async (e) => {

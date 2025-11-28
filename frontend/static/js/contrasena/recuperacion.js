@@ -1,8 +1,10 @@
+// Funcion para el envio del token
 const emailForm = document.getElementById('email-form');
 const emailSection = document.getElementById('email-section');
 const tokenSection = document.getElementById('token-section');
 let currentToken = '';
 
+// Evento para el envio del token
 emailForm.addEventListener('submit', e => {
   e.preventDefault();
   const email = document.getElementById('email').value;
@@ -18,6 +20,7 @@ emailForm.addEventListener('submit', e => {
   }
 });
 
+// Funcion para el envio del token
 const tokenInput = document.getElementById('token-input');
 const tokenDisplaySpans = document.querySelectorAll('#token-display span');
 const keypadButtons = document.querySelectorAll('.key-btn');
@@ -29,11 +32,13 @@ const resendTokenButton = document.getElementById('resend-token-button');
 let timeLeft = 300;
 let timerInterval;
 
+// Funcion para actualizar el display del token
 function updateTokenDisplay() {
   const token = tokenInput.value;
   tokenDisplaySpans.forEach((span, index) => { span.textContent = token[index] || ''; });
 }
 
+// Evento para el envio del token
 keypadButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     if (tokenInput.value.length < 6) {
@@ -43,11 +48,13 @@ keypadButtons.forEach(btn => {
   });
 });
 
+// Evento para el envio del token
 backspace.addEventListener('click', () => {
   tokenInput.value = tokenInput.value.slice(0, -1);
   updateTokenDisplay();
 });
 
+// Evento para el envio del token
 submitToken.addEventListener('click', () => {
   if (tokenInput.value.length === 6) {
     if (tokenInput.value === currentToken) {
@@ -66,12 +73,14 @@ tokenInput.addEventListener('input', () => {
   updateTokenDisplay();
 });
 
+// Funcion para formatear el tiempo
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
+// Funcion para iniciar el timer
 function startTimer() {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
@@ -87,6 +96,7 @@ function startTimer() {
   }, 1000);
 }
 
+// Evento para el envio del token
 resendTokenButton.addEventListener('click', () => {
   if (currentToken) {
     currentToken = Math.floor(100000 + Math.random() * 900000).toString();

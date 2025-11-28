@@ -11,6 +11,7 @@ import secrets
     Genera tokens temporales seguros con fecha de expiración para validar la identidad del usuario.
 """
 
+# Modelo base de solicitud de recuperacion
 class SolicitudRecuperacionBase(SQLModel):
     token: str = Field(unique=True, index=True)
     expiracion: dt = Field()
@@ -27,6 +28,7 @@ class SolicitudRecuperacionBase(SQLModel):
 
 
 
+# Modelo de solicitud de recuperacion
 class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     clienteID: int = Field(sa_column=Column(ForeignKey("cliente.id", ondelete="CASCADE")))
@@ -34,16 +36,19 @@ class SolicitudRecuperacion(SolicitudRecuperacionBase, table=True):
 
 
 
+# Modelo de solicitud de recuperacion para crear
 class SolicitudRecuperacionCreate(SolicitudRecuperacionBase):
     pass
 
 
 
+# Modelo de solicitud de recuperacion para actualizar
 class SolicitudRecuperacionUpdate(SolicitudRecuperacionBase):
     pass
 
 
 
+# Modelo de solicitud de recuperacion para eliminar
 class SolicitudRecuperacionDelete(SolicitudRecuperacionBase):
     pass
 

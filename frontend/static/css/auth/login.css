@@ -6,6 +6,7 @@
   --c5: #9c642d;
 }
 
+/* Estilos base */
 body {
   font-family: "Work Sans", "Noto Sans", sans-serif;
   background-color: var(--c3);

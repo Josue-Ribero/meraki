@@ -11,12 +11,15 @@ from sqlalchemy import Column, ForeignKey
     y el subtotal calculado (precio * cantidad).
 """
 
+# Modelo base de detalle de carrito
+# Modelo base de detalle de carrito
 class DetalleCarritoBase(SQLModel):
     cantidad: int = Field(default=0)
     fechaAgregado: dt = Field(default_factory=dt.now)
 
 
 
+# Modelo de detalle de carrito
 class DetalleCarrito(DetalleCarritoBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     carritoID: int = Field(sa_column=Column(ForeignKey("carrito.id", ondelete="CASCADE")))
@@ -37,6 +40,7 @@ class DetalleCarrito(DetalleCarritoBase, table=True):
 
 
 
+# Modelo de detalle de carrito para crear
 class DetalleCarritoCreate(SQLModel):
     productoID: Optional[int] = None
     disenoID: Optional[int] = None
@@ -44,11 +48,13 @@ class DetalleCarritoCreate(SQLModel):
 
 
 
+# Modelo de detalle de carrito para actualizar
 class DetalleCarritoUpdate(DetalleCarritoBase):
     pass
 
 
 
+# Modelo de detalle de carrito para eliminar
 class DetalleCarritoDelete(DetalleCarritoBase):
     pass
 

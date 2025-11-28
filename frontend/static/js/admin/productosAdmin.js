@@ -1,4 +1,3 @@
-// productosAdmin.js - CON FILTROS, PAGINACIÓN Y TODAS LAS FUNCIONES
 (() => {
   // Configuración base de la API
   const API_BASE = "";
@@ -91,17 +90,13 @@
   // Cargar productos desde la API
   async function cargarProductos() {
     try {
-      console.log("🔄 Cargando productos desde la API...");
       // Cargar TODOS los productos (incluyendo inactivos)
       productos = await apiCall('/productos/todas');
-      console.log("✅ Productos cargados:", productos);
       aplicarFiltrosYRenderizar();
     } catch (error) {
-      console.error('Error cargando productos:', error);
       // Si no existe el endpoint /todas, intentar con el normal
       try {
         productos = await apiCall('/productos/');
-        console.log("✅ Productos cargados (solo activos):", productos);
         aplicarFiltrosYRenderizar();
       } catch (error2) {
         showError('Error al cargar los productos: ' + error2.message);
@@ -112,11 +107,8 @@
   // Cargar categorías desde la API
   async function cargarCategorias() {
     try {
-      console.log("🔄 Cargando categorías desde la API...");
       categorias = await apiCall('/categorias/todas');
-      console.log("✅ Categorías cargadas:", categorias);
     } catch (error) {
-      console.error('Error cargando categorías:', error);
       categorias = [
         { id: 1, nombre: "Collares" },
         { id: 2, nombre: "Aretes" },
@@ -356,7 +348,7 @@
   async function guardarProducto() {
     const id = inputId.value ? parseInt(inputId.value) : null;
 
-    // Validar categoría - BUSCAR POR NOMBRE EXACTO
+    // Validar categoría - Buscar por nombre exacto
     const nombreCategoria = inputCategory.value.trim();
     if (!nombreCategoria) {
       alert("La categoría es obligatoria.");
@@ -366,7 +358,6 @@
 
     try {
       // Buscar categoría por nombre exacto en la API
-      console.log("🔍 Buscando categoría:", nombreCategoria);
       const todasCategorias = await apiCall('/categorias/todas');
       const categoriaEncontrada = todasCategorias.find(cat =>
         cat.nombre.toLowerCase().trim() === nombreCategoria.toLowerCase().trim()
@@ -379,7 +370,6 @@
       }
 
       const categoriaID = categoriaEncontrada.id;
-      console.log("✅ Categoría encontrada:", categoriaEncontrada);
 
       const formData = new FormData();
 
@@ -578,7 +568,6 @@
 
   // Inicializar la aplicación
   async function init() {
-    console.log("🚀 Inicializando gestión de productos...");
     inicializarPaginacion();
     await cargarCategorias();
     await cargarProductos();
