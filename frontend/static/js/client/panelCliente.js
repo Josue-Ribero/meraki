@@ -10,6 +10,11 @@ if (slider) {
   });
 }
 
+// Variables para paginación
+let pedidosActuales = [];
+let paginaActual = 1;
+const pedidosPorPagina = 10;
+
 // Mostrar info del cliente y pedidos
 document.addEventListener('DOMContentLoaded', async () => {
   let clienteInfo = null;
@@ -48,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('phone').value = clienteInfo.telefono || '';
       }
     }
-  } catch {}
+  } catch { }
 
   if (passwordForm) {
     passwordForm.addEventListener('submit', async (e) => {
@@ -91,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         if (resp.ok) {
-            showPassMsg('¡Cambio exitoso! Tu contraseña ha sido actualizada.', 'success');
+          showPassMsg('¡Cambio exitoso! Tu contraseña ha sido actualizada.', 'success');
           document.getElementById('new_password').value = '';
           document.getElementById('confirm_password').value = '';
         } else {
@@ -99,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           try {
             const errorData = await resp.json();
             if (errorData?.detail) errorMsg = errorData.detail;
-          } catch {}
+          } catch { }
           showPassMsg(errorMsg, 'error');
         }
       } catch (error) {
@@ -121,28 +126,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Fetch pedidos
-  try {
-    const respPedidos = await fetch('/pedidos/mis-pedidos', { credentials: 'include' });
-    if (respPedidos.ok) {
-      const pedidos = await respPedidos.json();
-      const tbody = document.getElementById('tabla-pedidos');
-      tbody.innerHTML = '';
-      if (pedidos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5">No tienes pedidos aún.</td></tr>';
-      } else {
-        pedidos.forEach(p => {
-          tbody.innerHTML += `<tr>
-            <td>${p.id}</td>
-            <td>${p.fecha ? new Date(p.fecha).toLocaleDateString('es-CO') : '-'}</td>
-            <td>${p.estado || '-'}</td>
-            <td>$${p.total || '-'}</td>
-            <td><a href="/proceso-pago-detalles?id=${p.id}" class="btn-ver">Ver</a></td>
-          </tr>`;
-        });
-      }
-    }
-  } catch {}
+  // Cargar pedidos
+  await cargarPedidos();
 
   // Tabs
   const tabPedidos = document.getElementById('tab-pedidos');
@@ -173,3 +158,187 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+// Función para cargar pedidos
+async function cargarPedidos() {
+  try {
+    const respPedidos = await fetch('/pedidos/mis-pedidos', { credentials: 'include' });
+    if (respPedidos.ok) {
+      pedidosActuales = await respPedidos.json();
+      actualizarEstadisticasPedidos();
+      mostrarPaginaPedidos(1);
+    }
+  } catch (error) {
+    console.error('Error cargando pedidos:', error);
+    document.getElementById('tabla-pedidos').innerHTML =
+      '<tr><td colspan="5">Error al cargar los pedidos. Intenta nuevamente.</td></tr>';
+  }
+}
+
+// Función para actualizar estadísticas
+function actualizarEstadisticasPedidos() {
+  const statsElement = document.getElementById('pedidos-stats');
+  if (!statsElement) return;
+
+  const totalPedidos = pedidosActuales.length;
+  const pedidosPagados = pedidosActuales.filter(p => p.estado === 'PAGADO').length;
+  const pedidosPendientes = pedidosActuales.filter(p => p.estado === 'PENDIENTE').length;
+
+  statsElement.innerHTML = `
+    <strong>Total:</strong> ${totalPedidos} pedidos | 
+    <strong>Pagados:</strong> ${pedidosPagados} | 
+    <strong>Pendientes:</strong> ${pedidosPendientes}
+  `;
+}
+
+// Función para mostrar una página específica de pedidos
+function mostrarPaginaPedidos(pagina) {
+  paginaActual = pagina;
+  const inicio = (pagina - 1) * pedidosPorPagina;
+  const fin = inicio + pedidosPorPagina;
+  const pedidosPagina = pedidosActuales.slice(inicio, fin);
+
+  const tbody = document.getElementById('tabla-pedidos');
+  const sinPedidosElement = document.getElementById('sin-pedidos');
+
+  // Mostrar/ocultar mensaje de sin pedidos
+  if (pedidosActuales.length === 0) {
+    tbody.innerHTML = '';
+    sinPedidosElement.classList.remove('hidden');
+    document.getElementById('paginacion-pedidos').innerHTML = '';
+    return;
+  } else {
+    sinPedidosElement.classList.add('hidden');
+  }
+
+  // Generar tabla de pedidos
+  tbody.innerHTML = '';
+  pedidosPagina.forEach(pedido => {
+    const fila = document.createElement('tr');
+
+    // Determinar clase de estado
+    let claseEstado = 'estado-pedido ';
+    switch (pedido.estado) {
+      case 'PAGADO':
+        claseEstado += 'estado-pagado';
+        break;
+      case 'PENDIENTE':
+        claseEstado += 'estado-pendiente';
+        break;
+      case 'ENVIADO':
+        claseEstado += 'estado-enviado';
+        break;
+      case 'COMPLETADO':
+        claseEstado += 'estado-completado';
+        break;
+      case 'CANCELADO':
+        claseEstado += 'estado-cancelado';
+        break;
+      default:
+        claseEstado += 'estado-pendiente';
+    }
+
+    fila.innerHTML = `
+      <td><strong>#${pedido.id}</strong></td>
+      <td>${pedido.fecha ? new Date(pedido.fecha).toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }) : '-'}</td>
+      <td><span class="${claseEstado}">${pedido.estado || 'PENDIENTE'}</span></td>
+      <td><strong>$${(pedido.total || 0).toLocaleString('es-CO')}</strong></td>
+      <td>
+        <a href="/proceso-pago-detalles?id=${pedido.id}" class="btn-ver">
+          <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+          Ver
+        </a>
+      </td>
+    `;
+    tbody.appendChild(fila);
+  });
+
+  // Generar paginación
+  generarPaginacion();
+}
+
+// Función para generar controles de paginación
+function generarPaginacion() {
+  const totalPaginas = Math.ceil(pedidosActuales.length / pedidosPorPagina);
+  const paginacionElement = document.getElementById('paginacion-pedidos');
+
+  if (totalPaginas <= 1) {
+    paginacionElement.innerHTML = '';
+    return;
+  }
+
+  let paginacionHTML = '';
+
+  // Botón anterior
+  if (paginaActual > 1) {
+    paginacionHTML += `<button class="btn-pagina" onclick="mostrarPaginaPedidos(${paginaActual - 1})">
+      <span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+    </button>`;
+  } else {
+    paginacionHTML += `<button class="btn-pagina" disabled>
+      <span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+    </button>`;
+  }
+
+  // Números de página
+  const paginasMostrar = [];
+  const paginasALado = 2;
+
+  for (let i = 1; i <= totalPaginas; i++) {
+    if (
+      i === 1 ||
+      i === totalPaginas ||
+      (i >= paginaActual - paginasALado && i <= paginaActual + paginasALado)
+    ) {
+      paginasMostrar.push(i);
+    } else if (
+      i === paginaActual - paginasALado - 1 ||
+      i === paginaActual + paginasALado + 1
+    ) {
+      paginasMostrar.push('...');
+    }
+  }
+
+  // Eliminar duplicados de "..." consecutivos
+  const paginasUnicas = [];
+  for (let i = 0; i < paginasMostrar.length; i++) {
+    if (paginasMostrar[i] !== paginasMostrar[i - 1]) {
+      paginasUnicas.push(paginasMostrar[i]);
+    }
+  }
+
+  paginasUnicas.forEach(pagina => {
+    if (pagina === '...') {
+      paginacionHTML += `<span class="btn-pagina" style="border: none; background: transparent;">...</span>`;
+    } else {
+      const esActiva = pagina === paginaActual;
+      paginacionHTML += `<button class="btn-pagina ${esActiva ? 'active' : ''}" 
+        onclick="mostrarPaginaPedidos(${pagina})">${pagina}</button>`;
+    }
+  });
+
+  // Botón siguiente
+  if (paginaActual < totalPaginas) {
+    paginacionHTML += `<button class="btn-pagina" onclick="mostrarPaginaPedidos(${paginaActual + 1})">
+      <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+    </button>`;
+  } else {
+    paginacionHTML += `<button class="btn-pagina" disabled>
+      <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+    </button>`;
+  }
+
+  // Información de paginación
+  const inicio = (paginaActual - 1) * pedidosPorPagina + 1;
+  const fin = Math.min(paginaActual * pedidosPorPagina, pedidosActuales.length);
+
+  paginacionHTML += `<div class="info-paginacion">
+    Mostrando ${inicio}-${fin} de ${pedidosActuales.length} pedidos
+  </div>`;
+
+  paginacionElement.innerHTML = paginacionHTML;
+}

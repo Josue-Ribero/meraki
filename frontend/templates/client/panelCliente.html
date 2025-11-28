@@ -55,9 +55,15 @@
         </div>
 
         <section id="pedidos-cliente" style="display:none;">
-          <h2>Mis Pedidos</h2>
+          <div class="pedidos-header">
+            <h2>Mis Pedidos</h2>
+            <div class="pedidos-stats" id="pedidos-stats">
+              <!-- Se llenará dinámicamente -->
+            </div>
+          </div>
+
           <div class="tabla-container">
-            <table>
+            <table class="tabla-pedidos">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -71,6 +77,19 @@
                 <!-- Los pedidos se cargarán aquí -->
               </tbody>
             </table>
+
+            <!-- Mensaje cuando no hay pedidos -->
+            <div id="sin-pedidos" class="sin-pedidos hidden">
+              <span class="material-symbols-outlined">inventory_2</span>
+              <h3>No tienes pedidos aún</h3>
+              <p>Cuando realices tu primer pedido, aparecerá aquí.</p>
+              <a href="/" class="btn-comprar">Ir a comprar</a>
+            </div>
+          </div>
+
+          <!-- Paginación -->
+          <div class="paginacion" id="paginacion-pedidos">
+            <!-- Se generará dinámicamente -->
           </div>
         </section>
 
@@ -94,7 +113,7 @@
               <div class="foto-perfil-row">
                 <div class="foto-perfil-img">
                   <img alt="Foto de perfil"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN7ImhR4wWK2yKqevJ-Ucdw9hbW_jdPSbulkJqd_HckYXGsNravP9ZLXCI1JUd046srsIUob9gDeBElpzkUsaTWn-lWo7JniJQ9LZL6wtSuaXdicRDld8MOko3BKFp92X5cUGr5SfOUEbzKFxxAorM6osv8_v4bn-qaPjWtzVcIs63si3DytRi0BCytFanhzqonGesF-Mc5CAqxBauUmeKf3vv2VeIkTtjsZMKEAeropbZINdgZB1tcT6D3Ts7ETT44TovHWwhg5P4" />
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8oKalR7slXkH_RA5UyOGLcDD9ydA95a5_zR1jiWAxbWRG7gPU76iNxW6TKaO3mKl2QGpt4Oy1z4KIfTDXcy9A3k4fJLD1F3jK8woSn3cBNyIfsju1e6ExKyzp03vUGk3-c2-o8JS12vJauWUWEruoyzPM4vu0XYdPSUEdnmti1wabEMXUqRBFwFz228WOUytzegxXx66MyVlaKTxmHcsBJA6nnTu3qNWDT4rTLcGn4JMZJDV4hy8EUN9N71l4D7preXJbCx_OUSJj" />
                   <button class="foto-perfil-edit">
                     <span class="material-icons-outlined" style="font-size: 18px;">edit</span>
                   </button>
@@ -125,11 +144,11 @@
                 <button type="submit" class="btn-guardar">Guardar Cambios</button>
               </div>
             </form>
-          </div> <!-- .panel-info-wrapper -->
-        </section> <!-- #info-personal -->
-      </div> <!-- .container -->
-    </main> <!-- .main-content -->
-  </div> <!-- .layout -->
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
   <script src="../../static/js/client/panelCliente.js"></script>
 </body>
