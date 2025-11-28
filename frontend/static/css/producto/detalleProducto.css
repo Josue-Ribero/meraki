@@ -6,6 +6,8 @@
   --color-background: #fdfbf3;
   --color-surface: #ffffff;
   --color-accent: #9c642d;
+  --color-error: #dc2626;
+  --color-error-bg: #fef2f2;
 }
 
 /* Estilos base */
@@ -206,6 +208,25 @@ body {
   margin: 0 0 1rem 0;
 }
 
+/* Mensaje de sin stock */
+.mensaje-sin-stock {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.mensaje-sin-stock .material-symbols-outlined {
+  font-size: 1.125rem;
+}
+
 /* Acciones */
 .acciones {
   display: flex;
@@ -250,6 +271,19 @@ body {
   color: white;
 }
 
+/* Botones deshabilitados */
+.btn-menos:disabled,
+.btn-mas:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-menos:disabled:hover,
+.btn-mas:disabled:hover {
+  background-color: transparent;
+  color: var(--color-text-light);
+}
+
 /* Boton de agregar al carrito */
 .btn-carrito {
   flex: 0 0 700px;
@@ -264,9 +298,39 @@ body {
   border-radius: 0.375rem;
   cursor: pointer;
   transition: transform 0.3s, background-color 0.3s;
+  position: relative;
 }
 
 .btn-carrito:hover {
   background-color: var(--color-accent);
   transform: scale(1.05);
+}
+
+/* Botón deshabilitado */
+.btn-carrito:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-carrito:disabled:hover {
+  background-color: #9ca3af;
+  transform: none;
+}
+
+/* Textos del botón */
+.btn-carrito .btn-texto-sin-stock {
+  display: none;
+}
+
+.btn-carrito:disabled .btn-texto {
+  display: none;
+}
+
+.btn-carrito:disabled .btn-texto-sin-stock {
+  display: inline;
+}
+
+.hidden {
+  display: none !important;
 }

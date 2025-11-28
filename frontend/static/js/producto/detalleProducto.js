@@ -2,21 +2,68 @@
 const cantidadEl = document.getElementById('cantidad');
 const btnDisminuir = document.getElementById('btn-disminuir');
 const btnAumentar = document.getElementById('btn-aumentar');
+const btnCarrito = document.getElementById('agregar-carrito');
+const mensajeSinStock = document.getElementById('mensaje-sin-stock');
 let cantidadValor = 1;
+let stockDisponible = 0;
+let productoActualID = null;
+
+// Función para actualizar el estado de los controles según el stock
+function actualizarEstadoStock() {
+  const tieneStock = stockDisponible > 0;
+
+  // Habilitar/deshabilitar botones según el stock
+  btnAumentar.disabled = !tieneStock || cantidadValor >= stockDisponible;
+  btnDisminuir.disabled = !tieneStock || cantidadValor <= 1;
+  btnCarrito.disabled = !tieneStock;
+
+  // Mostrar/ocultar mensaje de sin stock
+  if (!tieneStock) {
+    mensajeSinStock.classList.remove('hidden');
+  } else {
+    mensajeSinStock.classList.add('hidden');
+  }
+
+  // Actualizar el texto del stock
+  const stockElement = document.getElementById('stock');
+  if (stockElement) {
+    if (!tieneStock) {
+      stockElement.textContent = 'Sin stock';
+      stockElement.style.color = 'var(--color-error)';
+    } else {
+      stockElement.textContent = stockDisponible;
+      stockElement.style.color = '';
+    }
+  }
+}
 
 // Controles de cantidad de producto
 btnDisminuir.addEventListener('click', () => {
-  if (cantidadValor > 1) { cantidadValor--; cantidadEl.textContent = cantidadValor; }
+  if (cantidadValor > 1 && stockDisponible > 0) {
+    cantidadValor--;
+    cantidadEl.textContent = cantidadValor;
+    actualizarEstadoStock();
+  }
 });
+
 btnAumentar.addEventListener('click', () => {
-  const stockDisponible = parseInt(document.getElementById('stock').textContent) || 1;
-  if (cantidadValor < stockDisponible) { cantidadValor++; cantidadEl.textContent = cantidadValor; }
+  if (cantidadValor < stockDisponible && stockDisponible > 0) {
+    cantidadValor++;
+    cantidadEl.textContent = cantidadValor;
+    actualizarEstadoStock();
+  }
 });
 
 // Añadir al carrito
-let productoActualID = null;
-document.getElementById('agregar-carrito').addEventListener('click', async (e) => {
+btnCarrito.addEventListener('click', async (e) => {
   e.preventDefault();
+
+  // Verificar que haya stock antes de proceder
+  if (stockDisponible <= 0) {
+    alert('No hay stock disponible de este producto');
+    return;
+  }
+
   const cantidad = cantidadValor || 1;
   const formulario = new FormData();
   formulario.append('productoID', productoActualID);
@@ -51,7 +98,6 @@ document.getElementById('agregar-carrito').addEventListener('click', async (e) =
   }
 });
 
-
 // Cargar el producto
 async function cargarProducto() {
   const parametrosUrl = new URLSearchParams(window.location.search);
@@ -78,7 +124,9 @@ async function cargarProducto() {
     document.getElementById('titulo').textContent = producto.nombre || '';
     document.getElementById('descripcion').textContent = producto.descripcion || '';
     document.getElementById('sku').textContent = producto.sku || '';
-    document.getElementById('stock').textContent = (producto.stock != null) ? producto.stock : '';
+
+    // Guardar stock disponible
+    stockDisponible = producto.stock != null ? producto.stock : 0;
     document.getElementById('es-personalizable').textContent = producto.esPersonalizado ? 'Sí' : 'No';
 
     // Precio (formato COP)
@@ -158,10 +206,18 @@ async function cargarProducto() {
     // Guardar el ID actual para enviar al carrito
     productoActualID = producto.id || productoID;
 
+    // Actualizar el estado de los controles según el stock
+    actualizarEstadoStock();
+
   } catch (error) {
     console.error('Error cargando producto:', error);
     document.getElementById('titulo').textContent = 'Producto no disponible';
     document.getElementById('descripcion').textContent = 'No fue posible cargar la información del producto.';
+
+    // Deshabilitar controles en caso de error
+    btnAumentar.disabled = true;
+    btnDisminuir.disabled = true;
+    btnCarrito.disabled = true;
   }
 }
 
