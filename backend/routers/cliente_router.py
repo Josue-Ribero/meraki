@@ -60,6 +60,24 @@ def registrarClienteForm(
 
 
 
+# READ - Panel de cliente
+@router.get("/mi-perfil")
+def miPerfil(session: SessionDep, cliente=Depends(clienteActual)):
+    """
+    Devuelve los datos del cliente actual autenticado.
+    """
+    return {
+        "id": cliente.id,
+        "nombre": cliente.nombre,
+        "email": cliente.email,
+        "telefono": cliente.telefono,
+        "puntos": cliente.puntos,
+        "activo": cliente.activo,
+        "fechaCreacion": cliente.fechaCreacion.isoformat() if cliente.fechaCreacion else None
+        }
+
+
+
 # READ - Obtener lista de clientes
 @router.get("/")
 def listaClientes(session: SessionDep, _=Depends(adminActual)):

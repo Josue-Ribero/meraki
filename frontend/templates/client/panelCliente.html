@@ -50,102 +50,86 @@
         </header>
 
         <div class="tabs">
-          <button>Pedidos</button>
-          <button class="active-tab">Mis Puntos</button>
-          <button>Información Personal</button>
+          <button id="tab-info-personal" class="active-tab">Información Personal</button>
+          <button id="tab-pedidos">Pedidos</button>
         </div>
 
-        <section id="puntos-fidelidad">
-          <div class="grid">
-            <div class="recompensas">
-              <h2>Recompensas Disponibles</h2>
-              <div class="recompensas-grid">
-                <div class="recompensa">
-                  <span class="material-symbols-outlined">local_offer</span>
-                  <p class="titulo">S/ 10 de Descuento</p>
-                  <p class="puntos">100 Puntos</p>
-                  <button>Canjear</button>
-                </div>
-                <div class="recompensa">
-                  <span class="material-symbols-outlined">local_shipping</span>
-                  <p class="titulo">Envío Gratis</p>
-                  <p class="puntos">150 Puntos</p>
-                  <button>Canjear</button>
-                </div>
-                <div class="recompensa">
-                  <span class="material-symbols-outlined">card_giftcard</span>
-                  <p class="titulo">Aretes de Regalo</p>
-                  <p class="puntos">200 Puntos</p>
-                  <button>Canjear</button>
-                </div>
-                <div class="recompensa disabled">
-                  <span class="material-symbols-outlined">percent</span>
-                  <p class="titulo">15% Descuento</p>
-                  <p class="puntos">250 Puntos</p>
-                  <button disabled>Insuficientes</button>
-                </div>
-              </div>
-
-              <h2>Historial de Puntos</h2>
-              <div class="tabla-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Descripción</th>
-                      <th>Puntos</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>25 de julio de 2024</td>
-                      <td>Acumulación por compra #MK123456</td>
-                      <td class="positivo">+125</td>
-                    </tr>
-                    <tr>
-                      <td>20 de julio de 2024</td>
-                      <td>Canje: S/ 10 de Descuento</td>
-                      <td class="negativo">-100</td>
-                    </tr>
-                    <tr>
-                      <td>15 de julio de 2024</td>
-                      <td>Acumulación por compra #MK654321</td>
-                      <td class="positivo">+85</td>
-                    </tr>
-                    <tr>
-                      <td>5 de julio de 2024</td>
-                      <td>Acumulación por compra #MK987654</td>
-                      <td class="positivo">+210</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="sidebar-right">
-              <div class="balance">
-                <span class="material-symbols-outlined">workspace_premium</span>
-                <p>Balance Actual</p>
-                <h3>220</h3>
-                <p class="sub">Puntos Meraki</p>
-              </div>
-
-              <div class="aplicar-puntos">
-                <h3>Aplicar Puntos en tu Próxima Compra</h3>
-                <p>Usa tus puntos para obtener un descuento. Cada 10 puntos equivalen a S/ 1.00.</p>
-                <input type="range" min="0" max="220" value="100" id="sliderPuntos" />
-                <div class="resultado">
-                  <span id="valorPuntos">100</span> Puntos =
-                  <span id="valorDescuento">S/ 10.00</span> de Descuento
-                </div>
-                <button id="btnAplicar">Aplicar Descuento</button>
-              </div>
-            </div>
+        <section id="pedidos-cliente" style="display:none;">
+          <h2>Mis Pedidos</h2>
+          <div class="tabla-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Total</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-pedidos">
+                <!-- Los pedidos se cargarán aquí -->
+              </tbody>
+            </table>
           </div>
         </section>
-      </div>
-    </main>
-  </div>
+
+        <section id="info-personal" class="space-y-8">
+          <div class="panel-info-wrapper">
+            <div class="card-info-personal">
+              <h3 class="card-title">Información Personal</h3>
+              <div class="info-grid">
+                <div>
+                  <label for="name" class="info-label">Nombre Completo</label>
+                  <input id="name" type="text" class="info-input" value="" />
+                </div>
+                <div>
+                  <label for="phone" class="info-label">Teléfono</label>
+                  <input id="phone" type="tel" class="info-input" value="" />
+                </div>
+              </div>
+            </div>
+            <div class="card-foto-perfil">
+              <h3 class="card-title">Foto de Perfil</h3>
+              <div class="foto-perfil-row">
+                <div class="foto-perfil-img">
+                  <img alt="Foto de perfil"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN7ImhR4wWK2yKqevJ-Ucdw9hbW_jdPSbulkJqd_HckYXGsNravP9ZLXCI1JUd046srsIUob9gDeBElpzkUsaTWn-lWo7JniJQ9LZL6wtSuaXdicRDld8MOko3BKFp92X5cUGr5SfOUEbzKFxxAorM6osv8_v4bn-qaPjWtzVcIs63si3DytRi0BCytFanhzqonGesF-Mc5CAqxBauUmeKf3vv2VeIkTtjsZMKEAeropbZINdgZB1tcT6D3Ts7ETT44TovHWwhg5P4" />
+                  <button class="foto-perfil-edit">
+                    <span class="material-icons-outlined" style="font-size: 18px;">edit</span>
+                  </button>
+                  <input class="foto-perfil-upload" id="profile-picture-upload" type="file" />
+                </div>
+                <div class="foto-perfil-desc">
+                  <p class="info-desc">JPG, PNG o GIF. Máximo 5MB.</p>
+                  <p class="info-desc">Sube una nueva foto para actualizar el perfil.</p>
+                </div>
+              </div>
+            </div>
+            <form class="card-cambiar-contrasena" id="form-cambiar-contrasena">
+              <h3 class="card-title">Cambiar Contraseña</h3>
+              <p class="info-desc">Para mayor seguridad, elige una contraseña fuerte que no uses en otros sitios.</p>
+              <div id="msg-contrasena" class="msg-panel" aria-live="polite"></div>
+              <div class="contrasena-grid">
+                <div>
+                  <label for="new_password" class="info-label">Nueva Contraseña</label>
+                  <input id="new_password" type="password" class="info-input" placeholder="••••••••" />
+                </div>
+                <div>
+                  <label for="confirm_password" class="info-label">Confirmar Nueva Contraseña</label>
+                  <input id="confirm_password" type="password" class="info-input" placeholder="••••••••" />
+                </div>
+              </div>
+              <div class="panel-btn-row">
+                <button type="button" class="btn-cancelar" id="btn-cancelar-pass">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+              </div>
+            </form>
+          </div> <!-- .panel-info-wrapper -->
+        </section> <!-- #info-personal -->
+      </div> <!-- .container -->
+    </main> <!-- .main-content -->
+  </div> <!-- .layout -->
 
   <script src="../../static/js/client/panelCliente.js"></script>
 </body>
