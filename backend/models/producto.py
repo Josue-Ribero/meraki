@@ -18,6 +18,7 @@ class ProductoBase(SQLModel):
     imagenURL: Optional[str] = Field(default=None)
     sku: str = Field(unique=True)
     activo: bool = Field(default=True)
+    esPersonalizado: bool = Field(default=False)
 
     # Metodos producto
     def actualizarStock(self, cantidad: int):

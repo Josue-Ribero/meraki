@@ -22,3 +22,7 @@ __pycache__/
 # Archivos y dependencias
 entorno/
 .env/
+
+# Docker
+Dockerfile
+.dockerignore
