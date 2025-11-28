@@ -22,12 +22,7 @@ def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
     """
     
     # Obtener pedidos con información de cliente y pago en una sola query
-    query = (
-        select(Pedido, Cliente, Pago)
-        .join(Cliente, Pedido.clienteID == Cliente.id)
-        .outerjoin(Pago, Pedido.id == Pago.pedidoID)
-        .where(Pedido.clienteID == cliente.id)
-    )
+    query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID).where(Pedido.clienteID == cliente.id)
     
     resultados = session.exec(query).all()
     
@@ -54,11 +49,7 @@ def listaPedidos(session: SessionDep, _=Depends(adminActual)):
     """
     
     # Consulta optimizada con joins
-    query = (
-        select(Pedido, Cliente, Pago)
-        .join(Cliente, Pedido.clienteID == Cliente.id)
-        .outerjoin(Pago, Pedido.id == Pago.pedidoID)
-    )
+    query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID)
     
     resultados = session.exec(query).all()
     
@@ -82,12 +73,7 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
     """
     
     # Consulta principal optimizada
-    query = (
-        select(Pedido, Cliente, Pago)
-        .join(Cliente, Pedido.clienteID == Cliente.id)
-        .outerjoin(Pago, Pedido.id == Pago.pedidoID)
-        .where(Pedido.id == pedidoID)
-    )
+    query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID).where(Pedido.id == pedidoID)
     
     resultado = session.exec(query).first()
     
@@ -99,10 +85,7 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
     pedidoDB.pago = pago
 
     # Cargar detalles del pedido con información de productos y diseños
-    queryDetalles = (
-        select(DetallePedido)
-        .where(DetallePedido.pedidoID == pedidoID)
-    )
+    queryDetalles = select(DetallePedido).where(DetallePedido.pedidoID == pedidoID)
     
     detallesDB = session.exec(queryDetalles).all()
 
@@ -192,12 +175,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
     """
     
     # Consulta optimizada con seguridad de pertenencia
-    query = (
-        select(Pedido, Cliente, Pago)
-        .join(Cliente, Pedido.clienteID == Cliente.id)
-        .outerjoin(Pago, Pedido.id == Pago.pedidoID)
-        .where(Pedido.id == pedidoID, Pedido.clienteID == cliente.id)
-    )
+    query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID).where(Pedido.id == pedidoID, Pedido.clienteID == cliente.id)
     
     resultado = session.exec(query).first()
 
@@ -209,10 +187,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
     pedidoDB.pago = pago
 
     # Cargar detalles optimizados
-    queryDetalles = (
-        select(DetallePedido)
-        .where(DetallePedido.pedidoID == pedidoID)
-    )
+    queryDetalles = select(DetallePedido).where(DetallePedido.pedidoID == pedidoID)
     
     detallesDB = session.exec(queryDetalles).all()
 
@@ -304,10 +279,7 @@ def cancelarPedidoCliente(
     """
     
     # Consulta directa con verificación de pertenencia
-    pedidoDB = session.exec(
-        select(Pedido)
-        .where(Pedido.id == pedidoID, Pedido.clienteID == cliente.id)
-    ).first()
+    pedidoDB = session.exec(select(Pedido).where(Pedido.id == pedidoID, Pedido.clienteID == cliente.id)).first()
     
     if not pedidoDB:
         raise HTTPException(404, "No se encontró el pedido a cancelar")
@@ -322,7 +294,7 @@ def cancelarPedidoCliente(
     session.add(pedidoDB)
     session.commit()
     
-    return pedidoDB
+    return {"mensaje": "Pedido cancelado exitosamente", "pedido": pedidoDB}
 
 
 
@@ -350,7 +322,7 @@ def actualizarEstado(
     
     return pedidoDB
 
-    
+
 
 # UPDATE - Confirmar pedido (optimizado)
 @router.patch("/{pedidoID}/confirmar")
@@ -364,12 +336,7 @@ def confirmarPedido(
     """
     
     # Cargar pedido y pago en una sola consulta
-    query = (
-        select(Pedido, Pago, Cliente)
-        .join(Pago, Pedido.id == Pago.pedidoID)
-        .join(Cliente, Pedido.clienteID == Cliente.id)
-        .where(Pedido.id == pedidoID)
-    )
+    query = (select(Pedido, Pago, Cliente).join(Pago, Pedido.id == Pago.pedidoID).join(Cliente, Pedido.clienteID == Cliente.id).where(Pedido.id == pedidoID))
     
     resultado = session.exec(query).first()
     

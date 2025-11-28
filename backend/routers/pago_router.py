@@ -42,28 +42,31 @@ def crearPago(
     puntosUsados = 0
     confirmado = False
 
-    # Si se usan puntos
-    if usarPuntos:
+    # Si el método seleccionado es PUNTOS o se indicó usarPuntos, exigir saldo suficiente
+    if usarPuntos or metodo == MetodoPago.PUNTOS:
         if cliente.puntos <= 0:
             raise HTTPException(400, "No tienes puntos disponibles")
+        # Validar saldo suficiente para cubrir el total del pedido
+        if cliente.puntos < pedido.total:
+            raise HTTPException(400, "No tienes puntos suficientes para este pedido")
 
-        puntosUsados = min(cliente.puntos, pedido.total)
+        puntosUsados = pedido.total
         cliente.puntos -= puntosUsados
         pedido.pagadoConPuntos = True
         pedido.puntosUsados = puntosUsados
 
-        if puntosUsados > 0:
-            transaccionRedimidos = TransaccionPuntos(
-                clienteID=cliente.id,
-                pedidoID=pedido.id,
-                tipo=TipoTransaccion.REDIMIDOS,
-                cantidad=puntosUsados
-            )
-            session.add(transaccionRedimidos)
+        # Registrar transacción de puntos redimidos
+        transaccionRedimidos = TransaccionPuntos(
+            clienteID=cliente.id,
+            pedidoID=pedido.id,
+            tipo=TipoTransaccion.REDIMIDOS,
+            cantidad=puntosUsados
+        )
+        session.add(transaccionRedimidos)
 
-        if puntosUsados >= pedido.total:
-            confirmado = True
-            pedido.estado = EstadoPedido.PAGADO
+        # Pago completamente cubierto por puntos
+        confirmado = True
+        pedido.estado = EstadoPedido.PAGADO
     else:
         # No puntos: estado PENDIENTE, confirmado False
         pedido.estado = EstadoPedido.PENDIENTE

@@ -19,10 +19,10 @@
         <label for="metodo" class="block font-semibold mb-2">Método de Pago</label>
         <select id="metodo" name="metodo" class="w-full border rounded px-3 py-2">
           <option value="NEQUI">Nequi</option>
-          <option value="TRANSFERENCIA">Transferencia</option>
+          <option value="TRANSFERENCIA" disabled>Transferencia (por implementar)</option>
           <option value="DAVIPLATA" disabled>Daviplata (por implementar)</option>
           <option value="EFECTIVO" disabled>Efectivo (por implementar)</option>
-          <option value="PUNTOS" disabled>Puntos (por implementar)</option>
+          <option value="PUNTOS">Puntos</option>
         </select>
         <div id="transferencia-form" class="mt-6 hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <h3 class="font-semibold mb-2 text-yellow-800">Transferencia Bancaria</h3>
@@ -60,6 +60,44 @@
             e.preventDefault();
             const metodo = metodoSelect.value;
             const fechaPago = document.getElementById('fechaPago').value;
+            // Si es PUNTOS, usar saldo de puntos: enviar a /pagos/crear con usarPuntos=true
+            if (metodo === 'PUNTOS') {
+              (async () => {
+                // Obtener el pedidoID de la URL
+                const params = new URLSearchParams(window.location.search);
+                const pedidoID = params.get('id') || params.get('pedidoId');
+                if (!pedidoID) {
+                  alert('No se encontró el pedido.');
+                  return;
+                }
+                try {
+                  const fd = new FormData();
+                  fd.append('pedidoID', pedidoID);
+                  fd.append('metodo', 'PUNTOS');
+                  fd.append('usarPuntos', 'true');
+                  fd.append('fechaPago', new Date().toISOString());
+
+                  console.debug('procesoPago: enviando pago con puntos', { pedidoID });
+                  const resp = await fetch('/pagos/crear', { method: 'POST', body: fd });
+                  if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Error al procesar el pago con puntos');
+                  }
+                  // Mostrar mensaje de éxito
+                  const exito = document.createElement('div');
+                  exito.className = 'mt-4 p-4 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold';
+                  exito.textContent = '¡Pago con puntos confirmado!';
+                  form.appendChild(exito);
+                  setTimeout(() => { window.location.href = '/'; }, 1000);
+                } catch (err) {
+                  const errDiv = document.createElement('div');
+                  errDiv.className = 'mt-4 p-3 bg-red-100 border border-red-300 rounded text-red-800 text-center font-semibold';
+                  errDiv.textContent = err.message || 'Error al procesar pago con puntos';
+                  form.appendChild(errDiv);
+                }
+              })();
+              return;
+            }
             // Si es Nequi, mostrar formulario de transferencia y referencia
             if (metodo === 'NEQUI') {
               let nequiForm = document.getElementById('nequi-form');
@@ -105,8 +143,16 @@
                       throw new Error(error.detail || 'Error al procesar el pago');
                     }
                     nequiForm.innerHTML += `<div class='mt-4 p-3 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold'>¡Pago Nequi confirmado!</div>`;
-                    this.disabled = true;
-                    this.classList.add('opacity-60', 'cursor-not-allowed');
+                    console.debug('procesoPago: pago NEQUI confirmado, pedidoID=', pedidoID, 'referencia=', ref);
+                    // Reemplazar el botón de confirmar transferencia por un enlace a la tienda (UI)
+                    const btn = this;
+                    const storeLink = document.createElement('a');
+                    storeLink.href = '/';
+                    storeLink.className = btn.className;
+                    storeLink.textContent = 'Volver a la tienda';
+                    btn.replaceWith(storeLink);
+                    // Redirigir automáticamente a la tienda tras 1s para confirmar el flujo
+                    setTimeout(() => { window.location.href = '/'; }, 1000);
                   } catch (err) {
                     nequiForm.innerHTML += `<div class='mt-4 p-3 bg-red-100 border border-red-300 rounded text-red-800 text-center font-semibold'>${err.message}</div>`;
                   }
@@ -128,8 +174,16 @@
             msg.className = 'mt-4 p-4 bg-green-100 border border-green-300 rounded text-green-800 text-center font-semibold';
             msg.textContent = '¡Pago confirmado exitosamente!';
             form.appendChild(msg);
-            confirmarBtn.disabled = true;
-            confirmarBtn.classList.add('opacity-60', 'cursor-not-allowed');
+            console.debug('procesoPago: pago confirmado (flujo general)');
+            // Reemplazar el botón de confirmar por un enlace a la tienda para evitar reenvíos (UI)
+            const originalBtn = confirmarBtn;
+            const tiendaLink = document.createElement('a');
+            tiendaLink.href = '/';
+            tiendaLink.className = originalBtn.className;
+            tiendaLink.textContent = 'Volver a la tienda';
+            originalBtn.replaceWith(tiendaLink);
+            // Redirigir automáticamente a la tienda tras 1s para confirmar visualmente
+            setTimeout(() => { window.location.href = '/'; }, 1000);
           });
         });
       </script>

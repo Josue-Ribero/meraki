@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resumenEnvio = document.getElementById('resumen-envio');
   const resumenTotal = document.getElementById('resumen-total');
   const cancelarPedidoBtn = document.getElementById('cancelar-pedido-btn');
+  const continuarPagoBtn = document.getElementById('continuar-pago-btn');
 
   // Función para formatear el precio
   const formatCOP = (valor) => {
@@ -143,10 +144,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Si el pedido ya está cancelado, deshabilitar el botón
-    if (pedido.estado === 'CANCELADO' && cancelarPedidoBtn) {
+    if (pedido.estado === 'CANCELADO' && cancelarPedidoBtn || pedido.estado === 'PAGADO' && cancelarPedidoBtn) {
       cancelarPedidoBtn.disabled = true;
       cancelarPedidoBtn.classList.add('opacity-50', 'cursor-not-allowed');
       cancelarPedidoBtn.textContent = 'Pedido cancelado';
+    }
+
+    // Ajustar comportamiento del botón "Continuar al pago" según el estado del pedido
+    if (continuarPagoBtn) {
+      const estadoRaw = pedido.estado ? String(pedido.estado) : '';
+      const estado = estadoRaw.trim().toLowerCase();
+      // Log para depuración: muestra el estado tal cual viene y la forma normalizada
+      console.debug('procesoPagoDetalles: pedido.estado raw / normalized ->', { estadoRaw, estado, pedidoId: pedido.id });
+
+      // Comprobaciones robustas contra variantes del estado (mayúsculas, espacios, diferentes palabras)
+      if (estado.includes('pendient')) {
+        continuarPagoBtn.textContent = 'Volver a la tienda';
+        // Ruta de la tienda principal (ajustable si prefieres otra)
+        continuarPagoBtn.setAttribute('href', '/');
+      } else if (estado.includes('proces') || estado.includes('en proceso')) {
+        continuarPagoBtn.textContent = 'Ver mis pedidos';
+        continuarPagoBtn.setAttribute('href', '/personal');
+      } else if (estado.includes('proces') || estado.includes('cancelado') || estado.includes('pagado')) {
+        continuarPagoBtn.textContent = 'Ver mis pedidos';
+        continuarPagoBtn.setAttribute('href', '/personal');
+      } else {
+        // Enlace por defecto al proceso de pago con el id del pedido
+        continuarPagoBtn.setAttribute('href', `/proceso-pago?id=${pedido.id}`);
+      }
+    } else {
+      console.debug('procesoPagoDetalles: continuarPagoBtn no encontrado en el DOM');
     }
 
     // Productos (lista principal)
