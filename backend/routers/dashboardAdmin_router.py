@@ -5,6 +5,7 @@ from sqlmodel import select, func, join
 from datetime import datetime, timedelta
 from ..auth.auth import adminActual
 from ..models.pedido import Pedido, EstadoPedido
+from ..models.pago import Pago, MetodoPago
 from ..models.detallePedido import DetallePedido
 from ..models.producto import Producto
 from ..models.cliente import Cliente
@@ -43,12 +44,13 @@ def paginaDashboard(request: Request, session: SessionDep):
         queryVentasMes = select(func.sum(Pedido.total)).where(
             Pedido.fecha >= inicioMesActual,
             Pedido.fecha < finMesActual,
-            Pedido.estado == EstadoPedido.PAGADO
+            Pedido.estado == EstadoPedido.PAGADO,
+            Pedido.pagadoConPuntos == False
         )
         ventasMesActual = session.exec(queryVentasMes).first() or 0
 
         # Clientes activos
-        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
+        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == False)
         totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
         # Pedidos recientes (últimos 7 días)
@@ -175,7 +177,8 @@ def obtenerDatosVentasMensuales(session: SessionDep):
         # Consulta optimizada que trae solo los datos necesarios
         query = select(Pedido).where(
             Pedido.fecha >= fechaInicio, 
-            Pedido.estado == EstadoPedido.PAGADO
+            Pedido.estado == EstadoPedido.PAGADO,
+            Pedido.pagadoConPuntos == False
         )
         pedidos = session.exec(query).all()
 
@@ -217,10 +220,11 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         else:
             finMesActual = datetime(anioActual, mesActual + 1, 1)
         
-        queryVentasActual = select(func.sum(Pedido.total)).where(
+        queryVentasActual = select(func.sum(Pedido.total)).join(Pago).where(
             Pedido.fecha >= inicioMesActual, 
             Pedido.fecha < finMesActual, 
-            Pedido.estado == EstadoPedido.PAGADO
+            Pedido.estado == EstadoPedido.PAGADO,
+            Pago.metodoPago != MetodoPago.PUNTOS
         )
         ventasMesActual = session.exec(queryVentasActual).first() or 0
 
@@ -241,7 +245,8 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         queryVentasAnterior = select(func.sum(Pedido.total)).where(
             Pedido.fecha >= inicioMesAnterior, 
             Pedido.fecha < finMesAnterior, 
-            Pedido.estado != EstadoPedido.CANCELADO
+            Pedido.estado != EstadoPedido.CANCELADO,
+            Pedido.pagadoConPuntos == False
         )
         ventasMesAnterior = session.exec(queryVentasAnterior).first() or 0
 
@@ -260,7 +265,7 @@ def obtenerResumenDashboard(session: SessionDep, _=Depends(adminActual)):
         pedidosRecientesCount = session.exec(queryPedidosRecientes).first() or 0
 
         # Clientes activos
-        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
+        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == False)
         totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
         # Producto más vendido
