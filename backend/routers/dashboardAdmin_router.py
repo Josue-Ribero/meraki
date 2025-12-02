@@ -50,7 +50,7 @@ def paginaDashboard(request: Request, session: SessionDep):
         ventasMesActual = session.exec(queryVentasMes).first() or 0
 
         # Clientes activos
-        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == False)
+        queryClientesActivos = select(func.count(Cliente.id)).where(Cliente.activo == True)
         totalClientesActivos = session.exec(queryClientesActivos).first() or 0
 
         # Pedidos recientes (últimos 7 días)

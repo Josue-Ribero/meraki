@@ -60,6 +60,7 @@
             e.preventDefault();
             const metodo = metodoSelect.value;
             const fechaPago = document.getElementById('fechaPago').value;
+
             // Si es PUNTOS, usar saldo de puntos: enviar a /pagos/crear con usarPuntos=true
             if (metodo === 'PUNTOS') {
               (async () => {
@@ -187,20 +188,8 @@
           });
         });
       </script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const metodoSelect = document.getElementById('metodo');
-          const transferenciaForm = document.getElementById('transferencia-form');
-          metodoSelect.addEventListener('change', function () {
-            if (this.value === 'TRANSFERENCIA') {
-              transferenciaForm.classList.remove('hidden');
-            } else {
-              transferenciaForm.classList.add('hidden');
-            }
-          });
-        });
-      </script>
     </form>
+
     <aside class="summary-box bg-white p-6 md:p-7 rounded-lg shadow-md border border-gray-200 w-full">
       <h2 class="section-title mb-6 text-xl font-bold">Resumen del Pago</h2>
       <div class="space-y-4 mb-6">
@@ -221,22 +210,135 @@
       <div class="mt-6">
         <h3 class="font-semibold text-sm text-gray-700 mb-2">Productos</h3>
         <div id="resumen-productos" class="space-y-4">
-          <div class="text-center py-6 text-gray-400 animate-pulse" id="resumen-loading">Cargando productos...</div>
+          <div class="text-center py-6 text-gray-400 animate-pulse" id="resumen-loading">
+            Cargando productos...
+          </div>
         </div>
       </div>
     </aside>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const fechaInput = document.getElementById('fechaPago');
       if (fechaInput && !fechaInput.value) {
         const ahora = new Date();
-        const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        const opciones = {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        };
         fechaInput.value = ahora.toLocaleDateString('es-CO', opciones).replace(',', '');
       }
     });
   </script>
-  <script src="../../static/js/pago/procesoPago.js"></script>
+
+  <!-- Script para cargar los productos del pedido -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Obtener el ID del pedido desde query string
+      const params = new URLSearchParams(window.location.search);
+      const pedidoID = params.get('id') || params.get('pedidoId');
+
+      if (!pedidoID) {
+        console.error('No se encontró el ID del pedido en la URL.');
+        return;
+      }
+
+      // Función para formatear el precio
+      const formatCOP = (valor) => {
+        try {
+          return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(Number(valor) || 0);
+        } catch {
+          return `$${Number(valor) || 0}`;
+        }
+      };
+
+      // Elementos del DOM para actualizar
+      const resumenProductos = document.getElementById('resumen-productos');
+      const resumenSubtotal = document.getElementById('resumen-subtotal');
+      const resumenEnvio = document.getElementById('resumen-envio');
+      const resumenTotal = document.getElementById('resumen-total');
+
+      try {
+        // Obtener detalles del pedido desde la API
+        const response = await fetch(`/pedidos/mi-pedido/${pedidoID}`, {
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          throw new Error('No se pudo obtener los detalles del pedido');
+        }
+
+        const pedido = await response.json();
+
+        // Actualizar totales
+        if (resumenSubtotal) {
+          resumenSubtotal.textContent = formatCOP(pedido.subtotal || 0);
+        }
+
+        if (resumenEnvio) {
+          const envio = Number(pedido.envio) || 0;
+          resumenEnvio.textContent = envio === 0 ? 'Gratis' : formatCOP(envio);
+        }
+
+        if (resumenTotal) {
+          resumenTotal.textContent = formatCOP(pedido.total || 0);
+        }
+
+        // Mostrar productos en el resumen
+        if (resumenProductos) {
+          if (pedido.productos && pedido.productos.length > 0) {
+            resumenProductos.innerHTML = '';
+
+            pedido.productos.forEach(prod => {
+              const productCard = document.createElement('div');
+              productCard.className = 'flex items-center gap-4 mb-4';
+
+              const lineTotal = (Number(prod.price) || 0);
+
+              productCard.innerHTML = `
+                <div class="bg-center bg-no-repeat bg-cover rounded-md w-16 h-16 flex items-center justify-center">
+                  <img src="${prod.img}" alt="Foto producto" class="w-14 h-14 object-cover rounded-md" />
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-sm">${prod.name}</p>
+                  <p class="text-xs text-gray-500">Cantidad: ${prod.qty}</p>
+                </div>
+                <p class="font-semibold text-sm">${formatCOP(lineTotal)}</p>
+              `;
+
+              resumenProductos.appendChild(productCard);
+            });
+          } else {
+            resumenProductos.innerHTML = `
+              <div class="text-center py-6 text-gray-500">
+                No hay productos en este pedido.
+              </div>
+            `;
+          }
+        }
+
+      } catch (error) {
+        console.error('Error al cargar los detalles del pedido:', error);
+
+        if (resumenProductos) {
+          resumenProductos.innerHTML = `
+            <div class="text-center py-6 text-red-500">
+              Error al cargar los productos: ${error.message}
+            </div>
+          `;
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>
