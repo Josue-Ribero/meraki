@@ -6,7 +6,7 @@
   [![FastAPI](https://img.shields.io/badge/FastAPI-v0.118.3-green.svg)](https://github.com/fastapi/fastapi)
   [![SQLModel](https://img.shields.io/badge/SQLModel-v0.0.24-green.svg)](https://github.com/fastapi/sqlmodel)
   [![Python](https://img.shields.io/badge/Python-3.13.5-yellow.svg)](https://www.python.org/)
-  [![SQLite](https://img.shields.io/badge/SQLite-v3.51.0-orange.svg)](https://github.com/sqlite/sqlite)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-v18.0-orange.svg)](https://github.com/postgres/postgres)
 
 </div>
 
@@ -29,7 +29,9 @@ Además, contamos con un detalle extra para ti: por cada compra **recibirás pun
 
 ## 🛠️ Tecnologías
 
-Este proyecto está construido con tecnologías modernas como **FastAPI**, **SQLModel** y **SQLite**, lo que garantiza una plataforma rápida, segura y escalable.
+Este proyecto está construido con tecnologías modernas: **FastAPI**, **SQLModel** y **PostgreSQL**, lo que garantiza una plataforma rápida, segura y escalable.
+
+Así mismo está desplegado en **Render** y **Azure** utilizando contenerización con **Docker** y almacenamiento de bases de datos de información plana e imágenes en **Render** y **Supabase** respectivamente.
 
 ## 🚀 ¿Cómo funciona?
 
@@ -42,6 +44,104 @@ Este proyecto está construido con tecnologías modernas como **FastAPI**, **SQL
     * Gestiona la creación y soporte de productos en la plataforma.
     * Revisa de métricas para aseguramiento de calidad.
     * Realiza descuentos por temporada.
+
+---
+
+## Cómo usar en tu local 🚀
+
+### Requisitos Previos
+* Tener **Git** instalado y configurado en tu sistema.
+* Tener **Python 3.13+** instalado.
+* Tener **PostgreSQL** instalado.
+* Tener **archivo .env** con tus credenciales de supabase y render:  
+    Esto debe tener tu .env:
+    ```bash
+    DB_URL=tu url de db en render
+    SUPABASE_URL=Tu url al bucket de supabase
+    SUPABASE_KEY=Tu llave de supabase
+    SUPABASE_BUCKET=imagenes (el nombre de tu bucket)
+    ```
+* Tener **Dockerfile** si deseas desplegar en Azure usando docker:  
+    Esto debe tener tu dockerfile:
+    ```bash
+    FROM python:3.13-slim
+
+    WORKDIR /app
+
+    COPY requirements.txt .
+
+    RUN pip install --no-cache-dir -r requirements.txt
+
+    COPY . .
+
+    EXPOSE 8000
+
+    CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ```
+
+### Pasos de Instalación y Ejecución
+
+1.  **Clonar el repositorio:**
+    Abre tu terminal y ejecuta el comando:
+    ```bash
+    git clone https://github.com/Josue-Ribero/meraki.git
+    ```
+
+2.  **Crear un entorno virtual:**
+    El comando que debes ejecutar es:
+    ```bash
+    python3 -m venv entorno # En Mac/Linux
+    python -m venv entorno # En Windows
+    ```
+
+3.  **Activar entorno virtual:**
+    El comando que debes ejecutar es:
+    ```bash
+    source entorno/bin/activate # En Mac/Linux
+    entorno\Scripts\activate # En Windows
+    ```
+
+4.  **Instalar dependencias** (El `requirements.txt` contiene `fastapi`, `uvicorn`, `sqlmodel`, etc.).
+    El comando que debes ejecutar es:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+
+5.  **Ejecutar el servidor**:
+    Este es el comando que debes usar para iniciar la aplicación:
+    ```bash
+    fastapi dev backend/main.py
+    ```
+
+6.  Accede a la página principal de la App: **http://127.0.0.1:8000/**
+
+7.  Registro en Docker y Azure.
+
+8.  Creación de un Azure Container Registry.
+
+9.  **Creación de imagen docker (Opcional):**
+    Los comandos que debes ejecutar son:
+    1. Creación de la imagen de docker.
+    ```bash
+    docker build -t meraki-backend:latest .
+    ```
+
+    2. Taggueo de la imagen en el Azure Container Registry.
+    ```bash
+    docker tag meraki-backend:latest merakiacr.azurecr.io/meraki-backend:latest
+    ```
+
+    3. Subida de la imagen al Azure Container Registry listo para desplegar.
+    ```bash
+    docker push merakiacr.azurecr.io/meraki-backend:latest
+    ```
+
+10.  Creación de una App Web Azure con la imagen de Docker.
+
+11.  Despliegue de la App Web.
+
+---
 
 ## 🤝 ¿Quieres contribuir?
 

@@ -24,14 +24,6 @@ class EstadoPedido(Enum):
 
 
 
-# Estado de los pagos
-class EstadoPago(Enum):
-    PENDIENTE = "PENDIENTE"
-    PAGADO = "PAGADO"
-    CANCELADO = "CANCELADO"
-
-
-
 # Metodos de pago
 class MetodoPago(Enum):
     TRANSFERENCIA = "TRANSFERENCIA"
