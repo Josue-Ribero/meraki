@@ -382,7 +382,6 @@ document.getElementById('addToCartBtn').addEventListener('click', async () => {
 
     const designData = await designResponse.json();
     const designId = designData.id;
-    console.log('Diseño creado con ID:', designId);
 
     // 2. Añadir el diseño al carrito
     const cartFormData = new FormData();
@@ -412,7 +411,6 @@ document.getElementById('addToCartBtn').addEventListener('click', async () => {
     }
 
     const cartResult = await cartResponse.json();
-    console.log('Resultado del carrito:', cartResult);
 
     // 3. Mostrar modal de éxito
     document.getElementById('modalMessage').textContent =

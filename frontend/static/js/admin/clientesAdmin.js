@@ -366,7 +366,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Funcion para inicializar la aplicacion
-  console.log("Inicializando aplicación de clientes...");
   inicializarPaginacion();
   cargarClientes();
 });
