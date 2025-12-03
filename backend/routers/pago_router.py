@@ -68,7 +68,7 @@ def crearPago(
         confirmado = True
         pedido.estado = EstadoPedido.PAGADO
     else:
-        # No puntos: estado PENDIENTE, confirmado False
+        # Si no se usan puntos, el pago es PENDIENTE
         pedido.estado = EstadoPedido.PENDIENTE
         confirmado = False
     

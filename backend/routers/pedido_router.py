@@ -13,11 +13,11 @@ from ..models.disenoPersonalizado import DisenoPersonalizado
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
-# READ - Obtener la lista de pedidos del cliente (optimizado)
+# READ - Obtener la lista de pedidos del cliente
 @router.get("/mis-pedidos", response_model=list[Pedido])
 def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
     """
-    Endpoint optimizado para que clientes vean sus pedidos.
+    Endpoint para que clientes vean sus pedidos.
     Carga toda la información necesaria en una sola consulta.
     """
     
@@ -40,15 +40,15 @@ def misPedidos(session: SessionDep, cliente=Depends(clienteActual)):
 
 
 
-# READ - Obtener lista de pedidos (solo administrador - optimizado)
+# READ - Obtener lista de pedidos (solo administrador)
 @router.get("/", response_model=list[Pedido])
 def listaPedidos(session: SessionDep, _=Depends(adminActual)):
     """
-    Endpoint optimizado para administradores.
+    Endpoint para administradores.
     Carga todos los pedidos con información de cliente y pago en una sola consulta.
     """
     
-    # Consulta optimizada con joins
+    # Consulta con joins
     query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID)
     
     resultados = session.exec(query).all()
@@ -68,11 +68,11 @@ def listaPedidos(session: SessionDep, _=Depends(adminActual)):
 @router.get("/admin/{pedidoID}")
 def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual)):
     """
-    Endpoint optimizado para detalles de pedido.
+    Endpoint para detalles de pedido.
     Carga toda la información relacionada en consultas eficientes.
     """
     
-    # Consulta principal optimizada
+    # Consulta principal
     query = select(Pedido, Cliente, Pago).join(Cliente, Pedido.clienteID == Cliente.id).outerjoin(Pago, Pedido.id == Pago.pedidoID).where(Pedido.id == pedidoID)
     
     resultado = session.exec(query).first()
@@ -167,11 +167,11 @@ def pedidoPorIDAdmin(pedidoID: int, session: SessionDep, _=Depends(adminActual))
 
 
 
-# READ - Obtener pedido del cliente por ID con detalles (optimizado)
+# READ - Obtener pedido del cliente por ID con detalles
 @router.get("/mi-pedido/{pedidoID}")
 def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteActual)):
     """
-    Endpoint optimizado para que clientes vean detalles de sus pedidos.
+    Endpoint para que clientes vean detalles de sus pedidos.
     """
     
     # Consulta optimizada con seguridad de pertenencia
@@ -186,7 +186,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
     pedidoDB.cliente = objetoCliente
     pedidoDB.pago = pago
 
-    # Cargar detalles optimizados
+    # Cargar detalles
     queryDetalles = select(DetallePedido).where(DetallePedido.pedidoID == pedidoID)
     
     detallesDB = session.exec(queryDetalles).all()
@@ -267,7 +267,7 @@ def miPedidoPorID(pedidoID: int, session: SessionDep, cliente=Depends(clienteAct
 
 
 
-# UPDATE - Cancelar pedido (cliente - optimizado)
+# UPDATE - Cancelar pedido (cliente)
 @router.patch("/{pedidoID}/cancelar")
 def cancelarPedidoCliente(
     pedidoID: int,
@@ -275,7 +275,7 @@ def cancelarPedidoCliente(
     cliente=Depends(clienteActual)
 ):
     """
-    Endpoint optimizado para cancelar pedidos.
+    Endpoint para cancelar pedidos.
     """
     
     # Consulta directa con verificación de pertenencia
@@ -298,7 +298,7 @@ def cancelarPedidoCliente(
 
 
 
-# UPDATE - Actualizar el estado del pedido (solo administrador - optimizado)
+# UPDATE - Actualizar el estado del pedido (solo administrador)
 @router.patch("/{pedidoID}")
 def actualizarEstado(
     pedidoID: int,
@@ -307,7 +307,7 @@ def actualizarEstado(
     _=Depends(adminActual)
 ):
     """
-    Endpoint optimizado para actualizar estados de pedidos.
+    Endpoint para actualizar estados de pedidos.
     """
     
     pedidoDB = session.get(Pedido, pedidoID)
@@ -324,7 +324,7 @@ def actualizarEstado(
 
 
 
-# UPDATE - Confirmar pedido (optimizado)
+# UPDATE - Confirmar pedido
 @router.patch("/{pedidoID}/confirmar")
 def confirmarPedido(
     pedidoID: int,
@@ -332,7 +332,7 @@ def confirmarPedido(
     _=Depends(adminActual)
 ):
     """
-    Endpoint optimizado para confirmar pedidos y procesar transacciones.
+    Endpoint para confirmar pedidos y procesar transacciones.
     """
     
     # Cargar pedido y pago en una sola consulta

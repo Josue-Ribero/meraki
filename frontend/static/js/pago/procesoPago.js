@@ -44,7 +44,6 @@ function checkoutApp() {
         const response = await fetch('/carrito/mi-carrito');
         if (!response.ok) throw new Error('No se pudo obtener el carrito');
         const data = await response.json();
-        console.log('Respuesta carrito:', data);
 
         const itemsConProducto = await Promise.all(data.map(async item => {
           let producto = {
@@ -119,7 +118,6 @@ function checkoutApp() {
           alert('Dirección guardada correctamente');
         })
         .catch(error => {
-          console.error('Error al crear la dirección:', error);
           alert('Error al guardar la dirección: ' + error.message);
         });
     },
@@ -156,7 +154,6 @@ function checkoutApp() {
             alert('Dirección eliminada correctamente');
           })
           .catch(error => {
-            console.error('Error al eliminar dirección:', error);
             alert('Error al eliminar la dirección');
           });
       }
@@ -225,7 +222,6 @@ function checkoutApp() {
           window.location.href = `/proceso-pago-detalles?pedidoId=${data.id}`;
         })
         .catch(error => {
-          console.error('Error al crear el pedido:', error);
           alert('Error al crear el pedido: ' + error.message);
         });
     }

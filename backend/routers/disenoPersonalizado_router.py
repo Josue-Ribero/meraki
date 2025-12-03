@@ -20,7 +20,7 @@ def crearDiseno(
     Endpoint para crear un nuevo diseno personalizado
     """
     
-    # Crear diseno
+    # Crear diseño personalizado
     diseno = DisenoPersonalizado(
         imagenURL=imagenURL,
         precioEstimado=precioEstimado,
@@ -33,7 +33,9 @@ def crearDiseno(
     session.refresh(diseno)
     return diseno
 
-# CREATE - Agregar al carrito (VERSIÓN SUPER SIMPLIFICADA)
+
+
+# CREATE - Agregar al carrito
 @router.post("/agregar")
 def agregarAlCarrito(
     disenoPersonalizadoID: Optional[int] = Form(None),
@@ -61,7 +63,7 @@ def agregarAlCarrito(
         try:
             carrito.clienteID = cliente.id
         except AttributeError:
-            pass  # El modelo no tiene clienteID
+            pass  # En caso de que el modelo no tenga clienteID
         
         session.add(carrito)
         session.commit()
@@ -78,7 +80,7 @@ def agregarAlCarrito(
         try:
             nuevoDetalle.productoID = None
         except AttributeError:
-            pass  # El modelo no tiene productoID
+            pass  # En caso de que el modelo no tenga productoID
         
         session.add(nuevoDetalle)
         session.commit()
@@ -89,6 +91,8 @@ def agregarAlCarrito(
         # Log del error para depuración
         print(f"Error al agregar al carrito: {str(e)}")
         raise HTTPException(500, f"Error interno del servidor: {str(e)}")
+
+
 
 # READ - Obtener los disenos del cliente
 @router.get("/mis-disenos", response_model=list[DisenoPersonalizado])
@@ -104,6 +108,8 @@ def misDisenos(session: SessionDep, cliente = Depends(clienteActual)):
     if not disenosDB:
         raise HTTPException(404, "No tienes disenos personalizados")
     return disenosDB
+
+    
 
 # UPDATE - Cambiar estado o precio
 @router.patch("/{disenoID}", response_model=DisenoPersonalizado)

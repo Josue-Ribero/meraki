@@ -1,3 +1,4 @@
+// Inicialización cuando el DOM está completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
   // Constantes de configuración
   const PEDIDOS_POR_PAGINA = 5;
@@ -16,11 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Verificar que los elementos esenciales existan
   if (!cuerpoTabla) {
-    console.error('No se encontró el elemento cuerpo-tabla');
     return;
   }
-
-  console.log('Inicializando sistema de gestión de pedidos...');
 
   // Obtiene todos los pedidos desde la API del servidor
   async function obtenerPedidos() {
@@ -41,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return pedidos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     } catch (error) {
-      console.error('Error obteniendo pedidos:', error);
       alert('Error al cargar los pedidos: ' + error.message);
       return [];
     }
@@ -59,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return null;
     } catch (error) {
-      console.error('Error obteniendo cliente:', error);
       return null;
     }
   }
@@ -82,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return await respuesta.json();
     } catch (error) {
-      console.error('Error confirmando pedido:', error);
       alert('Error al confirmar el pedido: ' + error.message);
       throw error;
     }
@@ -102,8 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const pedido = await respuestaPedido.json();
 
-      console.log('Pedido obtenido:', pedido); // Debug
-
       // Obtener información del cliente si está disponible
       let informacionCliente = {};
       if (pedido.clienteID) {
@@ -116,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
             informacionCliente = await respuestaCliente.json();
           }
         } catch (error) {
-          console.error('Error obteniendo información del cliente:', error);
+          return null;
         }
       }
 
@@ -126,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cliente: informacionCliente
       };
     } catch (error) {
-      console.error('Error:', error);
       throw error;
     }
   }
@@ -156,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       renderizarDetallesPedido(pedido, detalles, cliente, contenido);
 
     } catch (error) {
-      console.error('Error al mostrar detalles:', error);
       const contenido = document.getElementById('contenidoModalDetalles');
       contenido.innerHTML = `
         <div class="text-center py-8 text-red-600">
@@ -170,11 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Renderiza los detalles del pedido en el modal usando templates
   function renderizarDetallesPedido(pedido, detalles, cliente, contenedor) {
-    console.log('Renderizando detalles:', { pedido, detalles, cliente }); // Debug
-
     const template = document.getElementById('template-detalles-pedido');
     if (!template) {
-      console.error('Template no encontrado');
       return;
     }
 
@@ -511,12 +499,11 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
     } catch (error) {
-      console.error('Error al imprimir el pedido:', error);
       alert('Error al imprimir el pedido: ' + error.message);
     }
   }
 
-  // ========== FUNCIONES DE UTILIDAD ==========
+  // Funciones de utilidad
 
   // Formatea una fecha ISO a formato largo en español
   function formatearFechaLarga(fechaISO) {
@@ -731,7 +718,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     } catch (error) {
-      console.error(`Error cargando cliente para pedido ${pedidoID}:`, error);
     }
   }
 
@@ -789,12 +775,9 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function cargarPedidos() {
     try {
-      console.log('Cargando pedidos...');
       todosLosPedidos = await obtenerPedidos();
-      console.log('Pedidos cargados y ordenados:', todosLosPedidos);
       renderizarTabla();
     } catch (error) {
-      console.error('Error cargando pedidos:', error);
     }
   }
 

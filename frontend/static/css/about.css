@@ -5,6 +5,11 @@
     background-color: #d1bc97;
 }
 
+/* Subtitulos */
+h2 {
+    color: #aa8744;
+}
+
 /* Sidebar */
 .sidebar {
     display: flex;

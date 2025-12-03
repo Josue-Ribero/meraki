@@ -24,12 +24,63 @@ function showTab(tabId) {
 }
 
 // Manejar el formulario de login
-document.getElementById('login-form').addEventListener('submit', function (event) {
-  // No prevenir el comportamiento por defecto - dejar que el formulario se envíe normalmente
-  // El backend se encargará de la redirección y autenticación
+document.getElementById('login-form').addEventListener('submit', async function (event) {
+  event.preventDefault();
 
-  // Solo mostrar el mensaje de error si las credenciales son incorrectas
-  // Esto se manejará desde el backend con un parámetro en la URL
+  const formData = new FormData(event.target);
+  const email = formData.get('email');
+  const contrasena = formData.get('contrasena');
+
+  const errorDiv = document.getElementById('login-error');
+  const errorText = errorDiv.querySelector('.error-text');
+  const loginButton = event.target.querySelector('button[type="submit"]');
+  const originalButtonText = loginButton.textContent;
+
+  // Limpiar mensaje de error previo
+  errorDiv.classList.add('hidden');
+  errorText.textContent = '';
+
+  // Validación básica
+  if (!email || !contrasena) {
+    errorText.textContent = 'Por favor completa todos los campos';
+    errorDiv.classList.remove('hidden');
+    return;
+  }
+
+  // Cambiar estado del botón
+  loginButton.disabled = true;
+  loginButton.textContent = 'Iniciando sesión...';
+
+  try {
+    const response = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
+    });
+
+    if (response.ok) {
+      // Credenciales correctas - redirigir
+      window.location.href = '/';
+    } else {
+      // Credenciales incorrectas - mostrar mensaje
+      const data = await response.json();
+      errorText.textContent = data.detail || 'Credenciales incorrectas. Por favor intenta nuevamente.';
+      errorDiv.classList.remove('hidden');
+
+      // Limpiar campo de contraseña
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-password').focus();
+    }
+  } catch (error) {
+    errorText.textContent = 'Credenciales incorrectas. Por favor intenta nuevamente.';
+    errorDiv.classList.remove('hidden');
+  } finally {
+    // Restaurar botón
+    loginButton.disabled = false;
+    loginButton.textContent = originalButtonText;
+  }
 });
 
 // Verificar si hay error de credenciales en la URL
@@ -39,6 +90,9 @@ function verificarErrorCredenciales() {
 
   if (error === 'credenciales') {
     const errorDiv = document.getElementById('login-error');
+    const errorText = errorDiv.querySelector('.error-text');
+
+    errorText.textContent = 'Credenciales incorrectas. Por favor intenta nuevamente.';
     errorDiv.classList.remove('hidden');
 
     // Limpiar el parámetro de la URL sin recargar la página
@@ -56,6 +110,8 @@ document.getElementById('register-form').addEventListener('submit', async (event
   const email = formData.get('email');
   const contrasena = formData.get('contrasena');
   const telefono = formData.get('telefono');
+  const registerButton = event.target.querySelector('button[type="submit"]');
+  const originalButtonText = registerButton.textContent;
 
   const errorDiv = document.getElementById('register-error');
   const errorText = errorDiv.querySelector('.error-text');
@@ -63,12 +119,23 @@ document.getElementById('register-form').addEventListener('submit', async (event
   errorDiv.classList.add('hidden');
   errorText.textContent = '';
 
+  // Validación básica
+  if (!nombre || !email || !contrasena) {
+    errorText.textContent = 'Por favor completa todos los campos obligatorios';
+    errorDiv.classList.remove('hidden');
+    return;
+  }
+
   // Validación básica del teléfono en el frontend
   if (telefono && telefono.replace(/\D/g, '').length < 7) {
     errorText.textContent = 'El número de teléfono debe tener al menos 7 dígitos';
     errorDiv.classList.remove('hidden');
     return;
   }
+
+  // Cambiar estado del botón
+  registerButton.disabled = true;
+  registerButton.textContent = 'Registrando...';
 
   try {
     const response = await fetch('/clientes/registrar', {
@@ -80,6 +147,7 @@ document.getElementById('register-form').addEventListener('submit', async (event
     });
 
     if (response.ok) {
+      // Registro exitoso - redirigir
       window.location.href = '/';
     } else {
       const data = await response.json();
@@ -87,9 +155,12 @@ document.getElementById('register-form').addEventListener('submit', async (event
       errorDiv.classList.remove('hidden');
     }
   } catch (error) {
-    console.error('Error de red:', error);
     errorText.textContent = 'Error de conexión. Intente nuevamente.';
     errorDiv.classList.remove('hidden');
+  } finally {
+    // Restaurar botón
+    registerButton.disabled = false;
+    registerButton.textContent = originalButtonText;
   }
 });
 
@@ -102,7 +173,24 @@ document.getElementById('login-password').addEventListener('input', () => {
   document.getElementById('login-error').classList.add('hidden');
 });
 
+// También para registro
+document.getElementById('register-nombre').addEventListener('input', () => {
+  document.getElementById('register-error').classList.add('hidden');
+});
+
+document.getElementById('register-email').addEventListener('input', () => {
+  document.getElementById('register-error').classList.add('hidden');
+});
+
+document.getElementById('register-password').addEventListener('input', () => {
+  document.getElementById('register-error').classList.add('hidden');
+});
+
+document.getElementById('register-telefono').addEventListener('input', () => {
+  document.getElementById('register-error').classList.add('hidden');
+});
+
 window.onload = () => {
   showTab('login-form');
   verificarErrorCredenciales();
-};  
+};

@@ -58,7 +58,6 @@
           <div class="pedidos-header">
             <h2>Mis Pedidos</h2>
             <div class="pedidos-stats" id="pedidos-stats">
-              <!-- Se llenará dinámicamente -->
             </div>
           </div>
 
@@ -74,11 +73,9 @@
                 </tr>
               </thead>
               <tbody id="tabla-pedidos">
-                <!-- Los pedidos se cargarán aquí -->
               </tbody>
             </table>
 
-            <!-- Mensaje cuando no hay pedidos -->
             <div id="sin-pedidos" class="sin-pedidos hidden">
               <span class="material-symbols-outlined">inventory_2</span>
               <h3>No tienes pedidos aún</h3>
@@ -87,27 +84,13 @@
             </div>
           </div>
 
-          <!-- Paginación -->
           <div class="paginacion" id="paginacion-pedidos">
-            <!-- Se generará dinámicamente -->
           </div>
         </section>
 
         <section id="info-personal" class="space-y-8">
           <div class="panel-info-wrapper">
-            <div class="card-info-personal">
-              <h3 class="card-title">Información Personal</h3>
-              <div class="info-grid">
-                <div>
-                  <label for="name" class="info-label">Nombre Completo</label>
-                  <input id="name" type="text" class="info-input" value="" />
-                </div>
-                <div>
-                  <label for="phone" class="info-label">Teléfono</label>
-                  <input id="phone" type="tel" class="info-input" value="" />
-                </div>
-              </div>
-            </div>
+
             <div class="card-foto-perfil">
               <h3 class="card-title">Foto de Perfil</h3>
               <div class="foto-perfil-row">
@@ -125,9 +108,30 @@
                 </div>
               </div>
             </div>
+
+            <div class="card-info-personal">
+              <h3 class="card-title">Cambiar Información Personal</h3>
+              <div id="msg-info-personal" class="msg-panel" aria-live="polite" style="display: none;"></div>
+              <div class="info-grid">
+                <div>
+                  <label for="name" class="info-label">Nombre Completo</label>
+                  <input id="name" type="text" class="info-input" value="" />
+                </div>
+                <div>
+                  <label for="phone" class="info-label">Teléfono</label>
+                  <input id="phone" type="tel" class="info-input" value="" />
+                </div>
+              </div>
+              <div class="panel-btn-row">
+                <button type="button" class="btn-cancelar" id="btn-cancelar-info">Cancelar</button>
+                <button type="button" class="btn-guardar">Guardar Cambios</button>
+              </div>
+            </div>
+
             <form class="card-cambiar-contrasena" id="form-cambiar-contrasena">
               <h3 class="card-title">Cambiar Contraseña</h3>
               <p class="info-desc">Para mayor seguridad, elige una contraseña fuerte que no uses en otros sitios.</p>
+              <br>
               <div id="msg-contrasena" class="msg-panel" aria-live="polite"></div>
               <div class="contrasena-grid">
                 <div>
@@ -144,6 +148,17 @@
                 <button type="submit" class="btn-guardar">Guardar Cambios</button>
               </div>
             </form>
+
+            <div class="card-cambiar-contrasena">
+              <h3 class="card-title">Eliminar Cuenta</h3>
+              <p class="info-desc">Si deseas eliminar tu cuenta permanentemente, presiona el botón "Eliminar Cuenta".
+                Recuerda que esta acción es IRREVERSIBLE.
+              </p>
+              <div id="msg-cuenta" class="msg-panel" aria-live="polite"></div>
+              <div class="panel-btn-row">
+                <button type="button" class="btn-eliminar" id="btn-eliminar-cuenta">Eliminar Cuenta</button>
+              </div>
+            </div>
           </div>
         </section>
       </div>

@@ -1,4 +1,3 @@
-// disenoPersonalizado.js - VERSIÓN DEFINITIVA CORREGIDA
 // Elementos del canvas
 const canvas = document.getElementById('designCanvas');
 const previewCanvas = document.getElementById('previewCanvas');
@@ -32,7 +31,7 @@ const materialPrices = {
   gems: 10000
 };
 
-// ========== FUNCIONES INICIALES ==========
+// Funciones iniciales
 function init() {
   initializeGridData();
   drawInitialGrid();
@@ -122,7 +121,7 @@ function updatePrice() {
   document.getElementById('totalPrice').textContent = `$${formattedPrice}`;
 }
 
-// ========== FUNCIONES DE DIBUJO CORREGIDAS ==========
+// Funciones de dibujo corregidas
 function drawPixel(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
@@ -175,7 +174,7 @@ function redrawCellGridLines(gx, gy) {
 function drawShape(x, y) {
   const gx = Math.floor(x / pixelSize);
   const gy = Math.floor(y / pixelSize);
-  const radius = 2; // Reducido para mejor precisión
+  const radius = 2;
   const color = currentMode === 'erase' ? '#ffffff' : selectedColor;
   const modifiedCells = [];
 
@@ -224,7 +223,7 @@ function drawShape(x, y) {
   updatePreview();
 }
 
-// ========== EVENT LISTENERS CORREGIDOS ==========
+// Event listeners
 canvas.addEventListener('mousedown', (e) => {
   isDrawing = true;
   const rect = canvas.getBoundingClientRect();

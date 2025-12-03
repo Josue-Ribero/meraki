@@ -39,7 +39,7 @@
             <button class="tab-button" id="register-tab" onclick="showTab('register-form')">Registrarse</button>
           </div>
 
-          <form class="space-y-6" id="login-form" method="post" action="/auth/login">
+          <form class="space-y-6" id="login-form" method="post">
             <div>
               <label for="login-email" class="form-label">Email</label>
               <input id="login-email" name="email" type="email" class="form-input" placeholder="tu@email.com"
@@ -60,10 +60,10 @@
             </div>
           </form>
 
-          <form class="space-y-6 hidden" id="register-form" method="post" action="/clientes/registrar">
+          <form class="space-y-6 hidden" id="register-form" method="post">
             <div>
-              <label for="register-name" class="form-label">Nombre Completo</label>
-              <input id="register-name" name="nombre" type="text" class="form-input" placeholder="Tu Nombre Completo"
+              <label for="register-nombre" class="form-label">Nombre Completo</label>
+              <input id="register-nombre" name="nombre" type="text" class="form-input" placeholder="Tu Nombre Completo"
                 required />
             </div>
             <div>
@@ -72,8 +72,8 @@
                 required />
             </div>
             <div>
-              <label for="register-phone" class="form-label">Teléfono</label>
-              <input id="register-phone" name="telefono" type="tel" class="form-input" placeholder="+57 300 123 4567"
+              <label for="register-telefono" class="form-label">Teléfono</label>
+              <input id="register-telefono" name="telefono" type="tel" class="form-input" placeholder="+57 300 123 4567"
                 required pattern="[0-9+\s()-]{7,20}"
                 title="Por favor ingresa un número de teléfono válido (mínimo 7 dígitos)" />
               <p class="text-xs text-gray-500 mt-1">Ingresa tu número de teléfono con código de país</p>

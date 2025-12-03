@@ -47,7 +47,6 @@ async function cargarDatosIniciales() {
     inicializarFiltros();
     aplicarFiltros();
   } catch (error) {
-    console.error('Error:', error);
     mostrarError('Error al cargar los datos. Por favor, intenta recargar la página.');
   }
 }
@@ -473,8 +472,6 @@ function mostrarError(mensaje) {
 
 // Funcion de agregar al carrito
 function agregarAlCarrito(productoId) {
-  console.log('Agregando producto al carrito:', productoId);
-
   // Boton de agregar al carrito
   const boton = document.querySelector(`[data-producto-id="${productoId}"]`);
   if (!boton) return;
@@ -517,7 +514,6 @@ function agregarAlCarrito(productoId) {
       const errorBody = await respuesta.json().catch(() => ({}));
       alert(errorBody.detail || 'No se pudo agregar el producto al carrito');
     } catch (error) {
-      console.error('Error al agregar al carrito', error);
       alert('Error de red al agregar al carrito');
     } finally {
       try {
@@ -581,7 +577,6 @@ document.addEventListener('click', async function (e) {
       }
     } catch (err) {
       // Error al alternar la wishlist
-      console.error(err);
       alternarWishlist(productoId);
       // Alternar la wishlist
       const enWishlist = estaEnWishlist(productoId);
@@ -604,5 +599,4 @@ document.addEventListener('click', function (e) {
 // Inicialización
 document.addEventListener('DOMContentLoaded', function () {
   cargarDatosIniciales();
-  console.log('Página principal inicializada.');
 });

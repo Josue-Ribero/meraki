@@ -42,8 +42,6 @@ function renderizarCarrito() {
     // Obtener template
     const template = document.getElementById('template-carrito-item');
     if (!template) {
-        // Si no se encuentra el template, mostrar error
-        console.error('No se encontró #template-carrito-item en el HTML');
         return;
     }
 
@@ -159,7 +157,7 @@ function asignarEventos() {
                     item.subtotal = d.subtotal || (item.precio * item.cantidad);
                     actualizarItemEnDOM(id);
                     calcularTotal();
-                } catch (err) { console.error(err); alert('No se pudo actualizar la cantidad'); }
+                } catch (err) { alert('No se pudo actualizar la cantidad'); }
             }
         });
     });
@@ -190,7 +188,7 @@ function asignarEventos() {
                     item.subtotal = d.subtotal || (item.precio * item.cantidad);
                     actualizarItemEnDOM(id);
                     calcularTotal();
-                } catch (err) { console.error(err); alert('No se pudo actualizar la cantidad'); }
+                } catch (err) { alert('No se pudo actualizar la cantidad'); }
             }
         });
     });
@@ -215,7 +213,7 @@ function asignarEventos() {
                 if (paginaActual > totalPaginas) paginaActual = totalPaginas;
                 renderizarCarrito();
                 calcularTotal();
-            } catch (err) { console.error(err); alert('No se pudo eliminar el producto'); }
+            } catch (err) { alert('No se pudo eliminar el producto'); }
         });
     });
 }
@@ -300,7 +298,6 @@ async function cargarCarrito() {
         // Calcular el total del carrito
         calcularTotal();
     } catch (err) {
-        console.error('Error cargando carrito', err);
         document.querySelector('.cart-items').innerHTML = '<p>No se pudo cargar el carrito.</p>';
     }
 }

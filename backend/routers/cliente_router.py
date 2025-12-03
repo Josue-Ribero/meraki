@@ -3,6 +3,10 @@ from sqlmodel import select
 from ..auth.auth import clienteActual, adminActual
 from ..models.cliente import Cliente, ClienteUpdate, ClienteHistorico
 from ..models.carrito import Carrito
+from ..models.pedido import Pedido, EstadoPedido
+from ..models.detallePedido import DetallePedido
+from ..models.disenoPersonalizado import DisenoPersonalizado, EstadoDiseno
+from ..models.pago import Pago
 from ..models.wishlist import Wishlist
 from ..db.db import SessionDep, contrasenaContext
 from fastapi.responses import RedirectResponse
@@ -17,7 +21,7 @@ def registrarClienteForm(
     nombre: str = Form(...),
     email: str = Form(...),
     contrasena: str = Form(...),
-    telefono: str = Form(...),  # Cambiado de Form(None) a Form(...) para hacerlo obligatorio
+    telefono: str = Form(...),
     session: SessionDep = None
 ):
     """
@@ -30,8 +34,15 @@ def registrarClienteForm(
     # Si el email ya esta registrado, mostrar error
     if clienteDB:
         raise HTTPException(400, "Este email ya tiene una cuenta asociada")
+
+    # Verificar si el email está en el histórico (eliminado)
+    clienteHistoricoDB = session.exec(select(ClienteHistorico).where(ClienteHistorico.email == email)).first()
     
-    # Validar formato de teléfono (opcional, pero recomendado)
+    # Si el email ya esta registrado, mostrar error
+    if clienteHistoricoDB:
+        raise HTTPException(400, "Este email ya tuvo una cuenta asociada y no puede volver a registrarse")
+    
+    # Validar formato de teléfono
     if telefono and len(telefono) < 7:
         raise HTTPException(400, "El número de teléfono debe tener al menos 7 dígitos")
     
@@ -263,27 +274,78 @@ def actualizarCliente(
 
 # DELETE - Eliminar cliente
 @router.delete("/eliminar-cuenta")
-def eliminarCliente(session: SessionDep, cliente=Depends(clienteActual)):
+def eliminarCliente(
+    request: Request,
+    session: SessionDep, 
+    cliente=Depends(clienteActual)
+):
     """
     Este endpoint elimina la cuenta del cliente.
     """
     
-    # Obtener el cliente
-    clienteDB = session.get(Cliente, cliente.id)
-    if not clienteDB:
-        raise HTTPException(404, "Cliente no encontrado")
+    try:
+        # Obtener el cliente
+        clienteDB = session.get(Cliente, cliente.id)
+        if not clienteDB:
+            raise HTTPException(404, "Cliente no encontrado")
 
-    # Crear registro en el historico antes de eliminar
-    historico = ClienteHistorico(
-        nombre=clienteDB.nombre,
-        email=clienteDB.email,
-        telefono=clienteDB.telefono,
-        fechaEliminacion=dt.now()
-    )
+        # Verificar si el cliente tiene pedidos activos
+        pedidosActivos = session.exec(
+            select(Pedido).where(
+                Pedido.clienteID == cliente.id,
+                Pedido.estado.in_([EstadoPedido.POR_PAGAR, EstadoPedido.PENDIENTE])
+            )
+        ).all()
+        
+        if pedidosActivos:
+            raise HTTPException(400, "No puedes eliminar tu cuenta porque tienes pedidos activos.")
+        
+        # Verificar si el cliente tiene diseños en producción
+        disenosEnProduccion = session.exec(
+            select(DisenoPersonalizado).where(
+                DisenoPersonalizado.clienteID == cliente.id,
+                DisenoPersonalizado.estado == EstadoDiseno.EN_PRODUCCION
+            )
+        ).all()
+        
+        if disenosEnProduccion:
+            raise HTTPException(400, "No puedes eliminar tu cuenta porque tienes diseños en producción.")
 
-    # Insertar y guardar el historico en la DB
-    session.add(historico)
-    session.delete(clienteDB)
-    session.commit()
+        # Crear registro en el historico antes de eliminar
+        historico = ClienteHistorico(
+            nombre=clienteDB.nombre,
+            email=clienteDB.email,
+            telefono=clienteDB.telefono,
+            fechaEliminacion=dt.now()
+        )
 
-    return {"mensaje": "Cuenta eliminada correctamente"}
+        # Insertar y guardar el historico en la DB
+        session.add(historico)
+
+        # Eliminar carrito
+        carrito = session.exec(select(Carrito).where(Carrito.clienteID == cliente.id)).first()
+        if carrito:
+            session.delete(carrito)
+        
+        # Eliminar wishlist
+        wishlist = session.exec(select(Wishlist).where(Wishlist.clienteID == cliente.id)).first()
+        if wishlist:
+            session.delete(wishlist)
+        
+        # Eliminar el cliente
+        session.delete(clienteDB)
+        session.commit()
+
+        # Limpiar la sesión
+        request.session.clear()
+        
+        return {
+            "mensaje": "Cuenta eliminada correctamente. Todos tus datos han sido eliminados.",
+            "redirect": "/"
+        }
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Error al eliminar cliente: {str(e)}")
+        raise HTTPException(500, "Error interno al eliminar la cuenta")

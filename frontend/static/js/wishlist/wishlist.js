@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fallback a localStorage si falla el servidor
     if (!respuesta.ok) {
-      console.warn('No se pudo cargar wishlist desde servidor, usando localStorage');
       const local = localStorage.getItem('wishlist');
       if (!local) { renderizarVacio(); return; }
       const ids = JSON.parse(local);
@@ -65,7 +64,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ids = items.map(i => i.productoID);
     await cargarProductosDesdeIds(ids);
   } catch (error) {
-    console.error('Error cargando wishlist:', error);
     renderizarVacio();
   }
 
@@ -235,7 +233,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           const error = await respuesta.json().catch(() => ({}));
           alert(error.detail || 'No se pudo eliminar de la wishlist');
         } catch (error) {
-          console.error('Error eliminando wishlist:', error);
           eliminarProductoGlobal(id);
         }
       });
@@ -264,7 +261,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           const error = await respuesta.json().catch(() => ({}));
           alert(error.detail || 'No se pudo mover al carrito');
         } catch (error) {
-          console.error('Error moviendo al carrito:', error);
           alert('Error de red. Intenta nuevamente.');
         } finally {
           try {

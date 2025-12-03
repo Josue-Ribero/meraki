@@ -1,6 +1,5 @@
 // Inicialización cuando el DOM está completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Script categoriaAdmin.js cargado");
 
   // Elementos del DOM
   const modal = document.getElementById("modal");
@@ -22,30 +21,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let paginaActual = 1;
   const categoriasPorPagina = 7;
 
-  // Configuración de API automática (igual que productosAdmin.js)
+  // Configuración de API automática
   const API_BASE_URL = `${window.location.protocol}//${window.location.host}`;
   const CATEGORIAS_ENDPOINT = `${API_BASE_URL}/categorias/`;
 
-  console.log("🔗 Endpoint de API:", CATEGORIAS_ENDPOINT);
-
   // Verificar que todos los elementos del DOM existen
   if (!modal || !openBtn || !form || !tbody || !cancelBtn || !paginacionEl || !infoPaginacionEl) {
-    console.error("❌ Elementos del DOM no encontrados");
     showError("Error: No se pudieron cargar los elementos de la página");
     return;
   }
 
-  console.log("✅ Todos los elementos del DOM encontrados");
-
   // Cargar categorías
   async function cargarCategorias() {
-    console.log("🔄 Cargando categorías...");
-
     try {
       showLoading();
 
       const url = `${CATEGORIAS_ENDPOINT}todas`;
-      console.log("📡 Haciendo petición GET a:", url);
 
       const response = await fetch(url, {
         method: 'GET',
@@ -55,26 +46,18 @@ document.addEventListener("DOMContentLoaded", () => {
         credentials: 'include'
       });
 
-      console.log("📡 Respuesta GET:", {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
-
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("📦 Datos recibidos:", data);
 
       // Guardar categorías y aplicar filtros
       categorias = Array.isArray(data) ? data : [];
       aplicarFiltros();
 
     } catch (error) {
-      console.error("❌ Error cargando categorías:", error);
       showError(`Error: ${error.message}`);
     }
   }
@@ -104,8 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Renderizar categorías
   function renderizarCategorias() {
-    console.log("🎨 Renderizando categorías");
-
     // Calcular índices para la paginación
     const totalCategorias = categoriasFiltradas.length;
     const totalPaginas = Math.max(1, Math.ceil(totalCategorias / categoriasPorPagina));
@@ -119,8 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const inicio = (paginaActual - 1) * categoriasPorPagina;
     const fin = inicio + categoriasPorPagina;
     const categoriasPagina = categoriasFiltradas.slice(inicio, fin);
-
-    console.log(`📄 Página ${paginaActual} de ${totalPaginas}, mostrando ${categoriasPagina.length} categorías`);
 
     tbody.innerHTML = '';
 
@@ -249,8 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // CREATE - Crear una nueva categoría
   async function crearCategoria(nombre, descripcion) {
-    console.log("📤 Creando categoría:", { nombre, descripcion });
-
     const formData = new FormData();
     formData.append('nombre', nombre);
     if (descripcion) {
@@ -277,8 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // UPDATE - Editar una categoría existente
   async function editarCategoria(id, nombre, descripcion) {
-    console.log("✏️ Editando categoría", id);
-
     const formData = new FormData();
     if (nombre !== undefined) formData.append('nombre', nombre);
     if (descripcion !== undefined) formData.append('descripcion', descripcion);
@@ -304,8 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // DELETE - Desactivar una categoría
   async function desactivarCategoria(id) {
-    console.log("🚫 Desactivando categoría:", id);
-
     const url = `${CATEGORIAS_ENDPOINT.slice(0, -1)}/${id}/deshabilitar`;
     const response = await fetch(url, {
       method: 'DELETE',
@@ -326,8 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // UPDATE - Reactivar una categoría desactivada
   async function activarCategoria(id) {
-    console.log("✅ Activando categoría:", id);
-
     const url = `${CATEGORIAS_ENDPOINT.slice(0, -1)}/${id}/habilitar`;
     const response = await fetch(url, {
       method: 'PATCH',
@@ -348,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Abrir modal para agregar nueva categoría
   function openModalForAdd() {
-    console.log("➕ Abriendo modal para agregar");
     editingRow = null;
     modalTitle.textContent = "Añadir Nueva Categoría";
     form.reset();
@@ -358,7 +328,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Abrir modal para editar categoría existente
   function openModalForEdit(categoria) {
-    console.log("✏️ Abriendo modal para editar:", categoria);
     editingRow = categoria;
     modalTitle.textContent = "Editar Categoría";
     document.getElementById("nombre").value = categoria.nombre;
@@ -369,7 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Cerrar modal
   function closeModal() {
-    console.log("❌ Cerrando modal");
     modal.style.display = "none";
     editingRow = null;
     form.reset();
@@ -450,8 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await cargarCategorias();
 
     } catch (error) {
-      console.error("❌ Error:", error);
-      alert(`Error: ${error.message}`);
+      showError(`Error: ${error.message}`);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
@@ -533,6 +500,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Inicializar la aplicación
-  console.log("🚀 Inicializando aplicación de categorías...");
   cargarCategorias();
 });

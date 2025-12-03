@@ -12,7 +12,6 @@ from sqlalchemy import Column, ForeignKey
 """
 
 # Modelo base de detalle de carrito
-# Modelo base de detalle de carrito
 class DetalleCarritoBase(SQLModel):
     cantidad: int = Field(default=0)
     fechaAgregado: dt = Field(default_factory=dt.now)

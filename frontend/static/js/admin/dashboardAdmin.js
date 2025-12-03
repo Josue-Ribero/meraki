@@ -1,6 +1,5 @@
-// dashboardAdmin.js - Versión mejorada con manejo robusto de errores
+// Inicialización cuando el DOM está completamente cargado
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Dashboard cargado correctamente");
 
   // Inicializar todos los componentes
   inicializarGrafica();
@@ -11,13 +10,11 @@ function inicializarGrafica() {
   const ctx = document.getElementById("ventasChart");
 
   if (!ctx) {
-    console.error("No se encontró el elemento canvas para la gráfica");
     return;
   }
 
   // Verificar si tenemos datos para la gráfica
   if (!window.datosGrafica || !Array.isArray(window.datosGrafica.meses) || !Array.isArray(window.datosGrafica.ventas)) {
-    console.warn("No hay datos válidos para la gráfica, usando datos de ejemplo");
     crearGraficaConDatosEjemplo(ctx);
     return;
   }
@@ -34,8 +31,6 @@ function crearGraficaConDatosReales(ctx) {
     if (meses.length === 0 || ventas.length === 0 || meses.length !== ventas.length) {
       throw new Error("Datos de gráfica inconsistentes");
     }
-
-    console.log("Creando gráfica con datos reales:", { meses, ventas });
 
     new Chart(ctx, {
       type: "line",
@@ -117,18 +112,13 @@ function crearGraficaConDatosReales(ctx) {
       }
     });
 
-    console.log("Gráfica creada exitosamente con datos reales");
-
   } catch (error) {
-    console.error("Error creando gráfica con datos reales:", error);
     crearGraficaConDatosEjemplo(ctx);
   }
 }
 
 function crearGraficaConDatosEjemplo(ctx) {
   try {
-    console.log("Creando gráfica con datos de ejemplo");
-
     // Datos de ejemplo para demostración
     const mesesEjemplo = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
     const ventasEjemplo = [1200, 1900, 1500, 2200, 1800, 2500, 2100, 2800, 2400, 3000, 2700, 3200];
@@ -195,16 +185,11 @@ function crearGraficaConDatosEjemplo(ctx) {
       }
     });
 
-    console.log("Gráfica de ejemplo creada exitosamente");
-
   } catch (error) {
-    console.error("Error creando gráfica de ejemplo:", error);
     // Si falla incluso la gráfica de ejemplo, mostrar un mensaje
     ctx.parentElement.innerHTML = '<p class="text-red-500">No se pudo cargar la gráfica de ventas</p>';
   }
 }
 
 function inicializarTooltips() {
-  // Inicializar tooltips si es necesario
-  console.log("Tooltips inicializados");
 }

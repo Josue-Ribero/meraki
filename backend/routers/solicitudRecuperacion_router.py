@@ -36,6 +36,8 @@ def crearSolicitud(
     session.refresh(solicitud)
     return solicitud
 
+    
+
 # READ - Validar token
 @router.get("/validar/{token}", response_model=SolicitudRecuperacion)
 def validarToken(token: str, session: SessionDep):

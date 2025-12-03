@@ -82,7 +82,6 @@
 
       return await response.json();
     } catch (error) {
-      console.error('API call failed:', error);
       throw error;
     }
   }
@@ -289,7 +288,6 @@
       await cargarProductos();
       if (modal.getAttribute("aria-hidden") === "false") closeModal();
     } catch (error) {
-      console.error('Error activando producto:', error);
       alert('Error al activar el producto: ' + error.message);
     }
   }
@@ -306,7 +304,6 @@
       await cargarProductos();
       if (modal.getAttribute("aria-hidden") === "false") closeModal();
     } catch (error) {
-      console.error('Error eliminando producto:', error);
       alert('Error al desactivar el producto: ' + error.message);
     }
   }
@@ -364,7 +361,7 @@
       );
 
       if (!categoriaEncontrada) {
-        alert(`❌ La categoría "${nombreCategoria}" no existe. Por favor, ingrese una categoría válida.`);
+        alert(`La categoría "${nombreCategoria}" no existe. Por favor, ingrese una categoría válida.`);
         inputCategory.focus();
         return;
       }
@@ -405,8 +402,6 @@
       closeModal();
       await cargarProductos();
     } catch (error) {
-      console.error('Error guardando producto:', error);
-      // Mostrar el mensaje exacto proveniente del servidor cuando sea posible
       alert('Error al guardar el producto: ' + (error.message || String(error)));
     }
   }

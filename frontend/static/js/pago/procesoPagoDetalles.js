@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
     } catch (error) {
-      console.error('Error al cancelar el pedido:', error);
       alert('Error al cancelar el pedido: ' + error.message);
     }
   }
@@ -154,8 +153,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (continuarPagoBtn) {
       const estadoRaw = pedido.estado ? String(pedido.estado) : '';
       const estado = estadoRaw.trim().toLowerCase();
-      // Log para depuración: muestra el estado tal cual viene y la forma normalizada
-      console.debug('procesoPagoDetalles: pedido.estado raw / normalized ->', { estadoRaw, estado, pedidoId: pedido.id });
 
       // Comprobaciones robustas contra variantes del estado (mayúsculas, espacios, diferentes palabras)
       if (estado.includes('pendient')) {
@@ -172,8 +169,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Enlace por defecto al proceso de pago con el id del pedido
         continuarPagoBtn.setAttribute('href', `/proceso-pago?id=${pedido.id}`);
       }
-    } else {
-      console.debug('procesoPagoDetalles: continuarPagoBtn no encontrado en el DOM');
     }
 
     // Productos (lista principal)
