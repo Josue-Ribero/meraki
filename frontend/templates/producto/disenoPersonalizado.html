@@ -51,10 +51,24 @@
           <h1 class="text-2xl md:text-3xl font-bold text-[var(--color-text-primary)]">Diseña Tu Propia Joya</h1>
           <div class="flex items-center space-x-4">
             <button id="clearBtn"
-              class="px-4 py-2 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-white transition">Limpiar</button>
+              class="px-4 py-2 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-white transition">
+              Limpiar
+            </button>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-600">Modo:</span>
+              <div class="flex bg-gray-100 rounded-lg p-1">
+                <button id="drawMode" class="mode-btn active px-3 py-1 rounded-md bg-[var(--color-primary)] text-white">
+                  Dibujar
+                </button>
+                <button id="eraseMode" class="mode-btn px-3 py-1 rounded-md text-gray-600 hover:bg-gray-200">
+                  Borrar
+                </button>
+              </div>
+            </div>
             <button id="saveBtn"
-              class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-bold hover:opacity-90 transition-opacity">Guardar
-              Diseño</button>
+              class="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-bold hover:opacity-90 transition-opacity">
+              Guardar Diseño
+            </button>
           </div>
         </div>
       </header>
@@ -100,22 +114,22 @@
             <div class="space-y-3">
               <label
                 class="flex items-center justify-between p-3 rounded-md border border-gray-200 cursor-pointer has-[:checked]:bg-[var(--color-accent)] has-[:checked]:border-[var(--color-primary)] transition-all">
-                <span class="font-medium text-[var(--color-text-primary)]">Metal</span>
+                <span class="font-medium text-[var(--color-text-primary)]">Metal ($12.000)</span>
                 <input checked
                   class="material-radio h-4 w-4 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                  name="material" type="radio" value="metal" />
+                  name="material" type="radio" value="metal" data-price="12000" />
               </label>
               <label
                 class="flex items-center justify-between p-3 rounded-md border border-gray-200 cursor-pointer has-[:checked]:bg-[var(--color-accent)] has-[:checked]:border-[var(--color-primary)] transition-all">
-                <span class="font-medium text-[var(--color-text-primary)]">Perlas</span>
+                <span class="font-medium text-[var(--color-text-primary)]">Perlas ($15.000)</span>
                 <input class="material-radio h-4 w-4 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                  name="material" type="radio" value="pearls" />
+                  name="material" type="radio" value="pearls" data-price="15000" />
               </label>
               <label
                 class="flex items-center justify-between p-3 rounded-md border border-gray-200 cursor-pointer has-[:checked]:bg-[var(--color-accent)] has-[:checked]:border-[var(--color-primary)] transition-all">
-                <span class="font-medium text-[var(--color-text-primary)]">Gemas</span>
+                <span class="font-medium text-[var(--color-text-primary)]">Mostacilla ($10.000)</span>
                 <input class="material-radio h-4 w-4 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                  name="material" type="radio" value="gems" />
+                  name="material" type="radio" value="gems" data-price="10000" />
               </label>
             </div>
           </div>
@@ -129,11 +143,9 @@
 
         <div class="col-span-12 lg:col-span-3 flex flex-col gap-6">
           <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-4">Vista Previa</h3>
+            <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-4">Vista Previa en Tiempo Real</h3>
             <div class="aspect-square bg-cover bg-center rounded-md bg-[var(--color-secondary)] p-4">
-              <div class="w-full h-full bg-contain bg-no-repeat bg-center" id="previewImg"
-                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWlaZ-HqzXQeK3jLH5SW8l_zAZBmg5Rg2tKi2oI8_Cuyr4HPVcgzcCMRbXLU__jrurbq8CREFE8RdvnlgS3ZsnCLcLQdgEOiWI7MbtGERIQVcCscH5hQDXNbfI5zf-W4ocxU82RTQarPn-_M9IBgwi-Omi_HkDDQ0nzfIntSE6uzkb1nmk2j3tSKZkejqDCSSjo5QaMRXHoJ1fM3W5Q1AZ8Y3A5hGWc2uJgqr0i0O-jKdz2mIGAVxi69YIRhH0fw8dl5E-YGvbSVs3 ');">
-              </div>
+              <canvas id="previewCanvas" class="w-full h-full rounded-md border border-gray-300"></canvas>
             </div>
           </div>
 
@@ -145,10 +157,10 @@
               </div>
               <div class="flex justify-between items-center text-md">
                 <span class="text-[var(--color-text-secondary)]">Precio Estimado:</span>
-                <span class="font-semibold text-xl text-[var(--color-text-primary)]">$2,850.00</span>
+                <span class="font-semibold text-xl text-[var(--color-primary)]" id="totalPrice">$12.000</span>
               </div>
             </div>
-            <button
+            <button id="addToCartBtn"
               class="w-full h-12 flex items-center justify-center bg-[var(--color-primary)] text-white rounded-lg font-bold text-lg hover:opacity-90 transition-opacity">
               <span class="material-symbols-outlined mr-2">add_shopping_cart</span>
               Añadir al Carrito
@@ -157,6 +169,24 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold text-[var(--color-text-primary)] mb-4">¡Éxito!</h3>
+      <p class="text-gray-700 mb-6" id="modalMessage"></p>
+      <div class="flex space-x-3">
+        <button id="continueDesigning"
+          class="flex-1 px-4 py-2 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-white transition">
+          Seguir Diseñando
+        </button>
+        <button id="goToCart"
+          class="flex-1 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-bold hover:opacity-90">
+          Ir al Carrito
+        </button>
+      </div>
+    </div>
   </div>
 
   <script src="../../static/js/producto/disenoPersonalizado.js"></script>
