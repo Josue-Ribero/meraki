@@ -379,6 +379,9 @@ function mostrarPaginaPedidos(pagina) {
       case 'PENDIENTE':
         claseEstado += 'estado-pendiente';
         break;
+      case 'POR PAGAR':
+        claseEstado += 'estado-por-pagar';
+        break;
       case 'CANCELADO':
         claseEstado += 'estado-cancelado';
         break;

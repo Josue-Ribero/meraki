@@ -349,14 +349,9 @@
     color: #92400e;
 }
 
-.estado-enviado {
+.estado-por-pagar {
     background: #dbeafe;
     color: #1e40af;
-}
-
-.estado-completado {
-    background: #dcfce7;
-    color: #166534;
 }
 
 .estado-cancelado {
