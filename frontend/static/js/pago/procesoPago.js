@@ -83,7 +83,7 @@ function checkoutApp() {
       }
     },
 
-    // Funcion para guardar la direccion
+    // Funcion para guardar la direccion (CREAR o EDITAR)
     saveAddress() {
       if (!this.form.nombre || !this.form.calle || !this.form.localidad || !this.form.codigoPostal) {
         alert('Por favor completa todos los campos de la dirección');
@@ -97,21 +97,23 @@ function checkoutApp() {
       formData.append('codigoPostal', this.form.codigoPostal);
       formData.append('esPredeterminada', this.form.esPredeterminada.toString());
 
-      fetch('/direcciones/crear', {
-        method: 'POST',
+      // Determinar si es edición o creación
+      const isEditing = this.editIndex !== null;
+      const url = isEditing ? `/direcciones/${this.addresses[this.editIndex].id}` : '/direcciones/crear';
+      const method = isEditing ? 'PATCH' : 'POST';
+
+      fetch(url, {
+        method: method,
         body: formData
       })
         .then(response => {
-          if (!response.ok) throw new Error('No se pudo crear la dirección');
+          if (!response.ok) throw new Error('No se pudo guardar la dirección');
           return response.json();
         })
         .then(() => {
           return fetch('/direcciones/mis-direcciones');
         })
-        .then(response => {
-          if (!response.ok) throw new Error('No se pudo obtener las direcciones');
-          return response.json();
-        })
+        .then(response => response.json())
         .then(direcciones => {
           this.addresses = direcciones;
           this.resetForm();
@@ -136,17 +138,18 @@ function checkoutApp() {
       };
     },
 
-    // Funcion para eliminar la direccion
+    // Funcion para eliminar la direccion (CORREGIDO)
     deleteAddress(index) {
       if (confirm('¿Estás seguro de que quieres eliminar esta dirección?')) {
         const addressId = this.addresses[index].id;
 
-        fetch(`/direcciones/eliminar/${addressId}`, {
+        fetch(`/direcciones/${addressId}`, {
           method: 'DELETE'
         })
           .then(response => {
             if (!response.ok) throw new Error('No se pudo eliminar la dirección');
-            return response.json();
+            // NO intentar parsear JSON de una respuesta 204 No Content
+            return response.status === 204 ? null : response.json();
           })
           .then(() => {
             this.addresses.splice(index, 1);
@@ -154,6 +157,7 @@ function checkoutApp() {
             alert('Dirección eliminada correctamente');
           })
           .catch(error => {
+            console.error('Error:', error);
             alert('Error al eliminar la dirección');
           });
       }

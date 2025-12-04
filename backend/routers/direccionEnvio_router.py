@@ -66,7 +66,8 @@ def actualizarDireccion(
     localidad: str = Form(None),
     codigoPostal: str = Form(None),
     esPredeterminada: bool = Form(None),
-    session: SessionDep = None
+    session: SessionDep = None,
+    cliente=Depends(clienteActual)
 ):
     """
     Endpoint para actualizar direccion para un usuario por ID
@@ -78,6 +79,10 @@ def actualizarDireccion(
     # Si no existe la direccion, mostrar error
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
+    
+    # Verificar que la dirección pertenece al cliente actual
+    if direccionDB.clienteID != cliente.id:
+        raise HTTPException(403, "No tienes permiso para modificar esta dirección")
     
     # Actualizar campos
     if nombre:
@@ -101,7 +106,7 @@ def actualizarDireccion(
 
 # DELETE - Eliminar direccion por ID
 @router.delete("/{direccionID}", status_code=204)
-def eliminarDireccion(direccionID: int, session: SessionDep):
+def eliminarDireccion(direccionID: int, session: SessionDep, cliente=Depends(clienteActual)):
     """
     Endpoint para eliminar direccion por ID
     """
@@ -112,6 +117,10 @@ def eliminarDireccion(direccionID: int, session: SessionDep):
     # Si no existe la direccion, mostrar error
     if not direccionDB:
         raise HTTPException(404, "Dirección no encontrada")
+    
+    # Verificar que la dirección pertenece al cliente actual
+    if direccionDB.clienteID != cliente.id:
+        raise HTTPException(403, "No tienes permiso para eliminar esta dirección")
     
     # Eliminar direccion y guardar cambios en la DB
     session.delete(direccionDB)
