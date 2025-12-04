@@ -58,23 +58,23 @@ document.getElementById('login-form').addEventListener('submit', async function 
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: `email=${encodeURIComponent(email)}&contrasena=${encodeURIComponent(contrasena)}`,
+      redirect: 'follow'
     });
 
-    if (response.ok) {
-      // Credenciales correctas - redirigir
+    if (response.redirected) {
+      window.location.href = response.url;
+    } else if (response.ok) {
       window.location.href = '/';
     } else {
-      // Credenciales incorrectas - mostrar mensaje
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       errorText.textContent = data.detail || 'Credenciales incorrectas. Por favor intenta nuevamente.';
       errorDiv.classList.remove('hidden');
 
-      // Limpiar campo de contraseña
       document.getElementById('login-password').value = '';
       document.getElementById('login-password').focus();
     }
   } catch (error) {
-    errorText.textContent = 'Credenciales incorrectas. Por favor intenta nuevamente.';
+    errorText.textContent = 'Error de conexión. Intenta nuevamente.';
     errorDiv.classList.remove('hidden');
   } finally {
     // Restaurar botón
