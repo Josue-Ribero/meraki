@@ -27,6 +27,11 @@ Además, contamos con un detalle extra para ti: por cada compra **recibirás pun
 *   <img src="https://cdn-icons-png.flaticon.com/512/4675/4675578.png" width="16" height="16"> **Programa de Fidelidad:** Gana puntos por tus compras y canjéalos por recompensas.
 *   <img src="https://cdn-icons-png.flaticon.com/512/4675/4675542.png" width="16" height="16"> **Lista de Deseos:** Guarda tus productos favoritos para comprarlos más tarde.
 
+---
+
+## Accede a la página principal de la App:
+**meraki-backend-ath6ctd6frdtb9bq.canadacentral-01.azurewebsites.net**
+
 ## 🛠️ Tecnologías
 
 Este proyecto está construido con tecnologías modernas: **FastAPI**, **SQLModel** y **PostgreSQL**, lo que garantiza una plataforma rápida, segura y escalable.
