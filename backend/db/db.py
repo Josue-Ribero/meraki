@@ -54,7 +54,7 @@ def crearAdminPredeterminado():
                 id=1,
                 nombre="Nicole",
                 email="nikkyr@gmail.com",
-                contrasenaHash=hashearContrasena("140852"),
+                contrasenaHash=hashearContrasena("nicole123"),
                 fechaCreacion=dt.now()
             )
             session.add(admin)

@@ -23,7 +23,7 @@ SUPABASE_KEY:str = os.getenv("SUPABASE_KEY")
 # Entorno de bucket
 env_bucket = os.getenv("SUPABASE_BUCKET")
 if not env_bucket or env_bucket.startswith("ey"):
-    SUPABASE_BUCKET = "imagenes"
+    SUPABASE_BUCKET = "productos"
 else:
     SUPABASE_BUCKET = env_bucket
 
