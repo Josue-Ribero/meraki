@@ -18,7 +18,6 @@ __pycache__/
 # DB
 *.db
 *.sqlite3
-backend/db/db.py
 
 # Archivos y dependencias
 entorno/
